@@ -1,0 +1,67 @@
+[package]
+name = "tlsn-mobile"
+version = "0.1.0"
+edition = "2021"
+description = "TLSNotary mobile bindings for iOS and Android"
+
+[lib]
+# staticlib/cdylib: artefactos do APK (Android/iOS).
+# rlib: permite que o exemplo de E2E (examples/sign_tx.rs) reutilize o assinador
+# real em vez de o reimplementar. Não afecta os artefactos móveis.
+crate-type = ["staticlib", "cdylib", "rlib"]
+name = "tlsn_mobile"
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "uniffi-bindgen.rs"
+
+[dependencies]
+# Core SDK — shared protocol engine with WASM/browser
+# For local development, override with a path in Cargo.toml:
+#   [patch."https://github.com/tlsnotary/tlsn.git"]
+#   tlsn-sdk-core = { path = "../tlsn-wasm/tlsn/crates/sdk-core" }
+tlsn-sdk-core = { git = "https://github.com/tlsnotary/tlsn.git", tag = "v0.1.0-alpha.15", features = ["mozilla-certs"] }
+
+# UniFFI for Swift/Kotlin bindings
+uniffi = { version = "0.28", features = ["cli"] }
+
+# Async runtime
+tokio = { version = "1", features = ["rt-multi-thread", "sync", "time", "macros", "net"] }
+tokio-util = { version = "0.7", features = ["compat"] }
+
+# WebSocket transport — rustls with bundled Mozilla CA roots (reliable on iOS + Android)
+tokio-tungstenite = { version = "0.21", features = ["rustls-tls-webpki-roots"] }
+futures = "0.3"
+
+# URL parsing
+url = "2"
+
+# Serialization (for verifier session protocol messages)
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Error handling
+thiserror = "1"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Session ids for the two-phase prove (prove_until_reveal → prove_finalize)
+uuid = { version = "1", features = ["v4"] }
+
+# --- Assinatura local da carteira (OPÇÃO 1, §13.97) ---
+# A seed nunca sai do aparelho: derivamos a chave e assinamos o sign-doc aqui.
+k256 = { version = "0.13", features = ["ecdsa"] }
+sha2 = "0.10"
+ripemd = "0.1"
+bip39 = "2"
+bip32 = { version = "0.5", features = ["secp256k1"] }
+bech32 = "0.11"
+
+[features]
+default = []
+
+[dev-dependencies]
+# Só para a ferramenta de E2E (examples/sign_tx.rs) — não entra no binário do APK.
+base64 = "0.22"

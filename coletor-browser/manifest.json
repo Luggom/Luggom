@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Luggom Coletor",
+  "version": "1.0",
+  "description": "Coleta localmente (somente leitura) a assinatura das requisicoes e o conteudo do comprovante, para diagnostico da mineracao Luggom.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "coletor@luggom.io"
+    }
+  },
+  "permissions": ["activeTab", "scripting", "cookies"],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "http://localhost/*",
+    "*://internetbanking.caixa.gov.br/*",
+    "*://contaonline.viacredi.coop.br/*",
+    "*://*.bb.com.br/*"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "action": {
+    "default_title": "Luggom: coletar e enviar"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://contaonline.viacredi.coop.br/*", "*://internetbanking.caixa.gov.br/*", "*://*.bb.com.br/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}

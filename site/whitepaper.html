@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Luggom · Whitepaper</title>
+  <meta name="description" content="The Luggom whitepaper: a Cosmos chain where you mine LUG by paying real tax, proven with TLSNotary. The basket, issuance, the endowment, governance and risks, explained.">
+  <meta name="theme-color" content="#f2e8dc">
+  <link rel="icon" href="assets/img/mark-square-t.png">
+  <link rel="stylesheet" href="assets/css/site.css?v=20261021b">
+  <link rel="stylesheet" href="assets/css/whitepaper.css">
+  <link rel="alternate" hreflang="pt-BR" href="pt/whitepaper.html">
+  <link rel="alternate" hreflang="en" href="whitepaper.html">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="Luggom, home">
+        <img src="assets/img/wordmark.svg" alt="Luggom">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <a href="index.html#how">How it works</a>
+        <a href="index.html#tokenomics">Tokenomics</a>
+        <a href="whitepaper.html" aria-current="page">Whitepaper</a>
+        <a href="download.html">Download</a>
+        <a href="validators.html">Validators</a>
+        <span class="lang">
+          <a href="whitepaper.html" aria-current="true" lang="en">EN</a>
+          <a href="pt/whitepaper.html" lang="pt-BR">PT</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Document head: the whitepaper as a reference object -->
+    <header class="doc-head">
+      <div class="wrap">
+        <span class="eyebrow">Whitepaper · Luggom</span>
+        <h1>A currency you mine by paying real tax</h1>
+        <p class="lede">Luggom is a Cosmos SDK blockchain with a single goal: to turn tax you have already paid into money you own. No third parties, no KYC and no promises. Only an immutable formula and cryptographic proof that the payment happened.</p>
+        <p class="kicker">Reference document · Lugo Vane · anti-censorship project</p>
+        <div class="tags">
+          <span class="tag">Cosmos SDK</span>
+          <span class="tag">x/luggom module</span>
+          <span class="tag">TLSNotary</span>
+          <span class="tag">7B LUG cap</span>
+          <span class="tag">No KYC</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap doc">
+
+      <!-- Table of contents: in-page anchors, English ids -->
+      <nav class="toc" aria-labelledby="toc-title">
+        <h2 class="toc__title" id="toc-title">Contents</h2>
+        <ol>
+          <li><a href="#introduction">Introduction</a></li>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#the-currency">The currency</a></li>
+          <li><a href="#issuance">Issuance and phases</a></li>
+          <li><a href="#endowment">The endowment</a></li>
+          <li><a href="#governance">Governance and immutability</a></li>
+          <li><a href="#mining">Mining and wallets</a></li>
+          <li><a href="#risks">Risks and honesty</a></li>
+          <li><a href="#roadmap">Roadmap</a></li>
+          <li><a href="#glossary">Glossary</a></li>
+        </ol>
+      </nav>
+
+      <div class="doc__body">
+
+        <!-- 01 Introduction -->
+        <section id="introduction">
+          <span class="eyebrow">01</span>
+          <h2>Introduction</h2>
+          <p class="lede">Every year you pay tax. That money leaves you and does not come back. Luggom does not give the money back: it turns the payment into money you own.</p>
+          <p>Luggom is a Cosmos SDK blockchain with a module of its own, <span class="mono">x/luggom</span>. The core idea is simple: you pay real tax, you prove that payment with TLSNotary and you mine LUG. The protocol never touches your money and never asks for access to your account.</p>
+          <p>There are no third parties. There is no KYC. There is no intermediary approving you. What enters the protocol is not your bank balance, it is the cryptographic proof that you paid.</p>
+          <p>The project is anti-censorship by design and the founder is anonymous (Lugo Vane). Instead of promises, Luggom fixes an immutable reference formula, a supply cap and a reserve in BTC that is not redeemable.</p>
+          <div class="tags">
+            <span class="tag">Cosmos SDK</span>
+            <span class="tag">x/luggom module</span>
+            <span class="tag">TLSNotary</span>
+            <span class="tag">No KYC</span>
+            <span class="tag">Anonymous founder</span>
+          </div>
+        </section>
+
+        <!-- 02 How it works -->
+        <section id="how-it-works" class="section-line">
+          <span class="eyebrow">02</span>
+          <h2>How it works</h2>
+          <p class="lede">Everything depends on one proof. TLSNotary shows that your payment receipt is genuine without exposing your banking session.</p>
+          <p>The TLSNotary notary ends the TLS connection outside the browser and reveals only the receipt. Your session, your password and your personal data are never exposed. What comes out is a verifiable document: collecting entity, amount, date and receipt identifier.</p>
+          <div class="steps">
+            <article class="step reveal">
+              <span class="step__n">01 / pay</span>
+              <h3>Pay the tax</h3>
+              <p>At your bank, as always. Luggom does not touch the money and does not ask for access to your account.</p>
+            </article>
+            <article class="step reveal">
+              <span class="step__n">02 / prove</span>
+              <h3>Prove the payment</h3>
+              <p>TLSNotary ends the TLS connection outside the browser and reveals only the receipt. No password, no personal data.</p>
+            </article>
+            <article class="step reveal">
+              <span class="step__n">03 / mine</span>
+              <h3>Mine LUG</h3>
+              <p>The notary signs the receipt, the chain verifies the signature and mints. Each receipt mines only once.</p>
+            </article>
+          </div>
+          <p>The notary extracts and signs the attestation with ECDSA secp256k1. The chain verifies the signature before minting. Without a valid signature, there is no new LUG.</p>
+          <p>There is no KYC, no entity validating your identity and no third parties in between. The only question the protocol asks is whether the receipt is genuine.</p>
+        </section>
+
+        <!-- 03 The currency -->
+        <section id="the-currency" class="section-line">
+          <span class="eyebrow">03</span>
+          <h2>The currency</h2>
+          <p class="lede">LUG has no fixed price and no peg. It has a single reference: the average of three strong currencies, times three, growing 10% per year.</p>
+          <p class="formula">LUG = ( <span class="tok">EUR/USD</span> + <span class="tok">GBP/USD</span> + <span class="tok">CHF/USD</span> ) / 3 × 3 · <span class="tok">+10%</span>/year</p>
+          <p>The basket is the average of EUR/USD, GBP/USD and CHF/USD. Multiplied by three, it gives the LUG reference. On top of that reference sits a growth of 10% per year, compounded, counted from year zero.</p>
+          <div class="figures">
+            <div class="figure">
+              <span class="figure__yr">Year 0</span>
+              <span class="figure__val">$3.60</span>
+            </div>
+            <div class="figure">
+              <span class="figure__yr">Year 5</span>
+              <span class="figure__val">$5.80</span>
+            </div>
+            <div class="figure">
+              <span class="figure__yr">Year 10</span>
+              <span class="figure__val">$9.34</span>
+            </div>
+          </div>
+          <p>The multiplier and the growth rate are compiled constants. They live in the code, out of governance reach. No vote or emergency can change them.</p>
+          <div class="split">
+            <div>
+              <p class="lede">The reference sets the OTC price and the pace of issuance. It is not a promise of conversion.</p>
+            </div>
+            <div>
+              <div class="item">
+                <h3>Immutable in code</h3>
+                <p>The factor of three and the 10% per year live compiled. Changing them would require changing the binary, not passing a proposal.</p>
+              </div>
+              <div class="item">
+                <h3>No peg</h3>
+                <p>The protocol does not convert LUG into dollars. The basket is a target, not a redemption commitment.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 04 Issuance and phases -->
+        <section id="issuance" class="section-line">
+          <span class="eyebrow">04</span>
+          <h2>Issuance and phases</h2>
+          <p class="lede">The cap is 7B LUG per year and shrinks 5% per year. Each LUG mined is split across three phases, and each phase sums to 100%.</p>
+          <p>The cap is not a stockpile waiting to be mined: it is the maximum that can be minted in a year. Whatever is not mined that year is not carried over to the next — it can never be created again. Example: if only 100M LUG are mined in the first year, the other 6.9B will simply never exist. Real supply is what is mined, not the cap.</p>
+
+          <h3>The three phases</h3>
+          <p>Phase 1 is the pre-sale. The transition starts when 10M LUG have been mined. Phase 2 begins when the pool and IBC open.</p>
+          <div class="table-scroll">
+            <table>
+              <caption>Percentages of what is mined · 7B LUG cap, −5% per year</caption>
+              <thead>
+                <tr><th scope="col">Component</th><th scope="col">Phase 1</th><th scope="col">Transition</th><th scope="col">Phase 2</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Miner</td><td class="num">30</td><td class="num">30</td><td class="num">30</td></tr>
+                <tr><td>Pre-sale</td><td class="num">35</td><td class="num">–</td><td class="num">–</td></tr>
+                <tr><td>OTC LOCKED</td><td class="num">–</td><td class="num">–</td><td class="num">40</td></tr>
+                <tr><td>Staking reservoir</td><td class="num">7.5</td><td class="num">30</td><td class="num">10</td></tr>
+                <tr><td>ATOM reservoir</td><td class="num">7.5</td><td class="num">30</td><td class="num">10</td></tr>
+                <tr><td>Founder</td><td class="num">5</td><td class="num">5</td><td class="num">5</td></tr>
+                <tr><td>Validators</td><td class="num">3</td><td class="num">3</td><td class="num">3</td></tr>
+                <tr><td>Governance reserve</td><td class="num">2</td><td class="num">2</td><td class="num">2</td></tr>
+                <tr><td>POOL</td><td class="num">10</td><td class="num">–</td><td class="num">–</td></tr>
+                <tr class="total"><td>Total</td><td class="num">100</td><td class="num">100</td><td class="num">100</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>In Phase 2, the 2% governance reserve splits into 0.5% for the notary and 1.5% for the treasury.</p>
+          <p>Because the basket grows 10% per year and the cap shrinks 5% per year, USD capacity grows about 4.5% per year: from about $25.2B at year zero to about $39.1B at year 10.</p>
+          <p>Saturation in number of users follows capacity. At an average of about $3k per user, it goes from about 8.4M at year zero to about 13.0M at year 10.</p>
+          <div class="figures">
+            <div class="figure">
+              <span class="figure__yr">Cap</span>
+              <span class="figure__val">7B LUG</span>
+            </div>
+            <div class="figure">
+              <span class="figure__yr">Shrink</span>
+              <span class="figure__val">−5% / year</span>
+            </div>
+            <div class="figure">
+              <span class="figure__yr">USD capacity</span>
+              <span class="figure__val">+4.5% / year</span>
+            </div>
+          </div>
+
+          <h3>The pre-sale</h3>
+          <p>The pre-sale places 3.5M LUG at $0.10, that is $350k. Vesting is linear over 3 months. Of the proceeds, $100k go to the pool and $100k to security and marketing; the use of the remainder will be decided by the community.</p>
+
+          <h3>The founder</h3>
+          <p>The founder receives 5% of everything mined, with no accumulation limit. Vesting is a pure cliff of 24 months, implemented in the code: nothing leaves before 24 months and, from then on, the whole accumulated amount is released and flows directly.</p>
+
+          <h3>The savings reservoirs</h3>
+          <p>The staking and ATOM reservoirs drip 10% per year of balance. The combined yield is capped at 25% per year. Qualification for the ATOM reservoir requires a fixed 100 ATOM.</p>
+
+          <h3>Fee and dust</h3>
+          <p>The transfer fee is 0.005 LUG. Creating a new wallet costs 0.00000000001 LUG in dust, once per address and at most 5 per hour per IP.</p>
+        </section>
+
+        <!-- 05 The endowment -->
+        <section id="endowment" class="section-line">
+          <span class="eyebrow">05</span>
+          <h2>The endowment</h2>
+          <p class="lede">40% of everything mined, in Phase 2, goes to the OTC vault. It is not a treasury: it is a supply wall.</p>
+          <p>The LUG in the vault can only be bought with BTC, in minimum lots of 100,000 LUG, at the basket price of the day. The BTC is never sold: it would only move with an 87% governance vote, and only to migrate to equal-or-stronger custody of the same asset — which does not exist today. In practice, the BTC dies there in the endowment.</p>
+          <div class="split">
+            <div>
+              <p class="lede">The vault does not exist to defend the price. It exists to take LUG out of the market permanently and predictably.</p>
+            </div>
+            <div>
+              <div class="item">
+                <h3>Not a treasury</h3>
+                <p>LUG only leaves the vault when it is bought at the basket of the day. Never by vote, never to pay expenses. It is a supply wall, not a box to spend.</p>
+              </div>
+              <div class="item">
+                <h3>Only BTC comes in</h3>
+                <p>The only currency accepted is BTC. The minimum lot is 100,000 LUG and the price is always the basket of the day. The BTC stays put in the vault.</p>
+              </div>
+              <div class="item">
+                <h3>A gold vault, not a debt</h3>
+                <p>The accumulated BTC is an asset, not a reserve to be spent. It is the same thesis as the MicroStrategy BTC treasury — but without the debt and the expenses pressing against it: nothing can force a BTC sale to pay costs, staking or creditors. BTC goes in and stays. It is a gold vault, not a spending account.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">BTC only</span>
+            <span class="tag">Lot ≥ 100,000 LUG</span>
+            <span class="tag">Price = basket</span>
+            <span class="tag">No redemption</span>
+          </div>
+        </section>
+
+        <!-- 06 Governance and immutability -->
+        <section id="governance" class="section-line">
+          <span class="eyebrow">06</span>
+          <h2>Governance and immutability</h2>
+          <p class="lede">There are three layers, and the order matters. First the code that is not touched, then the parameters that evolve and, only at the end, the emergency.</p>
+          <div class="split">
+            <div>
+              <p class="lede">Real immutability is not a promise of intent. It is what the binary refuses to execute.</p>
+            </div>
+            <div>
+              <div class="item">
+                <h3>Layer 1: immutable code</h3>
+                <p>The basket, the 7B LUG cap, the 0.005 LUG fee, the mining split and the OTC sale rules are compiled constants. Governance does not vote on them.</p>
+              </div>
+              <div class="item">
+                <h3>Layer 2: parameters</h3>
+                <p>The list of authorised banks, the collecting entities and the lists live in the parameters. Governance can change them, for example adding or removing a bank.</p>
+              </div>
+              <div class="item">
+                <h3>Layer 3: Shamir 7-of-12</h3>
+                <p>A 7-of-12 Shamir scheme guards the code. It serves emergencies only: it does not set policy and it does not change the currency.</p>
+              </div>
+            </div>
+          </div>
+          <p>The quorum and veto thresholds of governance are frozen in the code. Whoever wants to change them cannot do it by vote.</p>
+
+          <h3>The notaries</h3>
+          <p>Notaries come from a pool of volunteers among the validators, who number at most 180. Notarisation starts with 1 notary at launch, moves to 3 (2-of-3 quorum) and then to 5 (3-of-5 quorum). They are paid from 0.5% of the governance reserve, held in a separate module account. The notary money is not votable.</p>
+          <p>Mainnet only opens with a minimum of 12 validators.</p>
+
+          <h3>The list of banks and entities</h3>
+          <p>The tax list has one bank proven end to end — Viacredi, in Brazil — and a whitelist ready to light up more. A new bank lights up when a community member delivers a sanitised real receipt from that bank: we confirm the rail's canonical field, the rail goes live and every customer of that bank can mine. It is a job of evidence, not code. The US and Canada stay off until that canonical field exists per rail. Open Finance, as a second rail, is designed and off, and it is a testnet cohort deliverable.</p>
+        </section>
+
+        <!-- 07 Mining and wallets -->
+        <section id="mining" class="section-line">
+          <span class="eyebrow">07</span>
+          <h2>Mining and wallets</h2>
+          <p class="lede">Mining lives on the desktop. The wallet lives in your pocket or on your desktop. Each one does what it can do honestly.</p>
+          <p>The proof requires an environment that a phone cannot guarantee honestly. That is why the miner is a desktop application, written in Tauri. It connects to the node, proves the payment and mines the LUG. Your key never leaves the machine.</p>
+          <div class="split">
+            <div>
+              <p class="lede">The wallet runs on mobile or desktop: balance, receive, send and statement. All signed on the device, with no server in between.</p>
+            </div>
+            <div>
+              <div class="item">
+                <h3>Desktop: the miner</h3>
+                <p>A Tauri application that proves the payment and mines. This is where the TLSNotary proof happens, with network access and a local or remote node.</p>
+              </div>
+              <div class="item">
+                <h3>Mobile or desktop: the wallet</h3>
+                <p>Where LUG lives day to day. Signing on the device and keys that never leave it.</p>
+              </div>
+            </div>
+          </div>
+          <p>The payment identifier uses only the canonical field, today the PIX E2E in Brazil. It is fail-closed: if the canonical field is not present, mining does not happen.</p>
+          <div class="tags">
+            <span class="tag">Tauri app</span>
+            <span class="tag">Mining on desktop</span>
+            <span class="tag">Wallet on mobile and desktop</span>
+            <span class="tag">PIX E2E canonical field</span>
+          </div>
+          <h3>The GoldHunters</h3>
+          <p>The GoldHunters are the people who teach others to mine. They explain to individuals and companies how to pay IPTU, property tax and other real taxes and receive LUG for it — and charge a commission in LUG for that teaching. The commission is negotiated freely between the GoldHunter and the taxpayer: like an accountant who offers "mine your tax, I teach you, and you pass me a share of what you mine". The protocol neither sets nor charges this commission — it is an agreement between the parties, paid after mining.</p>
+          <h3>For companies</h3>
+          <p>A company in any sector already pays tax — it can mine that payment to receive LUG and distribute part of it to employees. The native pool (AMM) is the exit of that circulation: it is where the market price forms, orbiting the basket above and below. There is no floor forcing a sale below the basket, nor a ceiling holding it — the AMM provides the liquidity for the value to be discovered by the market.</p>
+        </section>
+
+        <!-- 08 Risks and honesty -->
+        <section id="risks" class="section-line">
+          <span class="eyebrow">08</span>
+          <h2>Risks and honesty</h2>
+          <p class="lede">An honest currency says what it does not do. LUG has no peg, no buyback and no redemption.</p>
+          <div class="notes">
+            <article class="note">
+              <h3>There is no peg</h3>
+              <p>The basket is an issuance and OTC price reference, not a promise of conversion. The market price orbits the basket, above and below, without being tethered to it — as it should on an AMM (free market).</p>
+            </article>
+            <article class="note">
+              <h3>There is no buyback</h3>
+              <p>The protocol does not buy LUG. There is no buyback order: the price is whatever the market sets, above or below the basket.</p>
+            </article>
+            <article class="note">
+              <h3>There is no redemption</h3>
+              <p>There is nothing to redeem in the protocol. With no redemption there is no run, and a permanent market discount is possible and survivable.</p>
+            </article>
+          </div>
+          <article class="note note--warn reveal">
+            <h3>Residual risk: the single notary</h3>
+            <p>With a single notary, whoever compromises it can mine up to the cap. The mitigation is the distributed notary — 3 (2-of-3) then 5 (3-of-5) —, planned for after mainnet.</p>
+          </article>
+        </section>
+
+        <!-- 09 Roadmap -->
+        <section id="roadmap" class="section-line">
+          <span class="eyebrow">09</span>
+          <h2>Roadmap</h2>
+          <p class="lede">From testnet to mainnet. Each step only starts when the previous one is finished.</p>
+          <div class="steps">
+            <article class="step">
+              <span class="step__n">01 / next</span>
+              <h3>Testnet</h3>
+              <p>Binaries, genesis, scripts, an explorer and the BTC vault dashboard, in a single package. It runs with a single notary — the founder — and opens to invited validators and developers.</p>
+            </article>
+            <article class="step">
+              <span class="step__n">02</span>
+              <h3>Shamir decisions</h3>
+              <p>The Shamir 7-of-12 split: who holds each share of the code.</p>
+            </article>
+            <article class="step">
+              <span class="step__n">03</span>
+              <h3>Notaries</h3>
+              <p>The distributed notary — 3 (2-of-3) then 5 (3-of-5) —, planned for after mainnet. The pool of volunteers among the validators, paid from 0.5% of the governance reserve.</p>
+            </article>
+            <article class="step">
+              <span class="step__n">04</span>
+              <h3>US and Canadian banks</h3>
+              <p>Bringing American and Canadian banks in for mining.</p>
+            </article>
+            <article class="step">
+              <span class="step__n">05</span>
+              <h3>First validators</h3>
+              <p>Who the validators that open the network will be.</p>
+            </article>
+            <article class="step">
+              <span class="step__n">06</span>
+              <h3>Public testnet</h3>
+              <p>The network open to everyone, still with no real value.</p>
+            </article>
+            <article class="step">
+              <span class="step__n">07</span>
+              <h3>Mainnet</h3>
+              <p>It only opens with a minimum of 12 validators.</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- 10 Glossary -->
+        <section id="glossary" class="section-line">
+          <span class="eyebrow">10</span>
+          <h2>Glossary</h2>
+          <p class="lede">The terms this page uses, in plain language.</p>
+          <dl class="glossary">
+            <dt>LUG</dt>
+            <dd>The Luggom currency. Referenced to the basket and capped at 7B.</dd>
+            <dt>x/luggom</dt>
+            <dd>The Cosmos SDK module that implements mining, the splits and the currency rules.</dd>
+            <dt>TLSNotary</dt>
+            <dd>A protocol that ends the TLS connection outside the browser and produces a verifiable proof of the receipt.</dd>
+            <dt>Notary</dt>
+            <dd>The party that extracts and signs the attestation with ECDSA secp256k1. The chain verifies the signature.</dd>
+            <dt>Basket</dt>
+            <dd>(EUR/USD + GBP/USD + CHF/USD) / 3 × 3, growing 10% per year from year zero.</dd>
+            <dt>Endowment</dt>
+            <dd>The OTC vault that receives 40% of mining in Phase 2 and accepts only BTC.</dd>
+            <dt>OTC LOCKED</dt>
+            <dd>The mechanism for buying LUG with BTC, in lots of 100,000 LUG, at the basket price of the day.</dd>
+            <dt>Cliff</dt>
+            <dd>A period in which nothing is released. For the founder it is 24 months, after which everything is released.</dd>
+            <dt>Dust</dt>
+            <dd>A cost of 0.00000000001 LUG per new wallet, once per address.</dd>
+            <dt>Shamir 7-of-12</dt>
+            <dd>A scheme that requires 7 keys out of 12 to reach the emergency control of the code.</dd>
+            <dt>Canonical field</dt>
+            <dd>The only accepted payment identifier, today the PIX E2E.</dd>
+            <dt>AMM / native pool</dt>
+            <dd>The native liquidity pool (x·y=k) where LUG is exchanged. It is the exit of mining: the market price orbits the basket, above and below, with no floor or ceiling.</dd>
+          </dl>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta">
+      <div class="wrap">
+        <div>
+          <h2>The testnet is live.</h2>
+          <p class="lede">The public network runs <code>luggom-test</code>. The next milestone is mainnet, which only opens with a minimum of 12 validators.</p>
+        </div>
+        <div class="btn-row" style="margin-top:0">
+          <a class="btn btn--secondary" href="download.html">Download</a>
+          <a class="btn btn--ghost" href="validators.html">See validators</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <a class="brand" href="index.html" aria-label="Luggom, home" style="margin-bottom:14px">
+            <img src="assets/img/wordmark.svg" alt="Luggom" style="height:30px">
+          </a>
+          <p style="max-width:34ch;color:var(--ink)">Luggom is a reserve anchored by the basket's algorithm: scarce, yet elastic, it grows with the real economy rather than speculation. It needs no USD or USDT in reserve, it is borderless and free (no KYC), and its reference rises 10% per year. Stability anchored in the basket, not in a promise.</p>
+        </div>
+        <div>
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html#how">How it works</a></li>
+            <li><a href="index.html#basket">The basket</a></li>
+            <li><a href="index.html#tokenomics">Tokenomics</a></li>
+            <li><a href="index.html#endowment">Reserve</a></li>
+          <li><a href="developers.html">Developers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Status</h4>
+          <ul>
+            <li>Testnet live · luggom-test</li>
+            <li>No KYC · no custody</li>
+            <li>TLSNotary proof</li>
+            <li>PT / EN</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Community</h4>
+          <ul>
+            <li><a class="social" href="https://t.me/+XRWgwPwvz4hkOTJh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · group</span></a></li>
+            <li><a class="social" href="https://t.me/Luggomchain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · channel</span></a></li>
+            <li><a class="social" href="https://x.com/luggom_chain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>X</span></a></li>
+            <li><a class="social" href="https://forum.cosmos.network/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg><span>Cosmos Forum</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="fine">
+        <span>© <span data-year>2026</span> Luggom</span>
+        <span>Self-custody · open source</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/site.js" defer></script>
+</body>
+</html>

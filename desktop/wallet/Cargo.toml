@@ -1,0 +1,39 @@
+[package]
+name = "luggom-wallet"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Carteira Luggom: derivação e assinatura reutilizando o assinador real do APK"
+
+[dependencies]
+# O assinador real (o mesmo que minerou on-chain — §13.97/§13.126). Não se
+# reimplementa cripto: um desvio aqui mandaria o LUG minerado para outro endereço.
+tlsn-mobile = { path = "../../apk_luggom/native/tlsn-mobile" }
+thiserror = "1"
+base64 = "0.22"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bech32 = "0.11"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+url = "2"
+tokio = { version = "1", features = ["time", "rt-multi-thread", "macros", "net", "sync"] }
+tokio-util = { version = "0.7", features = ["compat"] }
+tokio-tungstenite = { version = "0.21", features = ["rustls-tls-webpki-roots"] }
+futures = "0.3"
+uuid = { version = "1", features = ["v4"] }
+# O MESMO motor do CLI `prover-ws-poc` e do APK (alpha.15). O prover embutido
+# segue o fluxo do CLI, que é o que o notário completa.
+tlsn-sdk-core = { git = "https://github.com/tlsnotary/tlsn.git", tag = "v0.1.0-alpha.15", features = ["mozilla-certs"] }
+tracing = "0.1"
+# Construtor do pedido do banco no momento de provar (porte do make_prover_request.py):
+# ECDSA P-256 para a assinatura, RSA-OAEP para o X-Request cifrado.
+p256 = { version = "0.13", features = ["ecdsa"] }
+rsa = "0.9"
+sha2 = "0.10"
+sha1 = "0.10"
+rand = "0.8"
+
+[dev-dependencies]
+luggom-core = { workspace = true }
+tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

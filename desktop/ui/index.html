@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Luggom</title>
+    <link rel="icon" type="image/png" href="/l-icon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <img class="brand" src="/luggom-wordmark.png" alt="Luggom" />
+        <div class="lang" id="lang"></div>
+      </header>
+
+      <nav class="tabs" id="tabs">
+        <button type="button" data-tab="wallet" class="active" data-i18n="tab.wallet"></button>
+        <button type="button" data-tab="mine" data-i18n="tab.mine"></button>
+        <button type="button" data-tab="net" data-i18n="tab.net"></button>
+      </nav>
+
+      <main>
+        <!-- ---------------------------------------------------------------- -->
+        <!-- Carteira                                                          -->
+        <!-- ---------------------------------------------------------------- -->
+        <section class="panel" data-panel="wallet">
+          <div id="vault"></div>
+          <p id="error" class="error" hidden></p>
+
+          <div id="wallet-view" hidden>
+            <section class="card balance-card">
+              <p class="label" data-i18n="balance.title"></p>
+              <p class="balance" id="balance-lug"></p>
+              <p class="hint" id="balance-note" data-i18n="balance.none" hidden></p>
+              <p id="wallet-error" class="error" hidden></p>
+            </section>
+
+            <section class="card">
+              <h2 data-i18n="receive.title"></h2>
+              <code class="mono block" id="receive-address"></code>
+              <p class="hint" data-i18n="receive.hint"></p>
+              <button type="button" id="receive-copy" data-i18n="receive.copy"></button>
+              <p id="receive-copied" class="ok" hidden></p>
+            </section>
+
+            <section class="card">
+              <h2 data-i18n="send.title"></h2>
+              <div class="field">
+                <label for="send-to" data-i18n="send.to"></label>
+                <input id="send-to" type="text" spellcheck="false" />
+              </div>
+              <div class="field">
+                <label for="send-amount" data-i18n="send.amount"></label>
+                <input id="send-amount" type="text" inputmode="decimal" />
+              </div>
+              <p class="hint" id="send-plan"></p>
+              <button type="button" id="send" class="primary" data-i18n="send.action"></button>
+              <p id="send-done" class="ok" hidden></p>
+            </section>
+
+            <section class="card">
+              <h2 data-i18n="history.title"></h2>
+              <ul id="history" class="history"></ul>
+              <p class="hint" id="history-empty" data-i18n="history.empty" hidden></p>
+            </section>
+
+            <section class="card">
+              <h2 data-i18n="mine.history.title"></h2>
+              <p class="hint" data-i18n="mine.history.hint"></p>
+              <ul id="mine-history" class="history"></ul>
+              <p class="hint" id="mine-history-empty" data-i18n="mine.history.empty" hidden></p>
+            </section>
+          </div>
+        </section>
+
+        <!-- ---------------------------------------------------------------- -->
+        <!-- Minerar                                                           -->
+        <!-- ---------------------------------------------------------------- -->
+        <section class="panel" data-panel="mine" hidden>
+          <section class="card">
+            <h2 data-i18n="mine.title"></h2>
+            <p class="hint" data-i18n="mine.hint"></p>
+
+            <div id="mine-locked" class="notice" hidden data-i18n="mine.locked"></div>
+
+            <div class="field">
+              <label for="mine-provider" data-i18n="mine.provider"></label>
+              <select id="mine-provider"></select>
+            </div>
+
+            <div class="field">
+              <div class="row">
+                <button type="button" id="mine-bank-open" class="primary" data-i18n="mine.bank.open"></button>
+                <button type="button" id="mine-bank-forget" data-i18n="mine.bank.forget"></button>
+              </div>
+              <p class="hint" data-i18n="mine.bank.hint"></p>
+              <p class="hint" id="mine-bank-hint"></p>
+              <p class="hint mono small" id="mine-bank-info"></p>
+            </div>
+
+            <details class="advanced">
+              <summary data-i18n="mine.advanced"></summary>
+              <div class="field">
+                <label for="mine-api" data-i18n="mine.api"></label>
+                <input id="mine-api" type="text" spellcheck="false" placeholder="http://127.0.0.1:8082" />
+              </div>
+              <div class="field">
+                <label for="mine-notary" data-i18n="mine.notary"></label>
+                <input id="mine-notary" type="text" spellcheck="false" placeholder="http://127.0.0.1:7047" />
+              </div>
+              <div class="field">
+                <label for="mine-capture" data-i18n="mine.capture"></label>
+                <div class="row">
+                  <input
+                    id="mine-capture"
+                    type="text"
+                    spellcheck="false"
+                    placeholder="…/captura-viacredi.json"
+                  />
+                  <button type="button" id="mine-capture-load" data-i18n="mine.capture.load"></button>
+                </div>
+                <p class="hint" data-i18n="mine.capture.hint"></p>
+                <p class="hint mono small" id="mine-capture-info"></p>
+              </div>
+            </details>
+
+            <button type="button" id="mine-run" class="primary big" data-i18n="mine.run"></button>
+            <p id="mine-status" class="hint" hidden></p>
+
+            <div id="mine-approval" class="approval" hidden>
+              <h3 data-i18n="mine.approval.title"></h3>
+              <p class="hint" id="mine-approval-status"></p>
+              <ul id="mine-descriptors" class="history"></ul>
+              <div class="row">
+                <button type="button" id="mine-approve" class="primary" data-i18n="mine.approval.approve"></button>
+                <button type="button" id="mine-reject" data-i18n="mine.approval.reject"></button>
+              </div>
+            </div>
+
+            <p id="mine-done" class="ok" hidden></p>
+            <p id="mine-error" class="error" hidden></p>
+          </section>
+        </section>
+
+        <!-- ---------------------------------------------------------------- -->
+        <!-- Rede                                                              -->
+        <!-- ---------------------------------------------------------------- -->
+        <section class="panel" data-panel="net" hidden>
+          <section class="card">
+            <h2 data-i18n="chain.title"></h2>
+            <p class="hint" data-i18n="chain.hint"></p>
+            <div class="field">
+              <label for="node-url" data-i18n="chain.node"></label>
+              <div class="row">
+                <input id="node-url" type="text" spellcheck="false" placeholder="http://127.0.0.1:1317" />
+                <button type="button" id="node-save" data-i18n="chain.save"></button>
+              </div>
+            </div>
+            <p id="chain-state" class="hint"></p>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

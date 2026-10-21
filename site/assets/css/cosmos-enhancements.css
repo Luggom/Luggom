@@ -1,0 +1,588 @@
+/* cosmos-enhancements.css
+   Proposta 2: Cosmos Convergence
+   Adições ao tema Luggom sem alterar estrutura. Carregado APÓS site.css e whitepaper.css */
+
+/* ---------- Cosmos Tokens Adicionais ---------- */
+:root {
+  /* Cosmos brand colors complementando Luggom */
+  --cosmos-orange: #FB4E01;
+  --cosmos-blue: #013972;
+  --cosmos-casper: #A6BCD1;
+  --cosmos-glow: oklch(0.55 0.19 45 / 0.15);
+  
+  /* Gradients */
+  --gradient-hero: linear-gradient(180deg, 
+    oklch(0.195 0.016 62) 0%, 
+    oklch(0.225 0.018 180) 50%,
+    oklch(0.265 0.020 220) 100%);
+  --gradient-cosmos: radial-gradient(ellipse at 50% 0%, 
+    oklch(0.35 0.08 220 / 0.4) 0%, 
+    transparent 70%);
+  
+  /* Glow effects */
+  --glow-copper: 0 0 20px oklch(0.65 0.088 58 / 0.3);
+  --glow-orange: 0 0 30px oklch(0.65 0.19 45 / 0.25);
+  
+  /* Timing */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ---------- Hero Cosmos Background ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-cosmos);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Canvas para constelação */
+.cosmos-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1 !important;
+  display: block !important;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ---------- Language Toggle Redesenhado ---------- */
+.lang {
+  position: relative;
+  background: var(--paper-2);
+  border-radius: 999px;
+  padding: 2px;
+  display: inline-flex;
+  gap: 2px;
+  border: 1px solid var(--line);
+}
+
+.lang a {
+  position: relative;
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: all 0.3s var(--ease-smooth);
+  z-index: 1;
+}
+
+.lang a[aria-current="true"] {
+  background: var(--copper);
+  color: var(--paper);
+  box-shadow: var(--glow-copper);
+}
+
+.lang a:not([aria-current="true"]):hover {
+  background: var(--paper-3);
+  color: var(--ink);
+}
+
+/* ---------- Scroll Spy no TOC ---------- */
+.toc a {
+  position: relative;
+  padding-left: 1rem;
+  transition: all 0.2s ease;
+}
+
+.toc a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 70%;
+  background: var(--cosmos-orange);
+  border-radius: 2px;
+  transition: transform 0.25s var(--ease-smooth);
+}
+
+.toc a.is-active {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.toc a.is-active::before {
+  color: var(--cosmos-orange);
+}
+
+.toc a.is-active::after {
+  transform: translateY(-50%) scaleY(1);
+}
+
+/* ---------- Step Cards Melhorados ---------- */
+.steps > .step {
+  position: relative;
+  padding: var(--sp-5);
+  background: var(--paper-2);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  transition: all 0.4s var(--ease-smooth);
+}
+
+.steps > .step::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--radius-lg);
+  padding: 1px;
+  background: linear-gradient(135deg, var(--copper) 0%, transparent 50%, var(--cosmos-orange) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.steps > .step:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-2), var(--glow-copper);
+}
+
+.steps > .step:hover::before {
+  opacity: 1;
+}
+
+.steps .step__number {
+  font-family: var(--font-mono);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--copper);
+  opacity: 0.4;
+  line-height: 1;
+  margin-bottom: var(--sp-2);
+  text-shadow: 0 0 30px oklch(0.65 0.088 58 / 0.5);
+}
+
+.steps .step:hover .step__number {
+  color: var(--cosmos-orange);
+  opacity: 1;
+  text-shadow: 0 0 50px oklch(0.72 0.095 62 / 0.8);
+}
+
+/* Ícones nos steps via SVG data URI */
+.steps > .step[data-icon="pay"]::after,
+.steps > .step[data-icon="prove"]::after,
+.steps > .step[data-icon="mine"]::after {
+  content: '';
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.steps > .step[data-icon="pay"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FB4E01' stroke-width='1.5'%3E%3Cpath d='M3 3h18v18H3z'/%3E%3Cpath d='M7 7h10M7 12h10M7 17h6'/%3E%3C/svg%3E");
+}
+
+.steps > .step[data-icon="prove"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FB4E01' stroke-width='1.5'%3E%3Cpath d='M9 12l2 2 4-4'/%3E%3Cpath d='M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z'/%3E%3C/svg%3E");
+}
+
+.steps > .step[data-icon="mine"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FB4E01' stroke-width='1.5'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5z'/%3E%3Cpath d='M2 17l10 5 10-5'/%3E%3Cpath d='M2 12l10 5 10-5'/%3E%3C/svg%3E");
+}
+
+.steps > .step:hover[data-icon="pay"]::after,
+.steps > .step:hover[data-icon="prove"]::after,
+.steps > .step:hover[data-icon="mine"]::after {
+  opacity: 1;
+}
+
+/* ---------- Fórmula Animada ---------- */
+.formula {
+  position: relative;
+  background: var(--paper-2);
+  padding: var(--sp-5) var(--sp-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.formula::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--cosmos-glow) 50%, 
+    transparent 100%);
+  transform: translateX(-100%);
+  animation: formula-shine 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes formula-shine {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+.formula .tok {
+  display: inline-block;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.formula:hover .tok {
+  color: var(--cosmos-orange);
+  text-shadow: 0 0 20px oklch(0.65 0.19 45 / 0.5);
+}
+
+/* ---------- Tabela com Tabs Interativos ---------- */
+.phase-tabs {
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.phase-tab {
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.phase-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--cosmos-orange);
+  transform: scaleX(0);
+  transition: transform 0.25s var(--ease-smooth);
+}
+
+.phase-tab:hover {
+  color: var(--ink);
+}
+
+.phase-tab.is-active {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.phase-tab.is-active::after {
+  transform: scaleX(1);
+}
+
+.phase-content {
+  display: none;
+}
+
+.phase-content.is-active {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Visualização de barras da tabela */
+.table-bar {
+  height: 4px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.table-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--copper) 0%, var(--cosmos-orange) 100%);
+  border-radius: 2px;
+  transition: width 1s var(--ease-smooth);
+}
+
+/* ---------- Figures com Contadores Animados ---------- */
+.figure {
+  position: relative;
+  padding: var(--sp-4);
+  background: var(--paper-2);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.figure:hover {
+  border-color: var(--copper);
+  box-shadow: var(--glow-copper);
+}
+
+.figure__val {
+  font-size: var(--step-3);
+  font-weight: 700;
+  color: var(--copper);
+  transition: color 0.3s ease;
+}
+
+.figure:hover .figure__val {
+  color: var(--cosmos-orange);
+}
+
+/* ---------- Cards de Risco com Glassmorphism ---------- */
+.note {
+  position: relative;
+  background: oklch(0.22 0.015 62 / 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid oklch(1 0 0 / 0.08);
+  border-left: 3px solid var(--copper);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  transition: all 0.4s ease;
+}
+
+.note:hover {
+  background: oklch(0.25 0.02 62 / 0.7);
+  border-color: oklch(1 0 0 / 0.15);
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.3);
+  transform: translateY(-2px);
+}
+
+.note--warn {
+  border-left-color: var(--danger);
+}
+
+.note--warn:hover {
+  box-shadow: 0 8px 32px oklch(0.55 0.16 27 / 0.2);
+}
+
+/* ---------- Cronograma Visual ---------- */
+.roadmap-visual {
+  position: relative;
+  padding-left: var(--sp-6);
+}
+
+.roadmap-visual::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, 
+    var(--copper) 0%, 
+    var(--cosmos-orange) 50%,
+    var(--copper) 100%);
+  opacity: 0.5;
+}
+
+.roadmap-item {
+  position: relative;
+  padding-bottom: var(--sp-5);
+}
+
+.roadmap-item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--sp-6) - 4px);
+  top: var(--sp-1);
+  width: 10px;
+  height: 10px;
+  background: var(--paper);
+  border: 2px solid var(--copper);
+  border-radius: 50%;
+  transition: all 0.3s var(--ease-bounce);
+}
+
+.roadmap-item.is-complete::before {
+  background: var(--copper);
+  box-shadow: var(--glow-copper);
+}
+
+.roadmap-item.is-active::before {
+  background: var(--cosmos-orange);
+  border-color: var(--cosmos-orange);
+  box-shadow: var(--glow-orange);
+  transform: scale(1.3);
+}
+
+/* ---------- Tags Cosmos Badge ---------- */
+.tag {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.tag:hover {
+  background: var(--copper);
+  color: var(--paper);
+  transform: translateY(-1px);
+  box-shadow: var(--glow-copper);
+}
+
+.tag[data-cosmos="true"]:hover {
+  background: var(--cosmos-orange);
+  box-shadow: var(--glow-orange);
+}
+
+/* ---------- CTA Melhorado ---------- */
+.cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    oklch(0.25 0.05 58 / 0.1) 0%, 
+    transparent 50%);
+  pointer-events: none;
+}
+
+/* ---------- Footer com Rede Sutil ---------- */
+.site-footer {
+  position: relative;
+  overflow: hidden;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, oklch(0.35 0.08 220 / 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, oklch(0.35 0.08 58 / 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ---------- Botões com Glow ---------- */
+.btn {
+  transition: all 0.3s var(--ease-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, oklch(1 1 1 / 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+
+.btn:hover::before {
+  opacity: 1;
+}
+
+.btn--primary:hover {
+  box-shadow: 0 4px 20px oklch(0.265 0.024 62 / 0.4);
+}
+
+/* ---------- Animações Revelar Melhoradas ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-stagger-1 { transition-delay: 0.1s; }
+.reveal-stagger-2 { transition-delay: 0.2s; }
+.reveal-stagger-3 { transition-delay: 0.3s; }
+
+/* ---------- Hover Cards de Features ---------- */
+.item {
+  transition: all 0.3s ease;
+  padding: var(--sp-3);
+  border-radius: var(--radius);
+}
+
+.item:hover {
+  background: var(--paper-2);
+  transform: translateX(4px);
+}
+
+.item:hover h3 {
+  color: var(--cosmos-orange);
+}
+
+/* ---------- Table Highlight ---------- */
+table tbody tr {
+  transition: background 0.2s ease;
+}
+
+table tbody tr:hover {
+  background: oklch(0.22 0.015 62 / 0.5);
+}
+
+table tbody td {
+  position: relative;
+}
+
+table tbody td::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--line);
+  opacity: 0.3;
+}
+
+table tbody td:last-child::after {
+  display: none;
+}
+
+/* ---------- Responsive Enhancements ---------- */
+@media (max-width: 900px) {
+  .step {
+    padding: var(--sp-4);
+  }
+  
+  .formula {
+    padding: var(--sp-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

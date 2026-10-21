@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Luggom validators: running a node on the testnet</title>
+  <meta name="description" content="How a Luggom validator works: CometBFT consensus, optional TLSNotary notarising, up to 180 validators and a minimum of 12 to open mainnet. The guide ships with the testnet.">
+  <meta name="theme-color" content="#f2e8dc">
+  <link rel="icon" href="assets/img/mark-square-t.png">
+  <link rel="stylesheet" href="assets/css/site.css?v=20261021b">
+  <link rel="alternate" hreflang="en" href="validators.html">
+  <link rel="alternate" hreflang="pt-BR" href="pt/validators.html">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="Luggom, home">
+        <img src="assets/img/wordmark.svg" alt="Luggom">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <a href="index.html#how">How it works</a>
+        <a href="index.html#tokenomics">Tokenomics</a>
+        <a href="whitepaper.html">Whitepaper</a>
+        <a href="download.html">Download</a>
+        <a href="validators.html" aria-current="page">Validators</a>
+        <span class="lang">
+          <a href="validators.html" aria-current="true" lang="en">EN</a>
+          <a href="pt/validators.html" lang="pt-BR">PT</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Intro: the validator joins consensus and may notarise -->
+    <section>
+      <div class="wrap">
+        <span class="eyebrow">Validators</span>
+        <h1>Secure the network.<br>Seal the proofs.</h1>
+        <p class="lede">A validator on Luggom joins the CometBFT consensus to secure the chain and can, if it wants, volunteer as a TLSNotary notary. Both roles protect the same thing: the network and the proof that feeds it.</p>
+        <div class="tags">
+          <span class="tag">CometBFT consensus</span>
+          <span class="tag">Voluntary notarising</span>
+          <span class="tag">Testnet</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Role: consensus is required, notarising is voluntary -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">The role</span>
+        <h2>Two roles, one node.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">Being a validator is what keeps the network up. Being a notary is optional. You can do only the first, or take on both on the same server.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>Seal the chain</h3>
+              <p>The validator takes part in the CometBFT consensus: it proposes blocks and votes on them. Luggom security rests on this set of nodes.</p>
+            </div>
+            <div class="item">
+              <h3>You can notarise payments</h3>
+              <p>The notary finishes the TLS session outside the browser and signs the receipt. Notaries come from a pool of volunteers among the validators and are paid from 0.5% of the governance reserve, held in a separate module account.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scale: the cap and the mainnet gate -->
+    <div class="band">
+      <section id="scale">
+        <div class="wrap">
+          <span class="eyebrow">Scale</span>
+          <h2>The gate to the network.</h2>
+          <p class="lede">Mainnet only opens with a minimum of 12 validators signing. The cap is 180. Below the minimum, there is no network to open.</p>
+          <div class="growth">
+            <div class="cell"><span class="yr">Validator cap</span><span class="val">180</span></div>
+            <div class="cell"><span class="yr">Minimum for mainnet</span><span class="val">12</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Preparation: guidance, not an official hardware spec -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Preparation</span>
+        <h2>What you should have ready.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">These are guidance, not official numbers. Match the resources to the size of the chain and to your tolerance for risk.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>A Linux server</h3>
+              <p>Bare metal or a VPS, with a static IP. It is what keeps the node running around the clock.</p>
+            </div>
+            <div class="item">
+              <h3>Resources with headroom</h3>
+              <p>CPU, RAM and disk with margin for the growth of the chain and its state. Treat this as guidance, not as a published specification.</p>
+            </div>
+            <div class="item">
+              <h3>A proper service</h3>
+              <p>Run the node as a systemd service or inside Docker. It should restart on its own and survive a crash.</p>
+            </div>
+            <div class="item">
+              <h3>Key discipline</h3>
+              <p>Keep the validator key in a keyring or an HSM. Whoever holds the key is who votes.</p>
+            </div>
+            <div class="item">
+              <h3>Monitoring and alerts</h3>
+              <p>Watch whether the node is signing and get a warning when it stops. A validator that is down misses blocks and reputation.</p>
+            </div>
+            <div class="item">
+              <h3>Sentries and seeds</h3>
+              <p>Set up sentry nodes to protect the validator and seed nodes to help new peers join.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Onboarding: the seven steps of the testnet -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Joining the testnet</span>
+        <h2>Seven steps, in order.</h2>
+        <div class="steps">
+          <article class="step reveal">
+            <span class="step__n">01 / install</span>
+            <h3>Install the binary</h3>
+            <p>Install the node binary from the testnet package.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">02 / initialise</span>
+            <h3>Initialise with the genesis</h3>
+            <p>Start the chain with the published genesis file.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">03 / keys</span>
+            <h3>Set the keys</h3>
+            <p>Set the node key and the validator key.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">04 / join</span>
+            <h3>Join through the seeds</h3>
+            <p>Connect to the network through the published seed nodes.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">05 / start</span>
+            <h3>Start the service</h3>
+            <p>Start the service and let the node sync up to the network height.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">06 / create</span>
+            <h3>Create the validator</h3>
+            <p>Send the create-validator transaction.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">07 / verify</span>
+            <h3>Verify signing</h3>
+            <p>Confirm that your validator is signing blocks.</p>
+          </article>
+        </div>
+        <p class="lede">The step by step guide, with every command, ships inside the testnet package.</p>
+      </div>
+    </section>
+
+    <!-- What ships inside the testnet package -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">The package</span>
+        <h2>What ships with it.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">You will not assemble this from memory. When the testnet opens, everything you need arrives in a single package, with the commands in plain sight.</p>
+          </div>
+          <figure class="receipt" aria-label="Contents of the testnet package">
+            <div class="receipt__head">
+              <strong>Testnet package</strong>
+              <span class="receipt__stamp">ready</span>
+            </div>
+            <dl class="receipt__rows">
+              <div class="receipt__row"><dt>Binaries</dt><dd>node and tools</dd></div>
+              <div class="receipt__row"><dt>Genesis</dt><dd>published file</dd></div>
+              <div class="receipt__row"><dt>Scripts</dt><dd>install and service</dd></div>
+              <div class="receipt__row"><dt>Seed nodes</dt><dd>published list</dd></div>
+              <div class="receipt__row"><dt>Instructions</dt><dd>step by step guide</dd></div>
+            </dl>
+            <figcaption class="receipt__note">Everything you need to start a validator on the testnet.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testnet live: what you can do now -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Status</span>
+        <h2>The testnet is live.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">The public network runs <code>luggom-test</code>. The operator guide and binaries ship with the testnet package. There is no signup form and no contact address: the package is the door.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>Prepare a server</h3>
+              <p>A Linux machine with a static IP, with room and memory waiting for the node.</p>
+            </div>
+            <div class="item">
+              <h3>Read the design</h3>
+              <p>The <a href="whitepaper.html">whitepaper</a> explains the consensus, the TLSNotary proof and the reserve, so you reach the testnet knowing what you are running.</p>
+            </div>
+            <div class="item">
+              <h3>Study key management</h3>
+              <p>Learn how to store keys and harden the server before any vote counts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA: read the design, see the download -->
+    <div class="cta">
+      <div class="wrap">
+        <div>
+          <h2>Mainnet opens with 12.</h2>
+          <p class="lede">If you want to be ready, read the design and see what the download will hold.</p>
+        </div>
+        <div class="btn-row" style="margin-top:0">
+          <a class="btn btn--secondary" href="whitepaper.html">Read the whitepaper</a>
+          <a class="btn btn--ghost" href="download.html">See the download</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <a class="brand" href="index.html" aria-label="Luggom, home" style="margin-bottom:14px">
+            <img src="assets/img/wordmark.svg" alt="Luggom" style="height:30px">
+          </a>
+          <p style="max-width:34ch;color:var(--ink)">Luggom is a reserve anchored by the basket's algorithm: scarce, yet elastic, it grows with the real economy rather than speculation. It needs no USD or USDT in reserve, it is borderless and free (no KYC), and its reference rises 10% per year. Stability anchored in the basket, not in a promise.</p>
+        </div>
+        <div>
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html#how">How it works</a></li>
+            <li><a href="whitepaper.html">Whitepaper</a></li>
+            <li><a href="download.html">Download</a></li>
+            <li><a href="validators.html">Validators</a></li>
+          <li><a href="developers.html">Developers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Status</h4>
+          <ul>
+            <li>Testnet live · luggom-test</li>
+            <li>Mainnet from 12 validators</li>
+            <li>No KYC · no custody</li>
+            <li>PT / EN</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Community</h4>
+          <ul>
+            <li><a class="social" href="https://t.me/+XRWgwPwvz4hkOTJh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · group</span></a></li>
+            <li><a class="social" href="https://t.me/Luggomchain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · channel</span></a></li>
+            <li><a class="social" href="https://x.com/luggom_chain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>X</span></a></li>
+            <li><a class="social" href="https://forum.cosmos.network/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg><span>Cosmos Forum</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="fine">
+        <span>© <span data-year>2026</span> Luggom</span>
+        <span>Self-custody · open source</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/site.js" defer></script>
+</body>
+</html>

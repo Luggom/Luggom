@@ -1,0 +1,29 @@
+[package]
+name = "luggom-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Cofre da seed e lógica sem GUI do desktop Luggom"
+
+[dependencies]
+bip39 = { version = "2", features = ["rand", "zeroize"] }
+argon2 = "0.5"
+chacha20poly1305 = "0.10"
+zeroize = { version = "1", features = ["derive"] }
+rand = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+base64 = "0.22"
+
+[dev-dependencies]
+tempfile = "3"
+hex = "0.4"
+
+# Keychain do sistema operativo (Linux: Secret Service via D-Bus; macOS: Keychain;
+# Windows: Credential Manager).
+[target.'cfg(target_os = "linux")'.dependencies]
+keyring = { version = "3", features = ["sync-secret-service"] }
+
+[target.'cfg(not(target_os = "linux"))'.dependencies]
+keyring = { version = "3" }

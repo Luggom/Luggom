@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Luggom",
+  "version": "0.1.0",
+  "identifier": "com.luggom.desktop",
+  "build": {
+    "frontendDist": "../ui/dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "npm --prefix ../ui run dev",
+    "beforeBuildCommand": "npm --prefix ../ui run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Luggom",
+        "width": 1100,
+        "height": 720,
+        "minWidth": 900,
+        "minHeight": 600,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "deb",
+      "appimage"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Finance",
+    "shortDescription": "Luggom \u2014 minerador e carteira",
+    "longDescription": "Mineira LUG ao provar o pagamento de impostos reais (TLSNotary). A seed fica no aparelho; as transacoes sao assinadas localmente.",
+    "resources": {
+      "resources/coletor@luggom.io.xpi": "coletor@luggom.io.xpi"
+    }
+  }
+}

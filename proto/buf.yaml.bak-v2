@@ -1,0 +1,28 @@
+# Config v1 para buf 1.20 — rodar "buf generate" a partir de proto/
+version: v2
+deps:
+  - buf.build/cosmos/cosmos-proto
+  - buf.build/cosmos/cosmos-sdk
+  - buf.build/cosmos/gogo-proto
+  - buf.build/cosmos/ics23
+  - buf.build/googleapis/googleapis
+  - buf.build/protocolbuffers/wellknowntypes
+  - buf.build/cosmos/ibc
+breaking:
+  except:
+    - EXTENSION_NO_DELETE
+    - FIELD_SAME_DEFAULT
+  use:
+    - FILE
+lint:
+  except:
+    - COMMENT_FIELD
+    - RPC_REQUEST_STANDARD_NAME
+    - RPC_RESPONSE_STANDARD_NAME
+    - SERVICE_SUFFIX
+  ignore:
+    - tendermint
+  use:
+    - COMMENTS
+    - STANDARD
+    - FILE_LOWER_SNAKE_CASE

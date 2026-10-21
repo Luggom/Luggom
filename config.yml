@@ -1,0 +1,32 @@
+version: 1
+accounts:
+  - name: validator # Carteira do validador raiz (placeholder neutro — sem nome pessoal, decisão Lugo Vane)
+    coins:
+      - 0uluggom
+  - name: staking_pool # Carteira que acumula o 0.5% da POOL para pagar a cada 3 meses
+    coins:
+      - 0uluggom
+  - name: validator_pool # Carteira que acumula 1% para os validadores
+    coins:
+      - 0uluggom
+validator:
+  name: validator # O fundador começa validando a rede (placeholder neutro — sem nome pessoal)
+  staked: 200000000000000000000uluggom # Bond por validador: 200 LUG (§13.59 — antes 1000 LUG do §13.26)
+genesis:
+  app_state:
+    # Minimum gas price: 1uluggom (§13.87 — era 0uluggom; fecha txs 100% grátis.
+    # Custo ao usuário irrisório; barreira anti-spam de higiene. Config de operador,
+    # não on-chain — não viola imutabilidade.)
+    minimum_gas_prices: "1uluggom"
+    bank:
+      denom_metadata:
+        - description: "O Token Soberano da Rede Luggom"
+          denom_units:
+            - denom: uluggom
+              exponent: 0
+            - denom: luggom
+              exponent: 18
+          base: uluggom
+          display: luggom
+          name: Luggom
+          symbol: LUG

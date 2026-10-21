@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Developers do Luggom: endpoints da testnet</title>
+  <meta name="description" content="Endpoints públicos da testnet do Luggom: RPC, LCD/REST, API e notário TLSNotary. chain-id luggom-test.">
+  <meta name="theme-color" content="#f2e8dc">
+  <link rel="icon" href="../assets/img/mark-square-t.png">
+  <link rel="stylesheet" href="../assets/css/site.css?v=20261021b">
+  <link rel="alternate" hreflang="pt-BR" href="developers.html">
+  <link rel="alternate" hreflang="en" href="../developers.html">
+</head>
+<body>
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="Luggom, início">
+        <img src="../assets/img/wordmark.svg" alt="Luggom">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+      <nav class="nav" id="primary-nav" aria-label="Principal">
+        <a href="index.html#como">Como funciona</a>
+        <a href="index.html#tokenomics">Tokenomics</a>
+        <a href="whitepaper.html">Whitepaper</a>
+        <a href="download.html">Baixar</a>
+        <a href="validators.html">Validadores</a>
+        <a href="developers.html" aria-current="page">Developers</a>
+        <span class="lang">
+          <a href="../developers.html" lang="en">EN</a>
+          <a href="developers.html" aria-current="true" lang="pt-BR">PT</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section>
+      <div class="wrap">
+        <span class="eyebrow">Developers</span>
+        <h1>Construa na testnet da Luggom.</h1>
+        <p class="lede">A testnet pública está no ar. Estes são os endpoints que a aplicação desktop usa. É só testnet: saldos e histórico podem ser resetados, e nada aqui tem valor monetário.</p>
+        <div class="tags">
+          <span class="tag">chain-id: luggom-test</span>
+          <span class="tag">Cosmos SDK</span>
+          <span class="tag">TLSNotary</span>
+          <span class="tag">Sem KYC</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Endpoints</span>
+        <h2>A rede, em quatro endpoints.</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th scope="col">Serviço</th><th scope="col">URL</th><th scope="col">Para que serve</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>RPC</td><td class="mono">https://rpc.luggom.com</td><td>Status, blocos e pesquisa de transações (CometBFT)</td></tr>
+              <tr><td>LCD / REST</td><td class="mono">https://lcd.luggom.com</td><td>Consultas Cosmos, saldos e broadcast</td></tr>
+              <tr><td>API</td><td class="mono">https://api.luggom.com</td><td>Mineração, whitelist de bancos e tokenomics</td></tr>
+              <tr><td>Notário</td><td class="mono">https://notary.luggom.com</td><td>Sessões TLSNotary (WebSocket)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="lede">O notário também fala WebSocket em <code class="mono">wss://notary.luggom.com/session</code>.</p>
+        <p class="lede">IP direto (fallback): <code class="mono">62.146.183.122</code> nas portas 26657 (RPC), 1317 (LCD), 8082 (API) e 7047 (notário).</p>
+      </div>
+    </section>
+
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Verificação rápida</span>
+        <h2>Cinco comandos curl.</h2>
+<pre class="codeblock"><code>curl https://rpc.luggom.com/status
+curl https://lcd.luggom.com/cosmos/base/tendermint/v1beta1/blocks/latest
+curl https://lcd.luggom.com/cosmos/base/tendermint/v1beta1/validatorsets/latest
+curl https://api.luggom.com/api/v1/chain/info
+curl https://notary.luggom.com/health</code></pre>
+      </div>
+    </section>
+
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Primeira transação</span>
+        <h2>Veja uma mineração real.</h2>
+        <p class="lede">A primeira mineração bem-sucedida nesta testnet: R$ 1.291,49 → 21,09167035214527237 LUG, altura 1284, code 0.</p>
+        <div class="btn-row" style="margin-top:var(--sp-4)">
+          <a class="btn btn--secondary" href="https://lcd.luggom.com/cosmos/tx/v1beta1/txs/75EEF27E00190D2117E2DBA4388B694C34962467F56F77A57CC4114A61E5141D" target="_blank" rel="noopener">Abrir a transação (JSON)</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Aplicação desktop</span>
+        <h2>Aponte a app para a testnet.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">Na app: a aba Rede usa o LCD; a aba Minerar usa a API e o notário.</p>
+          </div>
+          <div>
+            <div class="item"><h3>Rede</h3><p><code class="mono">https://lcd.luggom.com</code></p></div>
+            <div class="item"><h3>Minerar · API</h3><p><code class="mono">https://api.luggom.com</code></p></div>
+            <div class="item"><h3>Minerar · Notário</h3><p><code class="mono">https://notary.luggom.com</code></p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Estado</span>
+        <h2>Regras da testnet.</h2>
+        <div class="notes">
+          <article class="note">
+            <h3>Pode ser resetada</h3>
+            <p>A chain, os saldos e o histórico podem ser apagados antes da mainnet. Nada aqui tem valor monetário.</p>
+          </article>
+          <article class="note">
+            <h3>Sem SLA de uptime</h3>
+            <p>Um operador, quatro validadores num só servidor. É uma testnet, não produção.</p>
+          </article>
+          <article class="note">
+            <h3>Limites de pedidos</h3>
+            <p>A API limita pedidos de mineração (5 por hora por IP). Não construas um backend de produção em cima dela.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <a class="brand" href="index.html" aria-label="Luggom, início" style="margin-bottom:14px">
+            <img src="../assets/img/wordmark.svg" alt="Luggom" style="height:30px">
+          </a>
+          <p style="max-width:34ch;color:var(--ink)">O Luggom é uma reserva auto-ancorada no algoritmo da cesta: escassa, mas elástica, cresce com a economia real e não com a especulação. Não guarda USD nem USDT em reserva, é livre (sem KYC, sem fronteiras), e a sua referência sobe 10% ao ano. Estabilidade ancorada na cesta, não numa promessa.</p>
+        </div>
+        <div>
+          <h4>Navegar</h4>
+          <ul>
+            <li><a href="index.html#como">Como funciona</a></li>
+            <li><a href="whitepaper.html">Whitepaper</a></li>
+            <li><a href="download.html">Baixar</a></li>
+            <li><a href="validators.html">Validadores</a></li>
+            <li><a href="developers.html">Developers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Estado</h4>
+          <ul>
+            <li>Testnet em operação · luggom-test</li>
+            <li>Sem KYC · sem custódia</li>
+            <li>Prova TLSNotary</li>
+            <li>PT / EN</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Comunidade</h4>
+          <ul>
+            <li><a class="social" href="https://t.me/+XRWgwPwvz4hkOTJh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · grupo</span></a></li>
+            <li><a class="social" href="https://t.me/Luggomchain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · canal</span></a></li>
+            <li><a class="social" href="https://x.com/luggom_chain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>X</span></a></li>
+            <li><a class="social" href="https://forum.cosmos.network/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg><span>Cosmos Forum</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="fine">
+        <span>© <span data-year>2026</span> Luggom</span>
+        <span>Autocustódia · código aberto</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/site.js" defer></script>
+</body>
+</html>

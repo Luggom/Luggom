@@ -1,0 +1,39 @@
+# Build artifacts
+/build/
+target/
+desktop/target/
+desktop/ui/dist/
+desktop/ui/node_modules/
+apk_luggom/native/tlsn-mobile/target/
+*.log
+
+# Local secrets and chain data
+.env
+*.info
+*.address
+keyring-test/
+priv_validator_key.json
+node_key.json
+coletor-browser/runs/
+coletor-browser/cookie.txt
+
+# Packages and archives
+*.tar.gz
+*.deb
+*.AppImage
+
+# Toolchains and caches
+.go1.23.8/
+.gocache/
+.gomodcache/
+.gotmp/
+proto/.gomodcache/
+proto/.gocache/
+proto/x/
+__pycache__/
+*.pyc
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/

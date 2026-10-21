@@ -1,0 +1,83 @@
+syntax = "proto3";
+package luggom.luggom.v1;
+
+import "amino/amino.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "luggom/x/luggom/types";
+
+// Params defines the parameters for the module.
+//
+// §13.170 (decisão de rumo pós-hard-test): **o que não pode mudar nunca vive no
+// CÓDIGO; o que deve evoluir vive nos PARAMS.** Este ficheiro é o resultado da
+// classificação A–E aprovada pelo Fundador (2026-09-26) e aplicada no §13.172:
+//
+//   A — params MORTOs apagados (nenhuma lógica os lia);
+//   B — congelados em constantes de código (uma proposta de gov deixa de os
+//       alcançar, que era o ponto: T-GOV-1 provou que o filtro estrito não
+//       protegia params);
+//   D — derivados (deixaram de ser knobs);
+//   E — mantidos (listas operacionais governáveis a 67%).
+//
+// Os números apagados ficam RESERVADOS — não se reutilizam.
+message Params {
+  option (amino.name) = "luggom/x/luggom/Params";
+  option (gogoproto.equal) = true;
+
+  reserved 1, 2, 4, 5, 7, 8, 9, 10, 12, 14, 19, 22, 23, 25, 26, 27, 28, 29, 30;
+  reserved "parity_mvp", "whitelist_tax_ids", "governance_quorum", "veto_threshold",
+           "llc_treasury_address", "pool_treasury_address",
+           "validator_operator_commission_bps", "commission_on_pre_pool_boost",
+           "dynamic_usd_oracle_enabled", "usd_oracle_max_stale_blocks",
+           "gov_llc_governance_validator_address", "tax_payment_max_age_days",
+           "tlsnotary_phase", "atom_bonus_active", "basket_multiplier_start_time",
+           "usd_oracle_max_stale_seconds", "validator_slash_no_sign_seconds",
+           "validator_cap_avg_multiplier", "validator_stake_limit_pct";
+
+  // --- C: endereços ---
+
+  // founder_address é o multisig 2-de-3 do Fundador (root wallet). Recebe a
+  // fatia de 5% de cada mineração (retida até ao cliff de 24 m, §13.171) e tem
+  // poder de veto na governança. TRANCADO no genesis: nunca muda (Grupo C).
+  string founder_address = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // api_verifier_address: conta cuja pubkey verifica as assinaturas de atestação
+  // (fase 2). ROTÁVEL de propósito — a chave do notário tem de poder rodar
+  // (§13.121) e o notário evolui para um conjunto t-de-n.
+  string api_verifier_address = 24 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // usd_oracle_updater_address: conta autorizada a submeter o snapshot do oráculo
+  // (chave quente). ROTÁVEL — o impacto é limitado pela mediana + fail-closed.
+  string usd_oracle_updater_address = 13 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // --- E: a "decoração" (governável a 67%) ---
+
+  // pool_active: quando true, a fatia da POOL vai para o cofre da pool.
+  bool pool_active = 6;
+
+  // tax_entity_whitelist: whitelist global unificada (slugs EUA + entes "br:")
+  // para a mineração. Operacional — 67% de governança.
+  repeated string tax_entity_whitelist = 20;
+
+  // government_entity_blacklist: tax-IDs de GOVERNOS que não podem minerar
+  // (government→government bloqueado). Operacional — 67% de governança.
+  // Formato: "br:<14 dígitos>", "us:<9 dígitos>", "ca:<9 dígitos>".
+  repeated string government_entity_blacklist = 31;
+
+  // bank_providers: whitelist de bancos (IDs de api/reclaimverify/providers.go).
+  // Operacional — 67% de governança.
+  repeated string bank_providers = 32;
+
+  // pool_assets: denoms permitidos na pool (btc, atom, usdt, usdc, xmr).
+  // Operacional — 67% de governança.
+  repeated string pool_assets = 33;
+
+  // --- Pesos do tally da governança (GOVERNANCE_MVP15) — usados pelo x/gov ---
+  // gov_validator_min_for_weight_shift: validadores bonded abaixo disto forçam
+  // peso 100% LLC no tally.
+  uint32 gov_validator_min_for_weight_shift = 15;
+  uint32 gov_llc_vote_weight_bps = 16;
+  uint32 gov_founder_vote_weight_bps = 17;
+  uint32 gov_validators_vote_weight_bps = 18;
+}

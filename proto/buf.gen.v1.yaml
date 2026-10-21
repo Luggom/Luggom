@@ -1,0 +1,17 @@
+# buf v1.20 compat; use: buf generate --template proto/buf.gen.v1.yaml
+version: v1
+plugins:
+  - plugin: gocosmos
+    path: ["go", "run", "github.com/cosmos/gogoproto/protoc-gen-gocosmos"]
+    out: ../x/luggom/types
+    opt:
+      - plugins=grpc
+      - Mgoogle/protobuf/any.proto=github.com/cosmos/gogoproto/types/any
+      - Mcosmos/orm/v1/orm.proto=cosmossdk.io/orm
+      - Mcosmos/app/v1alpha1/module.proto=cosmossdk.io/api/cosmos/app/v1alpha1
+  - plugin: grpc-gateway
+    path: ["go", "run", "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"]
+    out: ../x/luggom/types
+    opt:
+      - logtostderr=true
+      - allow_colon_final_segments=true

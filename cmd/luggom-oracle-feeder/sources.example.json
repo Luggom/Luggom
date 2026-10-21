@@ -1,0 +1,22 @@
+[
+  {
+    "_comment": "TEMPLATE. Substitui os REPLACE_ME. O feeder NÃO traz endpoints reais: as fontes são configuração porque o Chainlink e a Band são on-chain por natureza (EVM / chain próprio) e precisam de um adapter por RPC que ainda não existe. Com placeholders inválidos as fontes falham e o feeder NÃO submete (fail-closed) — não há risco de submeter lixo.",
+
+    "name": "pyth",
+    "url": "https://hermes.pyth.network/v2/updates/price/latest?ids[]=REPLACE_ME_EUR_USD&ids[]=REPLACE_ME_GBP_USD&ids[]=REPLACE_ME_CHF_USD",
+    "paths": {
+      "eur": "parsed.0.price.price",
+      "gbp": "parsed.1.price.price",
+      "chf": "parsed.2.price.price"
+    }
+  },
+  {
+    "name": "band",
+    "url": "https://REPLACE_ME_BAND_HTTP_ENDPOINT/",
+    "paths": {
+      "eur": "REPLACE_ME",
+      "gbp": "REPLACE_ME",
+      "chf": "REPLACE_ME"
+    }
+  }
+]

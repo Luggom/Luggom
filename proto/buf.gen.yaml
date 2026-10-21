@@ -1,0 +1,19 @@
+# buf.gen.yaml - Configuration for buf generate
+# v2 (buf 1.47+). Usa plugins compilados em ~/go/bin (compatível com Go 1.23.8).
+# Os plugins são instalados por scripts/regenerate_protos.sh.
+# NOTA: out é relativo ao cwd do buf (proto/), por isso ../x/luggom/types.
+version: v2
+plugins:
+  - local: ["protoc-gen-gocosmos"]
+    out: ../x/luggom/types
+    opt:
+      - plugins=grpc
+      - paths=source_relative
+      - Mgoogle/protobuf/any.proto=github.com/cosmos/gogoproto/types/any
+      - Mcosmos/orm/v1/orm.proto=cosmossdk.io/orm
+      - Mcosmos/app/v1alpha1/module.proto=cosmossdk.io/api/cosmos/app/v1alpha1
+  - local: ["protoc-gen-grpc-gateway"]
+    out: ../x/luggom/types
+    opt:
+      - logtostderr=true
+      - allow_colon_final_segments=true

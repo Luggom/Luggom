@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baixar o Luggom: minerador e carteira</title>
+  <meta name="description" content="As duas aplicações do Luggom: o minerador de desktop e a carteira móvel. Os instaladores chegam com a testnet; aqui você vê o que vai estar disponível e como se preparar.">
+  <meta name="theme-color" content="#f2e8dc">
+  <link rel="icon" href="../assets/img/mark-square-t.png">
+  <link rel="stylesheet" href="../assets/css/site.css?v=20261021b">
+  <link rel="alternate" hreflang="pt-BR" href="download.html">
+  <link rel="alternate" hreflang="en" href="../download.html">
+</head>
+<body>
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="Luggom, página inicial">
+        <img src="../assets/img/wordmark.svg" alt="Luggom">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+      <nav class="nav" id="primary-nav" aria-label="Principal">
+        <a href="index.html#como">Como funciona</a>
+        <a href="index.html#tokenomics">Tokenomics</a>
+        <a href="whitepaper.html">Whitepaper</a>
+        <a href="download.html" aria-current="page">Baixar</a>
+        <a href="validators.html">Validadores</a>
+        <span class="lang">
+          <a href="../download.html" lang="en">EN</a>
+          <a href="download.html" aria-current="true" lang="pt-BR">PT</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Intro: the two applications, one decision -->
+    <section>
+      <div class="wrap">
+        <span class="eyebrow">Download</span>
+        <h1>Minerar no desktop, guardar no bolso.</h1>
+        <p class="lede">O Luggom tem duas aplicações, cada uma com a sua tarefa. O minerador vive no computador e faz a prova do pagamento — só ele precisa do desktop. A carteira trata do saldo, de receber e de enviar, no celular ou no desktop. As duas falam direto com a rede, sem servidores pelo meio.</p>
+        <div class="tags">
+          <span class="tag">Aplicação de desktop</span>
+          <span class="tag">Aplicação móvel</span>
+          <span class="tag">Auto-custódia</span>
+          <span class="tag">Código aberto</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Downloads -->
+    <div class="band">
+      <section id="status">
+        <div class="wrap">
+          <span class="eyebrow">Download</span>
+          <h2>Baixe o minerador.</h2>
+          <div class="split">
+            <div>
+              <p class="lede">Linux 64-bit. Escolha o formato e confira o SHA-256. A mineração corre no desktop; a carteira vive no mesmo app.</p>
+              <div class="btn-row">
+                <a class="btn btn--primary" href="/downloads/Luggom_0.1.0_amd64.deb" download>.deb</a>
+                <a class="btn btn--primary" href="/downloads/Luggom_0.1.0_amd64.AppImage" download>.AppImage</a>
+                <a class="btn btn--ghost" href="/downloads/SHA256SUMS">SHA-256</a>
+              </div>
+              <p class="lede" style="margin-top:var(--sp-3)">Testnet <code>luggom-test</code> · sem KYC · a seed fica no seu aparelho.</p>
+            </div>
+            <figure class="receipt" aria-label="Arquivos publicados">
+              <div class="receipt__head">
+                <strong>Arquivos publicados</strong>
+                <span class="receipt__stamp">testnet</span>
+              </div>
+              <dl class="receipt__rows">
+                <div class="receipt__row"><dt>Minerador</dt><dd>Linux 64-bit</dd></div>
+                <div class="receipt__row"><dt>Formatos</dt><dd>.deb e .AppImage</dd></div>
+                <div class="receipt__row"><dt>Carteira</dt><dd>No mesmo app</dd></div>
+                <div class="receipt__row"><dt>Windows</dt><dd>mais tarde</dd></div>
+                <div class="receipt__row"><dt>Custo</dt><dd>gratuito e aberto</dd></div>
+              </dl>
+              <figcaption class="receipt__note">Cada arquivo é publicado com o seu SHA-256. O coletor, a extensão que captura o comprovante, instala-se junto com a aplicação.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- The two applications -->
+    <section id="apps" class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">As duas aplicações</span>
+        <h2>Uma prova, duas tarefas.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">O minerador faz o trabalho pesado e a carteira guarda o resultado. Você pode usar só a carteira — no celular ou no desktop —, mas minerar exige o computador.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>Desktop: o minerador</h3>
+              <p>Uma aplicação de desktop na Tauri, escrita em Rust. Liga-se a um nó, monta o pedido de prova, fala com o notário TLSNotary e mina. A chave privada nunca sai da sua máquina.</p>
+            </div>
+            <div class="item">
+              <h3>Celular ou desktop: a carteira</h3>
+              <p>Saldo, receber, enviar e extrato. Tudo é assinado no aparelho e enviado direto ao nó, por REST ou LCD. Não passa por nenhum servidor nosso. A mineração no celular não existe: mina-se só no desktop.</p>
+            </div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Linux 64-bit</span>
+          <span class="tag">.deb e .AppImage</span>
+          <span class="tag">Windows mais tarde</span>
+          <span class="tag">Mineração só no desktop</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Requirements -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Requisitos</span>
+        <h2>Do que você precisa para minerar.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">Estes são os requisitos do minerador hoje. Sem números inventados e sem datas prometidas.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>Linux de 64 bits</h3>
+              <p>É o sistema suportado hoje. Os pacotes saem em .deb e .AppImage. O suporte a Windows chega mais tarde.</p>
+            </div>
+            <div class="item">
+              <h3>Um nó sincronizado</h3>
+              <p>Ou um RPC público. É a esse nó que o minerador se liga para ler a rede e enviar a prova.</p>
+            </div>
+            <div class="item">
+              <h3>O navegador Firefox</h3>
+              <p>A sessão do banco é capturada a partir do Firefox pelo TLSNotary, fora do navegador.</p>
+            </div>
+            <div class="item">
+              <h3>Nenhum servidor nosso</h3>
+              <p>O minerador e a carteira falam direto com o nó. A chave privada fica na máquina e nunca é compartilhada.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Verification -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Verificação</span>
+        <h2>Confira antes de instalar.</h2>
+        <p class="lede">Cada instalador será publicado com o seu hash SHA-256 e com o código que o compila. Compare o hash do arquivo que você baixou com o hash publicado e, se quiser, compile você mesmo a partir da origem. Se os hashes não baterem, não instale.</p>
+      </div>
+    </section>
+
+    <!-- CTA: read the design, prepare to validate -->
+    <div class="cta">
+      <div class="wrap">
+        <div>
+          <h2>Enquanto os arquivos não chegam.</h2>
+          <p class="lede">Lê o desenho da moeda e vê o que é preciso para rodar um nó.</p>
+        </div>
+        <div class="btn-row" style="margin-top:0">
+          <a class="btn btn--secondary" href="whitepaper.html">Ler o whitepaper</a>
+          <a class="btn btn--ghost" href="validators.html">Ser validador</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <a class="brand" href="index.html" aria-label="Luggom, página inicial" style="margin-bottom:14px">
+            <img src="../assets/img/wordmark.svg" alt="Luggom" style="height:30px">
+          </a>
+          <p style="max-width:34ch;color:var(--ink)">O Luggom é uma reserva auto-ancorada no algoritmo da cesta: escassa, mas elástica, cresce com a economia real e não com a especulação. Não guarda USD nem USDT em reserva, é livre (sem KYC, sem fronteiras), e a sua referência sobe 10% ao ano. Estabilidade ancorada na cesta, não numa promessa.</p>
+        </div>
+        <div>
+          <h4>Navegar</h4>
+          <ul>
+            <li><a href="index.html#como">Como funciona</a></li>
+            <li><a href="whitepaper.html">Whitepaper</a></li>
+            <li><a href="download.html">Baixar</a></li>
+            <li><a href="validators.html">Validadores</a></li>
+          <li><a href="developers.html">Developers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Estado</h4>
+          <ul>
+            <li>Testnet em operação · luggom-test</li>
+            <li>Instaladores disponíveis</li>
+            <li>Sem KYC · sem custódia</li>
+            <li>PT / EN</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Comunidade</h4>
+          <ul>
+            <li><a class="social" href="https://t.me/+XRWgwPwvz4hkOTJh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · grupo</span></a></li>
+            <li><a class="social" href="https://t.me/Luggomchain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · canal</span></a></li>
+            <li><a class="social" href="https://x.com/luggom_chain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>X</span></a></li>
+            <li><a class="social" href="https://forum.cosmos.network/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg><span>Cosmos Forum</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="fine">
+        <span>© <span data-year>2026</span> Luggom</span>
+        <span>Autocustódia · código aberto</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/site.js" defer></script>
+</body>
+</html>

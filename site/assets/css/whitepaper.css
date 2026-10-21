@@ -1,0 +1,85 @@
+/* Luggom, whitepaper page styles
+   Register: brand. Surface: learn. Long-form reading layout.
+   Loaded after site.css. It adds a document head, a table of contents and
+   a few reading aids only. It never restyles the design system. */
+
+/* In-page anchors must clear the sticky site header. */
+.doc [id] { scroll-margin-top: 92px; }
+
+/* ---- Document head ---- */
+.doc-head { padding-block: var(--sp-7) var(--sp-6); border-bottom: 1px solid var(--line); }
+.doc-head h1 { font-size: var(--step-3); max-width: 26ch; }
+.doc-head .lede { margin-top: var(--sp-4); max-width: 60ch; }
+.doc-head .kicker { margin-top: var(--sp-3); font-size: var(--step--1); }
+
+/* ---- Two column reading layout: table of contents beside the body ---- */
+.doc {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--sp-6);
+  align-items: start;
+  padding-block: var(--sp-5) var(--sp-7);
+}
+.doc__body > section { padding-block: var(--sp-6); }
+
+/* ---- Table of contents ---- */
+.toc { position: sticky; top: 92px; align-self: start; }
+.toc__title {
+  font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--copper-strong);
+}
+.toc ol { list-style: none; margin: var(--sp-3) 0 0; padding: 0; display: grid; gap: var(--sp-2); counter-reset: toc; }
+.toc li { counter-increment: toc; }
+.toc a {
+  display: grid; grid-template-columns: 1.7rem 1fr; gap: var(--sp-2);
+  text-decoration: none; color: var(--ink-2); font-size: var(--step--1); line-height: 1.35;
+}
+.toc a::before { content: counter(toc, decimal-leading-zero); font-family: var(--font-mono); color: var(--copper); }
+.toc a:hover { color: var(--ink); }
+.toc a:hover::before { color: var(--copper-strong); }
+
+/* ---- Formula block. The system .eq is tuned for the dark band, so the
+        whitepaper carries its own light surface version of it. ---- */
+.formula {
+  font-family: var(--font-mono);
+  font-size: clamp(1.05rem, 0.6rem + 1.7vw, 1.5rem);
+  line-height: 1.5; letter-spacing: -0.01em;
+  margin-block: var(--sp-5);
+  padding-left: var(--sp-4);
+  border-left: 3px solid var(--copper);
+  overflow-x: auto; white-space: nowrap;
+}
+.formula .tok { color: var(--copper-strong); }
+
+/* ---- Figure row (basket growth, supply figures) ---- */
+.figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); margin-block: var(--sp-5); }
+.figures .figure { border-left: 2px solid var(--copper); padding-left: var(--sp-3); }
+.figures .figure__yr { display: block; font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.figures .figure__val { display: block; font-family: var(--font-mono); font-size: var(--step-2); color: var(--ink); }
+
+/* ---- Risk notes ---- */
+.notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); margin-top: var(--sp-5); }
+.note { border: 1px solid var(--line); border-left: 3px solid var(--copper); border-radius: var(--radius); padding: var(--sp-4); }
+.note h3 { margin-bottom: var(--sp-2); }
+.note p { font-size: var(--step--1); color: var(--ink-2); }
+.note--warn { border-left-color: var(--danger); margin-top: var(--sp-4); }
+
+/* ---- Glossary ---- */
+.glossary { display: grid; grid-template-columns: minmax(9rem, max-content) 1fr; gap: var(--sp-2) var(--sp-4); margin-top: var(--sp-5); }
+.glossary dt { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-2); padding-top: 2px; }
+.glossary dd { font-size: var(--step--1); color: var(--ink-2); }
+
+/* ---- Narrow screens: stack the table of contents above the body ---- */
+@media (max-width: 900px) {
+  .doc { grid-template-columns: 1fr; gap: var(--sp-5); }
+  .toc { position: static; }
+}
+@media (max-width: 820px) {
+  .notes { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .figures { grid-template-columns: 1fr; }
+  .figures .figure { border-left: none; border-top: 1px solid var(--line); padding: var(--sp-2) 0 0; }
+  .glossary { grid-template-columns: 1fr; gap: 0; }
+  .glossary dd { margin-bottom: var(--sp-3); }
+}

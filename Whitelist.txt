@@ -1,0 +1,822 @@
+Whitelist
+
+
+
+---
+
+## Bloco 1: Brasil 
+
+Pagar Imposto de Renda	
+
+00.394.460/0001-41
+
+
+
+| Órgão / Entidade | CNPJ | Estado / Abrangência | Site Oficial / Fonte |
+|---|---|---|---|
+| **Receita Federal do Brasil (RFB)** | 00.394.460/0058-87 | Federal | [gov.br/receitafederal](https://www.gov.br/receitafederal) |
+| **Secretaria do Tesouro Nacional (STN)** | 00.394.460/0409-50 | Federal | [gov.br/tesouronacional](https://www.gov.br/tesouronacional) |
+| **SEFAZ Acre** | 04.032.986/0001-34 | AC | [sefaz.ac.gov.br](https://www.sefaz.ac.gov.br) |
+| **SEFAZ Alagoas** | 12.200.259/0001-65 | AL | [sefaz.al.gov.br](https://www.sefaz.al.gov.br) |
+| **SEFAZ Amapá** | 23.011.011/0001-50 | AP | [sefaz.ap.gov.br](https://www.google.com/search?q=https://chapeu.ap.gov.br) |
+| **SEFAZ Amazonas** | 04.312.369/0001-44 | AM | [sefaz.am.gov.br](https://www.sefaz.am.gov.br) |
+| **SEFAZ Bahia** | 13.937.073/0001-56 | BA | [sefaz.ba.gov.br](https://www.sefaz.ba.gov.br) |
+| **SEFAZ Ceará** | 07.954.597/0001-52 | CE | [sefaz.ce.gov.br](https://www.sefaz.ce.gov.br) |
+| **SECON Transparência DF** | 00.394.684/0001-53 | DF |  |
+| **SEFAZ Espírito Santo** | 27.080.571/0001-30 | ES | [sefaz.es.gov.br](https://www.google.com/search?q=https://hd.sefaz.es.gov.br) |
+| **SEFAZ Goiás** | 01.409.580/0001-38 | GO | [economia.go.gov.br](https://www.economia.go.gov.br) |
+| **SEFAZ Maranhão** | 06.354.100/0001-39 | MA | [portal.sefaz.ma.gov.br](https://sistemas1.sefaz.ma.gov.br) |
+| **SEFAZ Mato Grosso** | 03.507.415/0001-44 | MT | [sefaz.mt.gov.br](https://www.sefaz.mt.gov.br) |
+| **SEFAZ Mato Grosso do Sul** | 15.412.257/0001-28 | MS | [sefaz.ms.gov.br](https://www.sefaz.ms.gov.br) |
+| **SEFAZ Minas Gerais** | 18.715.615/0001-60 | MG | [fazenda.mg.gov.br](https://www.fazenda.mg.gov.br) |
+| **SEFA Pará** | 05.054.857/0001-41 | PA | [sefa.pa.gov.br](https://www.google.com/search?q=https://www.sefa.pa.gov.br) |
+| **SEFAZ Paraíba** | 08.761.341/0001-13 | PB | [sefaz.pb.gov.br](https://www.sefaz.pb.gov.br) |
+| **SEFAZ Paraná** | 76.416.890/0001-89 | PR | [fazenda.pr.gov.br](https://www.google.com/search?q=https://www.fazenda.pr.gov.br) |
+| **SEFAZ Pernambuco** | 10.572.030/0001-20 | PE | [sefaz.pe.gov.br](https://www.sefaz.pe.gov.br) |
+| **SEFAZ Piauí** | 06.553.481/0001-49 | PI | [sefaz.pi.gov.br](https://www.sefaz.pi.gov.br) |
+| **SEFAZ Rio de Janeiro** | 42.498.675/0001-52 | RJ | [fazenda.rj.gov.br](https://www.google.com/search?q=https://www.fazenda.rj.gov.br) |
+| **SEFAZ Rio Grande do Norte** | 08.239.380/0001-90 | RN | [set.rn.gov.br](https://www.google.com/search?q=https://www.set.rn.gov.br) |
+| **SEFAZ Rio Grande do Sul** | 87.958.674/0001-81 | RS | [sefaz.rs.gov.br](https://www.sefaz.rs.gov.br) |
+| **SEFAZ Rondônia** | 04.244.200/0001-57 | RO | [sefin.ro.gov.br](https://www.sefin.ro.gov.br) |
+| **SEFAZ Roraima** | 02.730.081/0001-02 | RR | [sefaz.rr.gov.br](https://www.sefaz.rr.gov.br) |
+| **SEFAZ Santa Catarina** | 82.951.310/0001-14 | SC | [sef.sc.gov.br](https://www.sef.sc.gov.br) |
+| **SEFAZ São Paulo** | 46.377.222/0001-29 | SP | [portal.fazenda.sp.gov.br](https://portal.fazenda.sp.gov.br) |
+| **SEFAZ Sergipe** | 13.064.213/0001-54 | SE | [sefaz.se.gov.br](https://www.sefaz.se.gov.br) |
+| **SEFAZ Tocantins** | 01.760.714/0001-40 | TO | [sefaz.to.gov.br](https://www.sefaz.to.gov.br) |
+
+---
+
+## Bloco 1-B: Brasil — Municípios (IPTU, por arrecadação)
+
+> 284 municípios.
+
+| # | Município | UF | CNPJ da Prefeitura | Arrecadação IPTU (R$ Mi) | Site Oficial |
+|---|---|---|---|---|---|
+| 1 | São Paulo | SP | 46.392.130/0001-18 | 14.100 | [capital.sp.gov.br](https://www.capital.sp.gov.br) |
+| 2 | Rio de Janeiro | RJ | 42.498.733/0001-48 | 4.300 | [prefeitura.rio](https://www.prefeitura.rio) |
+| 3 | Belo Horizonte | MG | 18.715.383/0001-40 | 1.950 | [pbh.gov.br](https://www.google.com/search?q=https://www.pbh.gov.br) |
+| 4 | Brasília | DF | 00.394.684/0001-53 | 1.400 | [df.gov.br](https://www.df.gov.br) |
+| 5 | Salvador | BA | 13.922.541/0001-87 | 1.100 | [salvador.ba.gov.br](https://www.salvador.ba.gov.br) |
+| 6 | Curitiba | PR | 76.411.534/0001-98 | 1.050 | [curitiba.pr.gov.br](https://www.curitiba.pr.gov.br) |
+| 7 | Porto Alegre | RS | 92.963.560/0001-60 | 850 | [portoalegre.rs.gov.br](https://www.portoalegre.rs.gov.br) |
+| 8 | Campinas | SP | 46.391.132/0001-43 | 810 | [campinas.sp.gov.br](https://www.campinas.sp.gov.br) |
+| 9 | Fortaleza | CE | 07.954.605/0001-65 | 740 | [fortaleza.ce.gov.br](https://www.fortaleza.ce.gov.br) |
+| 10 | Recife | PE | 10.565.000/0001-92 | 690 | [recife.pe.gov.br](https://www.recife.pe.gov.br) |
+| 11 | Guarulhos | SP | 46.319.000/0001-50 | 620 | [guarulhos.sp.gov.br](https://www.guarulhos.sp.gov.br) |
+| 12 | Goiânia | GO | 01.612.092/0001-23 | 600 | [goiania.go.gov.br](https://www.goiania.go.gov.br) |
+| 13 | Barueri | SP | 46.523.015/0001-35 | 570 | [barueri.sp.gov.br](https://www.barueri.sp.gov.br) |
+| 14 | São Bernardo do Campo | SP | 46.523.239/0001-47 | 540 | [saobernardo.sp.gov.br](https://www.google.com/search?q=https://www.saobernardo.sp.gov.br) |
+| 15 | Manaus | AM | 04.365.326/0001-73 | 510 | [manaus.am.gov.br](https://www.manaus.am.gov.br) |
+| 16 | Santo André | SP | 46.522.942/0001-30 | 480 |  |
+| 17 | Ribeirão Preto | SP | 56.024.581/0001-56 | 440 | [ribeiraopreto.sp.gov.br](https://www.ribeiraopreto.sp.gov.br) |
+| 18 | Santos | SP | 58.200.015/0001-83 | 420 | [santos.sp.gov.br](https://www.santos.sp.gov.br) |
+| 19 | Niterói | RJ | 28.521.748/0001-59 | 410 | [niteroi.rj.gov.br](https://www.niteroi.rj.gov.br) |
+| 20 | Belém | PA | 05.055.617/0001-45 | 380 | [belem.pa.gov.br](https://www.google.com/search?q=https://www.belem.pa.gov.br) |
+| 21 | São José dos Campos | SP | 46.694.495/0001-00 | 370 | [sjc.sp.gov.br](https://www.sjc.sp.gov.br) |
+| 22 | Sorocaba | SP | 46.634.046/0001-08 | 350 | [sorocaba.sp.gov.br](https://www.sorocaba.sp.gov.br) |
+| 23 | Osasco | SP | 46.523.213/0001-01 | 340 | [osasco.sp.gov.br](https://www.osasco.sp.gov.br) |
+| 24 | Florianópolis | SC | 82.892.282/0001-43 | 335 | [pmf.sc.gov.br](https://www.pmf.sc.gov.br) |
+| 25 | Joinville | SC | 83.107.243/0001-08 | 320 | [joinville.sc.gov.br](https://www.joinville.sc.gov.br) |
+| 26 | Jundiaí | SP | 45.780.103/0001-10 | 310 | [jundiai.sp.gov.br](https://www.jundiai.sp.gov.br) |
+| 27 | São Luís | MA | 06.307.108/0001-29 | 300 | [saoluis.ma.gov.br](https://www.saoluis.ma.gov.br) |
+| 28 | Natal | RN | 08.241.741/0001-28 | 290 | [natal.rn.gov.br](https://www.natal.rn.gov.br) |
+| 29 | Maceió | AL | 12.204.186/0001-08 | 285 | [maceio.al.gov.br](https://www.maceio.al.gov.br) |
+| 30 | Campo Grande | MS | 03.501.509/0001-06 | 280 | [campogrande.ms.gov.br](https://www.campogrande.ms.gov.br) |
+| 31 | Piracicaba | SP | 54.372.339/0001-09 | 270 | [piracicaba.sp.gov.br](https://www.piracicaba.sp.gov.br) |
+| 32 | Londrina | PR | 75.771.477/0001-70 | 265 | [londrina.pr.gov.br](https://www.londrina.pr.gov.br) |
+| 33 | João Pessoa | PB | 08.778.329/0001-00 | 260 | [joaopessoa.pb.gov.br](https://www.google.com/search?q=https://www.joaopessoa.pb.gov.br) |
+| 34 | Caxias do Sul | RS | 88.665.310/0001-90 | 250 | [caxias.rs.gov.br](https://www.caxias.rs.gov.br) |
+| 35 | Uberlândia | MG | 18.232.066/0001-22 | 245 | [uberlandia.mg.gov.br](https://www.uberlandia.mg.gov.br) |
+| 36 | São José do Rio Preto | SP | 46.588.950/0001-80 | 240 | [riopreto.sp.gov.br](https://www.riopreto.sp.gov.br) |
+| 37 | Vila Velha | ES | 27.142.041/0001-26 | 235 | [vilavelha.es.gov.br](https://www.vilavelha.es.gov.br) |
+| 38 | Vitória | ES | 27.142.058/0001-83 | 230 | [vitoria.es.gov.br](https://www.vitoria.es.gov.br) |
+| 39 | Teresina | PI | 06.554.828/0001-01 | 225 | [teresina.pi.gov.br](https://www.teresina.pi.gov.br) |
+| 40 | Cuiabá | MT | 03.507.415/0001-44 | 220 | [cuiaba.mt.gov.br](https://www.cuiaba.mt.gov.br) |
+| 41 | Mogi das Cruzes | SP | 46.523.056/0001-21 | 215 |  |
+| 42 | Aracaju | SE | 13.041.021/0001-18 | 210 | [aracaju.se.gov.br](https://www.aracaju.se.gov.br) |
+| 43 | Maringá | PR | 76.282.656/0001-06 | 205 | [maringa.pr.gov.br](https://www.maringa.pr.gov.br) |
+| 44 | Diadema | SP | 46.523.148/0001-01 | 200 | [diadema.sp.gov.br](https://www.diadema.sp.gov.br) |
+| 45 | Mauá | SP | 46.522.959/0001-98 | 195 | [maua.sp.gov.br](https://www.maua.sp.gov.br) |
+| 46 | Campos dos Goytacazes | RJ | 29.116.712/0001-43 | 190 | [campos.rj.gov.br](https://www.campos.rj.gov.br) |
+| 47 | Duque de Caxias | RJ | 29.138.328/0001-23 | 185 | [duquedecaxias.rj.gov.br](https://www.duquedecaxias.rj.gov.br) |
+| 48 | São Gonçalo | RJ | 28.521.920/0001-74 | 180 | [saogoncalo.rj.gov.br](https://www.saogoncalo.rj.gov.br) |
+| 49 | Juiz de Fora | MG | 18.338.178/0001-27 | 175 | [pjf.mg.gov.br](https://www.pjf.mg.gov.br) |
+| 50 | Blumenau | SC | 82.779.612/0001-06 | 170 | [blumenau.sc.gov.br](https://www.blumenau.sc.gov.br) |
+| 51 | Bauru | SP | 46.137.410/0001-80 | 165 | [bauru.sp.gov.br](https://www.bauru.sp.gov.br) |
+| 52 | Carapicuíba | SP | 46.522.975/0001-80 | 160 | [carapicuiba.sp.gov.br](https://www.carapicuiba.sp.gov.br) |
+| 53 | São Caetano do Sul | SP | 46.523.221/0001-58 | 158 | [saocaetanodosul.sp.gov.br](https://www.saocaetanodosul.sp.gov.br) |
+| 54 | Praia Grande | SP | 46.551.495/0001-02 | 155 | [praiagrande.sp.gov.br](https://www.praiagrande.sp.gov.br) |
+| 55 | Taubaté | SP | 46.680.544/0001-50 | 150 | [taubate.sp.gov.br](https://www.taubate.sp.gov.br) |
+| 56 | Limeira | SP | 45.474.343/0001-96 | 148 | [limeira.sp.gov.br](https://www.limeira.sp.gov.br) |
+| 57 | Franca | SP | 47.901.442/0001-34 | 145 | [franca.sp.gov.br](https://www.franca.sp.gov.br) |
+| 58 | São José dos Pinhais | PR | 76.105.543/0001-35 | 142 | [sjp.pr.gov.br](https://www.sjp.pr.gov.br) |
+| 59 | Serra | ES | 27.174.168/0001-90 | 140 | [serra.es.gov.br](https://www.serra.es.gov.br) |
+| 60 | Porto Velho | RO | 04.223.766/0001-44 | 138 | [portovelho.ro.gov.br](https://www.portovelho.ro.gov.br) |
+| 61 | Macapá | AP | 05.995.766/0001-44 | 135 | [macapa.ap.gov.br](https://www.macapa.ap.gov.br) |
+| 62 | Feira de Santana | BA | 13.043.415/0001-91 | 132 | [feiradesantana.ba.gov.br](https://www.feiradesantana.ba.gov.br) |
+| 63 | Contagem | MG | 18.715.508/0001-31 | 130 | [contagem.mg.gov.br](https://www.contagem.mg.gov.br) |
+| 64 | Uberaba | MG | 18.428.839/0001-90 | 128 | [uberaba.mg.gov.br](https://www.uberaba.mg.gov.br) |
+| 65 | Pelotas | RS | 87.411.757/0001-02 | 125 | [pelotas.com.br](https://www.pelotas.com.br) |
+| 66 | Santa Maria | RS | 87.493.177/0001-85 | 122 | [santamaria.rs.gov.br](https://www.santamaria.rs.gov.br) |
+| 67 | Cascavel | PR | 76.208.867/0001-07 | 120 | [cascavel.pr.gov.br](https://www.cascavel.pr.gov.br) |
+| 68 | Suzano | SP | 46.523.049/0001-20 | 118 | [suzano.sp.gov.br](https://www.suzano.sp.gov.br) |
+| 69 | Cotia | SP | 46.523.106/0001-70 | 115 | [cotia.sp.gov.br](https://www.cotia.sp.gov.br) |
+| 70 | Sumaré | SP | 45.787.652/0001-14 | 112 | [sumare.sp.gov.br](https://www.sumare.sp.gov.br) |
+| 71 | São Carlos | SP | 46.410.536/0001-33 | 110 | [saocarlos.sp.gov.br](https://www.saocarlos.sp.gov.br) |
+| 72 | Marília | SP | 46.475.257/0001-52 | 108 | [marilia.sp.gov.br](https://www.marilia.sp.gov.br) |
+| 73 | Americana | SP | 46.126.249/0001-01 | 105 | [americana.sp.gov.br](https://www.americana.sp.gov.br) |
+| 74 | Jacareí | SP | 46.694.131/0001-28 | 103 | [jacarei.sp.gov.br](https://www.jacarei.sp.gov.br) |
+| 75 | Indaiatuba | SP | 44.733.608/0001-09 | 100 | [indaiatuba.sp.gov.br](https://www.indaiatuba.sp.gov.br) |
+| 76 | Araraquara | SP | 45.719.978/0001-11 | 98 | [araraquara.sp.gov.br](https://www.google.com/search?q=https://www.araraquara.sp.gov.br) |
+| 77 | Itapevi | SP | 46.523.031/0001-28 | 96 | [itapevi.sp.gov.br](https://www.itapevi.sp.gov.br) |
+| 78 | Hortolândia | SP | 67.995.001/0001-02 | 94 | [hortolandia.sp.gov.br](https://www.hortolandia.sp.gov.br) |
+| 79 | Rio Claro | SP | 46.173.340/0001-54 | 92 | [rioclaro.sp.gov.br](https://www.rioclaro.sp.gov.br) |
+| 80 | Presidente Prudente | SP | 55.356.653/0001-08 | 90 | [presidenteprudente.sp.gov.br](https://www.presidenteprudente.sp.gov.br) |
+| 81 | Itaquaquecetuba | SP | 46.523.205/0001-65 | 88 | [itaquaquecetuba.sp.gov.br](https://www.itaquaquecetuba.sp.gov.br) |
+| 82 | Divinópolis | MG | 18.291.138/0001-53 | 86 | [divinopolis.mg.gov.br](https://www.divinopolis.mg.gov.br) |
+| 83 | Montes Claros | MG | 18.256.107/0001-02 | 84 | [montesclaros.mg.gov.br](https://www.montesclaros.mg.gov.br) |
+| 84 | Betim | MG | 18.715.391/0001-96 | 82 | [betim.mg.gov.br](https://www.betim.mg.gov.br) |
+| 85 | Ipatinga | MG | 19.837.939/0001-81 | 80 | [ipatinga.mg.gov.br](https://www.ipatinga.mg.gov.br) |
+| 86 | Petrópolis | RJ | 29.138.344/0001-16 | 79 | [petropolis.rj.gov.br](https://www.petropolis.rj.gov.br) |
+| 87 | Volta Redonda | RJ | 28.643.781/0001-41 | 77 | [voltaredonda.rj.gov.br](https://www.voltaredonda.rj.gov.br) |
+| 88 | Macaé | RJ | 29.115.474/0001-60 | 75 | [macae.rj.gov.br](https://www.macae.rj.gov.br) |
+| 89 | Cabo Frio | RJ | 28.518.157/0001-00 | 73 | [cabofrio.rj.gov.br](https://www.cabofrio.rj.gov.br) |
+| 90 | Novo Hamburgo | RS | 91.681.338/0001-31 | 71 | [novohamburgo.rs.gov.br](https://www.novohamburgo.rs.gov.br) |
+| 91 | Canoas | RS | 88.636.568/0001-30 | 70 | [canoas.rs.gov.br](https://www.canoas.rs.gov.br) |
+| 92 | Passo Fundo | RS | 87.611.222/0001-25 | 68 | [passofundo.rs.gov.br](https://www.google.com/search?q=https://www.passofundo.rs.gov.br) |
+| 93 | Criciúma | SC | 82.915.240/0001-81 | 66 | [criciuma.sc.gov.br](https://www.google.com/search?q=https://www.criciuma.sc.gov.br) |
+| 94 | Itajaí | SC | 83.102.269/0001-38 | 65 | [itajai.sc.gov.br](https://www.itajai.sc.gov.br) |
+| 95 | Chapecó | SC | 83.021.790/0001-01 | 63 | [chapeco.sc.gov.br](https://www.chapeco.sc.gov.br) |
+| 96 | Ponta Grossa | PR | 76.175.884/0001-87 | 62 | [pontagrossa.pr.gov.br](https://www.pontagrossa.pr.gov.br) |
+| 97 | Foz do Iguaçu | PR | 75.425.074/0001-52 | 60 | [pmfi.pr.gov.br](https://www.pmfi.pr.gov.br) |
+| 98 | Olinda | PE | 10.404.184/0001-09 | 59 | [olinda.pe.gov.br](https://www.google.com/search?q=https%3A%2F%2Fwww.olinda.pe.gov.br) |
+| 99 | Caruaru | PE | 10.091.510/0001-73 | 57 | [caruaru.pe.gov.br](https://www.google.com/search?q=https%3A%2F%2Fwww.caruaru.pe.gov.br) |
+| 100 | Campina Grande | PB | 08.993.924/0001-00 | 55 | [campinagrande.pb.gov.br](https://www.google.com/search?q=https%3A%2F%2Fwww.campinagrande.pb.gov.br) |
+| 101 | Caucaia | CE | 07.477.565/0001-18 | 54 | caucaia.ce.gov.br |
+| 102 | Juazeiro do Norte | CE | 07.971.070/0001-30 | 53 | juazeiro.ce.gov.br |
+| 103 | Sobral | CE | 07.598.634/0001-37 | 52 | sobral.ce.gov.br |
+| 104 | Anápolis | GO | 01.058.468/0001-43 | 51 | anapolis.go.gov.br |
+| 105 | Aparecida de Goiânia | GO | 01.743.024/0001-14 | 50 | aparecida.go.gov.br |
+| 106 | Rio Verde | GO | 02.056.857/0001-33 | 49 | rioverde.go.gov.br |
+| 107 | Imperatriz | MA | 06.158.655/0001-09 | 48 | imperatriz.ma.gov.br |
+| 108 | Sete Lagoas | MG | 16.720.401/0001-09 | 47 | setelagoas.mg.gov.br |
+| 109 | Santa Luzia | MG | 18.715.409/0001-51 | 46 | santaluzia.mg.gov.br |
+| 110 | Ibirité | MG | 18.256.123/0001-05 | 45 | ibirite.mg.gov.br |
+| 111 | Governador Valadares | MG | 18.307.439/0001-10 | 44 | valadares.mg.gov.br |
+| 112 | Rondonópolis | MT | 03.347.101/0001-21 | 43 | rondonopolis.mt.gov.br |
+| 113 | Dourados | MS | 03.155.926/0001-44 | 42 | dourados.ms.gov.br |
+| 114 | Mossoró | RN | 08.272.761/0001-03 | 41 | prefeiturademossoro.com.br |
+| 115 | Parnamirim | RN | 08.343.646/0001-11 | 40 | parnamirim.rn.gov.br |
+| 116 | Petrolina | PE | 10.358.174/0001-84 | 39 | petrolina.pe.gov.br |
+| 117 | Paulista | PE | 10.408.839/0001-54 | 38 | paulista.pe.gov.br |
+| 118 | Colombo | PR | 76.105.675/0001-68 | 37 | colombo.pr.gov.br |
+| 119 | Guarapuava | PR | 76.178.037/0001-76 | 36 | guarapuava.pr.gov.br |
+| 120 | Paranaguá | PR | 76.015.657/0001-65 | 35 | paranagua.pr.gov.br |
+| 121 | São Gonçalo do Amarante | RN | 08.139.739/0001-44 | 34 | saogoncalo.rn.gov.br |
+| 122 | São José | SC | 82.892.415/0001-81 | 33 | pmsj.sc.gov.br |
+| 123 | Palhoça | SC | 82.892.316/0001-00 | 32 | palhoca.sc.gov.br |
+| 124 | Lages | SC | 82.777.301/0001-90 | 30 | lages.sc.gov.br |
+| 125 | São Vicente | SP | 46.523.247/0001-93 | 29 | saovicente.sp.gov.br |
+| 126 | Guarujá | SP | 44.959.021/0001-04 | 28 | guaruja.sp.gov.br |
+| 127 | Taboão da Serra | SP | 46.523.114/0001-16 | 26 | taboaodaserra.sp.gov.br |
+| 128 | Santa Bárbara d'Oeste | SP | 46.425.435/0001-72 | 18.0 | santabarbara.sp.gov.br |
+| 129 | Francisco Morato | SP | 46.523.064/0001-78 | 16.5 | franciscomorato.sp.gov.br |
+| 130 | Ferraz de Vasconcelos | SP | 46.523.023/0001-81 | 16.0 | ferrazdevasconcelos.sp.gov.br |
+| 131 | Itu | SP | 46.634.467/0001-22 | 15.5 | itu.sp.gov.br |
+| 132 | Bragança Paulista | SP | 46.352.746/0001-65 | 15.0 | braganca.sp.gov.br |
+| 133 | Pindamonhangaba | SP | 45.424.348/0001-21 | 14.8 | pindamonhangaba.sp.gov.br |
+| 134 | Itatiba | SP | 45.459.799/0001-44 | 14.5 | itatiba.sp.gov.br |
+| 135 | Valinhos | SP | 45.787.413/0001-61 | 14.2 | valinhos.sp.gov.br |
+| 136 | Salto | SP | 46.634.509/0001-21 | 14.0 | salto.sp.gov.br |
+| 137 | Jaú | SP | 46.533.915/0001-43 | 13.8 | jau.sp.gov.br |
+| 138 | Botucatu | SP | 46.523.080/0001-60 | 13.5 | botucatu.sp.gov.br |
+| 139 | Atibaia | SP | 45.279.338/0001-34 | 13.2 | atibaia.sp.gov.br |
+| 140 | Santana de Parnaíba | SP | 46.523.041/0001-63 | 13.0 | santanadeparnaiba.sp.gov.br |
+| 141 | Araras | SP | 44.220.507/0001-20 | 12.8 | araras.sp.gov.br |
+| 142 | Cubatão | SP | 46.410.452/0001-00 | 12.5 | cubatao.sp.gov.br |
+| 143 | Poá | SP | 46.523.163/0001-50 | 12.2 | poa.sp.gov.br |
+| 144 | Ribeirão Pires | SP | 46.522.991/0001-73 | 12.0 | ribeiraopires.sp.gov.br |
+| 145 | Jandira | SP | 46.523.072/0001-14 | 11.8 | jandira.sp.gov.br |
+| 146 | Mogi Guaçu | SP | 46.680.593/0001-92 | 11.5 | mogiguacu.sp.gov.br |
+| 147 | Catanduva | SP | 45.123.957/0001-70 | 11.2 | catanduva.sp.gov.br |
+| 148 | Barretos | SP | 44.776.474/0001-44 | 11.0 | barretos.sp.gov.br |
+| 149 | Guaratinguetá | SP | 46.680.577/0001-00 | 10.8 | guaratingueta.sp.gov.br |
+| 150 | Ourinhos | SP | 44.943.439/0001-90 | 10.5 | ourinhos.sp.gov.br |
+| 151 | Paulínia | SP | 46.391.108/0001-04 | 10.2 | paulinia.sp.gov.br |
+| 152 | Sertãozinho | SP | 45.412.350/0001-38 | 10.0 | sertaozinho.sp.gov.br |
+| 153 | Birigui | SP | 46.151.718/0001-40 | 9.8 | birigui.sp.gov.br |
+| 154 | Votorantim | SP | 45.723.368/0001-52 | 9.6 | votorantim.sp.gov.br |
+| 155 | Tatuí | SP | 46.634.566/0001-00 | 9.4 | tatui.sp.gov.br |
+| 156 | Barcarena | PA | 05.108.432/0001-10 | 9.2 | barcarena.pa.gov.br |
+| 157 | Marabá | PA | 05.101.445/0001-73 | 9.0 | maraba.pa.gov.br |
+| 158 | Parauapebas | PA | 22.954.954/0001-63 | 8.8 | parauapebas.pa.gov.br |
+| 159 | Castanhal | PA | 05.121.997/0001-22 | 8.6 | castanhal.pa.gov.br |
+| 160 | Santarém | PA | 05.182.233/0001-11 | 8.4 | santarem.pa.gov.br |
+| 161 | Ananindeua | PA | 05.055.849/0001-03 | 8.2 | ananindeua.pa.gov.br |
+| 162 | Camaçari | BA | 14.101.277/0001-08 | 8.0 | camacari.ba.gov.br |
+| 163 | Lauro de Freitas | BA | 13.924.364/0001-90 | 7.8 | laurodefreitas.ba.gov.br |
+| 164 | Vitória da Conquista | BA | 14.239.578/0001-00 | 7.6 | pmvc.ba.gov.br |
+| 165 | Juazeiro | BA | 13.915.958/0001-85 | 7.4 | juazeiro.ba.gov.br |
+| 166 | Itabuna | BA | 14.147.494/0001-68 | 7.2 | itabuna.ba.gov.br |
+| 167 | Ilhéus | BA | 13.672.591/0001-57 | 7.0 | ilheus.ba.gov.br |
+| 168 | Jequié | BA | 14.155.968/0001-60 | 6.8 | jequie.ba.gov.br |
+| 169 | Alagoinhas | BA | 13.644.004/0001-60 | 6.6 | alagoinhas.ba.gov.br |
+| 170 | Barreiras | BA | 13.654.508/0001-03 | 6.4 | barreiras.ba.gov.br |
+| 171 | Porto Seguro | BA | 13.634.823/0001-08 | 6.2 | portoseguro.ba.gov.br |
+| 172 | Teixeira de Freitas | BA | 14.168.326/0001-53 | 6.0 | teixeiradefreitas.ba.gov.br |
+| 173 | Linhares | ES | 27.167.410/0001-88 | 5.8 | linhares.es.gov.br |
+| 174 | Cachoeiro de Itapemirim | ES | 27.165.638/0001-39 | 5.6 | cachoeiro.es.gov.br |
+| 175 | São Mateus | ES | 27.167.436/0001-26 | 5.4 | saomateus.es.gov.br |
+| 176 | Guarapari | ES | 27.165.620/0001-37 | 5.2 | guarapari.es.gov.br |
+| 177 | Colatina | ES | 27.165.661/0001-23 | 5.0 | colatina.es.gov.br |
+| 178 | Aracruz | ES | 27.165.679/0001-25 | 4.8 | aracruz.es.gov.br |
+| 179 | Cariacica | ES | 27.165.588/0001-90 | 4.6 | cariacica.es.gov.br |
+| 180 | Campina Grande do Sul | PR | 76.105.592/0001-78 | 4.4 | pmcgs.pr.gov.br |
+| 181 | Pinhais | PR | 95.422.507/0001-31 | 4.2 | pinhais.pr.gov.br |
+| 182 | Almirante Tamandaré | PR | 76.105.550/0001-37 | 4.0 | tamandare.pr.gov.br |
+| 183 | Piraquara | PR | 76.105.535/0001-99 | 3.8 | piraquara.pr.gov.br |
+| 184 | Campo Largo | PR | 76.105.584/0001-21 | 3.6 | campolargo.pr.gov.br |
+| 185 | Araucária | PR | 76.105.527/0001-42 | 3.4 | araucaria.pr.gov.br |
+| 186 | Toledo | PR | 76.205.806/0001-88 | 3.2 | toledo.pr.gov.br |
+| 187 | Campo Mourão | PR | 75.904.360/0001-70 | 3.0 | campomourao.pr.gov.br |
+| 188 | Paranavaí | PR | 76.975.280/0001-08 | 2.9 | paranavai.pr.gov.br |
+| 189 | Apucarana | PR | 75.771.253/0001-65 | 2.8 | apucarana.pr.gov.br |
+| 190 | Arapongas | PR | 75.771.220/0001-15 | 2.7 | arapongas.pr.gov.br |
+| 191 | Umuarama | PR | 76.247.378/0001-56 | 2.6 | umuarama.pr.gov.br |
+| 192 | Pato Branco | PR | 76.995.304/0001-06 | 2.5 | patobranco.pr.gov.br |
+| 193 | Francisco Beltrão | PR | 77.816.510/0001-66 | 2.4 | franciscobeltrao.pr.gov.br |
+| 194 | Cianorte | PR | 76.307.727/0001-52 | 2.3 | cianorte.pr.gov.br |
+| 195 | Telêmaco Borba | PR | 76.170.216/0001-40 | 2.2 | telemacoborba.pr.gov.br |
+| 196 | Castro | PR | 76.105.618/0001-88 | 2.1 | castro.pr.gov.br |
+| 197 | Caxias | MA | 06.014.282/0001-10 | 2.0 | caxias.ma.gov.br |
+| 198 | Timon | MA | 06.317.461/0001-41 | 1.95 | timon.ma.gov.br |
+| 199 | Codó | MA | 06.103.586/0001-38 | 1.90 | codo.ma.gov.br |
+| 200 | Açailândia | MA | 07.000.263/0001-08 | 1.85 | acailandia.ma.gov.br |
+| 201 | Bacabal | MA | 06.104.915/0001-61 | 1.80 | bacabal.ma.gov.br |
+| 202 | Maracanaú | CE | 07.697.527/0001-70 | 1.75 | maracanau.ce.gov.br |
+| 203 | Itapipoca | CE | 07.625.338/0001-70 | 1.70 | itapipoca.ce.gov.br |
+| 204 | Maranguape | CE | 07.371.743/0001-83 | 1.65 | maranguape.ce.gov.br |
+| 205 | Crato | CE | 07.624.968/0001-60 | 1.60 | crato.ce.gov.br |
+| 206 | Iguatu | CE | 07.810.369/0001-04 | 1.55 | iguatu.ce.gov.br |
+| 207 | Luziânia | GO | 01.169.836/0001-13 | 1.50 | luziania.go.gov.br |
+| 208 | Águas Lindas de Goiás | GO | 01.616.523/0001-10 | 1.48 | aguaslindasdegoias.go.gov.br |
+| 209 | Valparaíso de Goiás | GO | 01.613.512/0001-44 | 1.45 | valparaisodegoias.go.gov.br |
+| 210 | Trindade | GO | 01.218.427/0001-72 | 1.42 | trindade.go.gov.br |
+| 211 | Formosa | GO | 01.119.864/0001-19 | 1.40 | formosa.go.gov.br |
+| 212 | Itumbiara | GO | 01.077.534/0001-92 | 1.38 | itumbiara.go.gov.br |
+| 213 | Jataí | GO | 01.121.282/0001-20 | 1.35 | jatai.go.gov.br |
+| 214 | Catalão | GO | 01.505.643/0001-50 | 1.32 | catalao.go.gov.br |
+| 215 | Senador Canedo | GO | 25.074.883/0001-52 | 1.30 | senadorcanedo.go.gov.br |
+| 216 | Várzea Grande | MT | 03.507.548/0001-10 | 1.28 | varzeagrande.mt.gov.br |
+| 217 | Sinop | MT | 15.024.003/0001-02 | 1.25 | sinop.mt.gov.br |
+| 218 | Sorriso | MT | 03.239.043/0001-12 | 1.22 | sorriso.mt.gov.br |
+| 219 | Tangará da Serra | MT | 03.791.985/0001-90 | 1.20 | tangaradaserra.mt.gov.br |
+| 220 | Três Lagoas | MS | 03.153.947/0001-50 | 1.18 | treslagoas.ms.gov.br |
+| 221 | Corumbá | MS | 03.417.516/0001-83 | 1.15 | corumba.ms.gov.br |
+| 222 | Ponta Porã | MS | 03.434.792/0001-70 | 1.12 | pontapora.ms.gov.br |
+| 223 | Ribas do Rio Pardo | MS | 03.522.612/0001-09 | 1.10 | ribasdoriopardo.ms.gov.br |
+| 224 | Araguaína | TO | 01.154.283/0001-74 | 1.08 | araguaina.to.gov.br |
+| 225 | Gurupi | TO | 01.183.183/0001-59 | 1.05 | gurupi.to.gov.br |
+| 226 | Porto Nacional | TO | 01.196.177/0001-00 | 1.02 | portonacional.to.gov.br |
+| 227 | Ji-Paraná | RO | 04.092.674/0001-22 | 1.00 | ji-parana.ro.gov.br |
+| 228 | Ariquemes | RO | 04.103.745/0001-01 | 0.98 | ariquemes.ro.gov.br |
+| 229 | Vilhena | RO | 04.092.708/0001-81 | 0.96 | vilhena.ro.gov.br |
+| 230 | Cacoal | RO | 04.092.716/0001-28 | 0.94 | cacoal.ro.gov.br |
+| 231 | Cruzeiro do Sul | AC | 04.032.555/0001-78 | 0.92 | cruzeirodosul.ac.gov.br |
+| 232 | Santana | AP | 23.069.125/0001-14 | 0.90 | santana.ap.gov.br |
+| 233 | Laranjal do Jari | AP | 25.045.008/0001-39 | 0.88 | laranjaldojari.ap.gov.br |
+| 234 | Nossa Senhora do Socorro | SE | 13.111.451/0001-05 | 0.86 | socorro.se.gov.br |
+| 235 | Lagarto | SE | 13.119.538/0001-52 | 0.84 | lagarto.se.gov.br |
+| 236 | Itabaiana | SE | 13.104.746/0001-21 | 0.82 | itabaiana.se.gov.br |
+| 237 | Arapiraca | AL | 12.198.685/0001-20 | 0.80 | arapiraca.al.gov.br |
+| 238 | Rio Largo | AL | 12.200.127/0001-08 | 0.78 | riolargo.al.gov.br |
+| 239 | Palmeira dos Índios | AL | 12.349.529/0001-62 | 0.76 | palmeiradosindios.al.gov.br |
+| 240 | Penedo | AL | 12.212.247/0001-34 | 0.74 | penedo.al.gov.br |
+| 241 | Santa Rita | PB | 08.918.426/0001-01 | 0.72 | santarita.pb.gov.br |
+| 242 | Patos | PB | 08.962.770/0001-25 | 0.70 | patos.pb.gov.br |
+| 243 | Bayeux | PB | 08.924.580/0001-60 | 0.68 | bayeux.pb.gov.br |
+| 244 | Parnaíba | PI | 06.554.216/0001-44 | 0.66 | parnaiba.pi.gov.br |
+| 245 | Picos | PI | 06.553.846/0001-01 | 0.64 | picos.pi.gov.br |
+| 246 | Jaboatão dos Guararapes | PE | 10.128.536/0001-05 | 0.62 | jaboatao.pe.gov.br |
+| 247 | Cabo de Santo Agostinho | PE | 11.294.402/0001-09 | 0.60 | cabo.pe.gov.br |
+| 248 | Camaragibe | PE | 11.251.832/0001-05 | 0.58 | camaragibe.pe.gov.br |
+| 249 | Garanhuns | PE | 11.303.906/0001-01 | 0.56 | garanhuns.pe.gov.br |
+| 250 | Vitória de Santo Antão | PE | 11.049.855/0001-23 | 0.54 | prefeituradavitoria.pe.gov.br |
+| 251 | São Lourenço da Mata | PE | 11.251.816/0001-12 | 0.52 | slm.pe.gov.br |
+| 252 | Igarassu | PE | 11.451.887/0001-50 | 0.50 | igarassu.pe.gov.br |
+| 253 | Macaíba | RN | 08.217.151/0001-23 | 0.46 | macaiba.rn.gov.br |
+| 254 | Caicó | RN | 08.118.527/0001-56 | 0.44 | caico.rn.gov.br |
+| 255 | Santana do Livramento | RS | 88.138.177/0001-00 | 0.42 | sdlivramento.com.br |
+| 256 | Bagé | RS | 87.422.374/0001-83 | 0.40 | bage.rs.gov.br |
+| 257 | Bento Gonçalves | RS | 87.551.354/0001-18 | 0.38 | bentogoncalves.rs.gov.br |
+| 258 | Erechim | RS | 87.613.434/0001-10 | 0.36 | pmerechim.rs.gov.br |
+| 259 | Guaíba | RS | 88.811.906/0001-44 | 0.34 | guaiba.rs.gov.br |
+| 260 | Ijuí | RS | 90.738.196/0001-95 | 0.32 | ijui.rs.gov.br |
+| 261 | Cachoeira do Sul | RS | 87.587.317/0001-38 | 0.30 | cachoeiradosul.rs.gov.br |
+| 262 | Esteio | RS | 88.150.487/0001-65 | 0.28 | esteio.rs.gov.br |
+| 263 | Sapiranga | RS | 87.933.271/0001-38 | 0.26 | sapiranga.rs.gov.br |
+| 264 | Viamão | RS | 87.971.057/0001-50 | 0.24 | viamao.rs.gov.br |
+| 265 | Alvorada | RS | 88.000.914/0001-23 | 0.22 | alvorada.rs.gov.br |
+| 266 | Brusque | SC | 83.102.319/0001-83 | 0.20 | brusque.sc.gov.br |
+| 267 | Tubarão | SC | 82.928.656/0001-06 | 0.18 | tubarao.sc.gov.br |
+| 268 | Jaraguá do Sul | SC | 83.101.436/0001-02 | 0.16 | jaraguadosul.sc.gov.br |
+| 269 | Balneário Camboriú | SC | 83.102.285/0001-20 | 0.15 | bc.sc.gov.br |
+| 270 | Camboriú | SC | 83.102.293/0001-77 | 0.14 | camboriu.sc.gov.br |
+| 271 | Navegantes | SC | 83.102.301/0001-81 | 0.13 | navegantes.sc.gov.br |
+| 272 | Itapema | SC | 83.102.426/0001-02 | 0.12 | itapema.sc.gov.br |
+| 273 | Gaspar | SC | 83.102.343/0001-12 | 0.11 | gaspar.sc.gov.br |
+| 274 | Indaial | SC | 83.102.350/0001-14 | 0.10 | indaial.sc.gov.br |
+| 275 | Concórdia | SC | 83.024.257/0001-21 | 0.09 | concordia.sc.gov.br |
+| 276 | Caçador | SC | 83.074.245/0001-10 | 0.08 | cacador.sc.gov.br |
+| 277 | Rolim de Moura | RO | 04.092.740/0001-67 | 0.06 | rolimdemoura.ro.gov.br |
+| 278 | Guajará-Mirim | RO | 04.092.682/0001-79 | 0.04 | guajaramirim.ro.gov.br |
+| 279 | Jaru | RO | 04.092.690/0001-18 | 0.03 | jaru.ro.gov.br |
+| 280 | Santana do Ipanema | AL | 12.215.141/0001-76 | 0.02 | santanadoipanema.al.gov.br |
+| 281 | Delmiro Gouveia | AL | 12.221.735/0001-74 | 0.015 | delmirogouveia.al.gov.br |
+| 282 | Coruripe | AL | 12.212.189/0001-49 | 0.010 | coruripe.al.gov.br |
+| 283 | Marechal Deodoro | AL | 12.200.200/0001-31 | 0.005 | marechaldeodoro.al.gov.br |
+| 284 | União dos Palmares | AL | 12.199.196/0001-09 | 0.002 | uniaodospalmares.al.gov.br |
+
+---
+
+## Bloco 2: EUA — Entidades Federais (IRS)
+
+| Nome Oficial | URL do Portal | Impostos/Taxas que Administra | Domínio .gov Verificado |
+
+
+Pagar Imposto de Renda	EIN 53-0204720	Internal Revenue Service (IRS) / Tesouro dos EUA
+
+
+---
+
+## Bloco 2-B: EUA — Entidades Estaduais (Departments of Revenue)
+
+| Estado | Nome Oficial do Portal | URL Direta de Pagamentos | Impostos Gerenciados |
+|---|---|---|---|
+| **California** | Franchise Tax Board (FTB) / CDTFA | [ftb.ca.gov](https://www.ftb.ca.gov) / [cdtfa.ca.gov](https://www.cdtfa.ca.gov) | State Income Tax, Sales & Use Tax |
+| **New York** | NY Department of Taxation and Finance | [tax.ny.gov](https://www.tax.ny.gov) | Personal & Corporate Income, Sales Tax |
+| **Texas** | Texas Comptroller of Public Accounts | [comptroller.texas.gov](https://comptroller.texas.gov) | No Income Tax. Gerencia Sales Tax, Franchise Tax |
+| **Florida** | Florida Department of Revenue | [floridarevenuelabs.com](https://floridarevenue.com) | No Income Tax. Gerencia Corporate Income e Sales Tax |
+| **Illinois** | Illinois Department of Revenue (MyTax) | [mytax.illinois.gov](https://mytax.illinois.gov) | Individual/Corporate Income Tax, Sales Tax |
+| **Pennsylvania** | Pennsylvania Department of Revenue | [revenue.pa.gov](https://www.revenue.pa.gov) | Personal Income Tax, Sales Tax, Corporate Tax |
+| **Ohio** | Ohio Department of Taxation | [tax.ohio.gov](https://tax.ohio.gov) | State Income Tax, Commercial Activity Tax (CAT) |
+| **Georgia** | Georgia Department of Revenue | [dor.georgia.gov](https://dor.georgia.gov) | Individual/Corporate Income, Sales Tax |
+| **North Carolina** | North Carolina Department of Revenue | [ncdor.gov](https://www.ncdor.gov) | Income Tax, Sales and Use Tax |
+| **Michigan** | Michigan Department of Treasury | [michigan.gov/treasury](https://www.michigan.gov/treasury) | State Income Tax, Sales Tax |
+| **Virginia** | Virginia Department of Taxation | [tax.virginia.gov](https://www.tax.virginia.gov) | Individual and Corporate Income, Sales Tax |
+| **Washington** | Washington Department of Revenue | [dor.wa.gov](https://dor.wa.gov) | No Income Tax. Business & Occupation (B&O), Sales Tax |
+
+---
+
+## Bloco 2-C: EUA — Condados (Property Tax, por arrecadação)
+
+> 300 condados. EIN = Federal Tax ID do Tax Collector/Treasurer do condado.
+
+| # | Condado (County) | Estado | EIN | URL Oficial do Tax Collector / Treasurer |
+|---|---|---|---|---|
+| 1 | Los Angeles County | CA | 95-6000927 | ttc.lacounty.gov |
+| 2 | Cook County | IL | 36-6004941 | cookcountytreasurer.com |
+| 3 | Harris County | TX | 74-6001211 | hctax.net |
+| 4 | Orange County | CA | 95-6000934 | ttc.ocgov.com |
+| 5 | San Diego County | CA | 95-6000930 | sdttc.com |
+| 6 | Dallas County | TX | 75-6000744 | dallascounty.org |
+| 7 | King County | WA | 91-6001252 | kingcounty.gov |
+| 8 | Maricopa County | AZ | 86-6000302 | treasurer.maricopa.gov |
+| 9 | Miami-Dade County | FL | 59-6000573 | miamidade.gov |
+| 10 | Santa Clara County | CA | 94-6000531 | sccgov.org |
+| 11 | Nassau County | NY | 11-6002165 | nassaucountyny.gov |
+| 12 | Tarrant County | TX | 75-6000787 | tarrantcounty.com |
+| 13 | Bexar County | TX | 74-6000450 | bexar.org |
+| 14 | Broward County | FL | 59-1065160 | broward.org |
+| 15 | Riverside County | CA | 95-6000933 | countytreasurer.org |
+| 16 | Suffolk County | NY | 11-6002241 | suffolkcountyny.gov |
+| 17 | San Bernardino County | CA | 95-6000920 | sbcounty.gov |
+| 18 | Alameda County | CA | 94-6000501 | acgov.org |
+| 19 | Clark County | NV | 88-6000022 | clarkcountynv.gov |
+| 20 | Wayne County | MI | 38-6004881 | waynecounty.com |
+| 21 | Sacramento County | CA | 94-6000525 | finance.saccounty.net |
+| 22 | Palm Beach County | FL | 59-6000787 | pbctax.com |
+| 23 | Fairfax County | VA | 54-6001224 | fairfaxcounty.gov |
+| 24 | Hennepin County | MN | 41-6004732 | hennepin.us |
+| 25 | Oakland County | MI | 38-6004825 | oakgov.com |
+| 26 | Contra Costa County | CA | 94-6000507 | cctax.us |
+| 27 | Travis County | TX | 74-6000192 | traviscountytax.org |
+| 28 | Montgomery County | MD | 52-6001477 | montgomerycountymd.gov |
+| 29 | Bergen County | NJ | 22-6002283 | bergencountytreasurer.com |
+| 30 | Orange County | FL | 59-6000780 | octaxcol.com |
+| 31 | Fulton County | GA | 58-6000755 | fultoncountytaxes.org |
+| 32 | Allegheny County | PA | 25-6000918 | alleghenycounty.us |
+| 33 | Franklin County | OH | 31-6400135 | franklincountytreasurer.com |
+| 34 | Middlesex County | MA | 04-6001402 | middlesexmass.gov |
+| 35 | Westchester County | NY | 13-6400155 | westchestergov.com |
+| 36 | Hillsborough County | FL | 59-6000636 | hillstax.org |
+| 37 | Cuyahoga County | OH | 34-6400140 | treasurer.cuyahogacounty.us |
+| 38 | Ventura County | CA | 95-6001007 | vcportal.ventura.org |
+| 39 | San Francisco County | CA | 94-6000543 | sftreasurer.org |
+| 40 | Collin County | TX | 75-6000880 | collincountytx.gov |
+| 41 | Denver County | CO | 84-6000534 | denvergov.org |
+| 42 | Prince George's County | MD | 52-6001487 | princegeorgescountymd.gov |
+| 43 | DuPage County | IL | 36-6005230 | dupagecounty.gov |
+| 44 | Milwaukee County | WI | 39-6005221 | county.milwaukee.gov |
+| 45 | Marion County | IN | 35-6001150 | indy.gov |
+| 46 | St. Louis County | MO | 43-6001093 | stlouiscountymo.gov |
+| 47 | Salt Lake County | UT | 87-6000171 | slco.org/treasurer |
+| 48 | Pierce County | WA | 91-6001358 | piercecountywa.gov |
+| 49 | Hartford County | CT | 06-6001962 | hartfordgov.com |
+| 50 | Mecklenberg County | NC | 56-6001438 | mecknc.gov |
+| 51 | Shelby County | TN | 62-6000676 | shelbycountytrustee.com |
+| 52 | Pima County | AZ | 86-6000412 | treasurer.pima.gov |
+| 53 | Pinellas County | FL | 59-6000816 | pinellastax.com |
+| 54 | Lake County | IL | 36-6005085 | lakecountyil.gov |
+| 55 | Norfolk County | MA | 04-6001416 | norfolkcounty.org |
+| 56 | Worcester County | MA | 04-6001446 | worcestermass.gov |
+| 57 | San Mateo County | CA | 94-6000539 | smcgov.org |
+| 58 | Fresno County | CA | 94-6000511 | co.fresno.ca.us |
+| 59 | Honolulu County | HI | 99-6000106 | realpropertyhonolulu.com |
+| 60 | Douglas County | NE | 47-0356550 | douaxcollector.org |
+| 61 | Oklahoma County | OK | 73-6000305 | oklahomacounty.org |
+| 62 | El Paso County | CO | 84-6000547 | elpasoco.com |
+| 63 | Jefferson County | AL | 63-6000570 | jccal.org |
+| 64 | Duval County | FL | 59-6000575 | coj.net |
+| 65 | Polk County | FL | 59-6000824 | polktaxes.com |
+| 66 | Cobb County | GA | 58-6000728 | cobbtaxorg.org |
+| 67 | Gwinnett County | GA | 58-6000768 | gwinnetttaxcommissioner.com |
+| 68 | Johnson County | KS | 48-6000673 | jocogov.org |
+| 69 | Jefferson County | KY | 61-6000282 | jeffersoncountyclerk.org |
+| 70 | Will County | IL | 36-6006421 | willcountytreasurer.com |
+| 71 | Kane County | IL | 36-6005045 | kanecountytreasurer.org |
+| 72 | Monmouth County | NJ | 22-6002369 | visitmonmouth.com |
+| 73 | Ocean County | NJ | 22-6002396 | co.ocean.nj.us |
+| 74 | Essex County | NJ | 22-6002324 | essexcountynj.org |
+| 75 | Middlesex County | NJ | 22-6002361 | middlesexcountynj.gov |
+| 76 | Erie County | NY | 16-6001550 | erie.gov |
+| 77 | Monroe County | NY | 16-6001710 | monroecounty.gov |
+| 78 | Wake County | NC | 56-6001509 | wakegov.com |
+| 79 | Hamilton County | OH | 31-6400150 | hamiltoncountytreasurer.org |
+| 80 | Montgomery County | OH | 31-6400185 | mctreas.org |
+| 81 | Tulsa County | OK | 73-6004455 | treasurer.tulsacounty.org |
+| 82 | Washington County | OR | 93-6002330 | co.washington.or.us |
+| 83 | Multnomah County | OR | 93-6002298 | multco.us |
+| 84 | Clackamas County | OR | 93-6002236 | clackamas.us |
+| 85 | Montgomery County | PA | 23-6002621 | montcopa.org |
+| 86 | Bucks County | PA | 23-6002422 | buckscounty.gov |
+| 87 | Delaware County | PA | 23-6002495 | delcopa.gov |
+| 88 | Providence County | RI | 05-6000523 | providenceri.gov |
+| 89 | Greenville County | SC | 57-6000529 | greenvillecounty.org |
+| 90 | Davidson County | TN | 62-6000632 | nashville.gov |
+| 91 | Fort Bend County | TX | 74-6000780 | fortbendcountytx.gov |
+| 92 | Hidalgo County | TX | 74-6000942 | hidalgocounty.us |
+| 93 | Denton County | TX | 75-6000898 | dentoncounty.gov |
+| 94 | El Paso County | TX | 74-6000762 | epcounty.com |
+| 95 | Snohomish County | WA | 91-6001375 | snohomishcountywa.gov |
+| 96 | Dane County | WI | 39-6005161 | danecounty.gov |
+| 97 | Waukesha County | WI | 39-6005721 | waukeshacounty.gov |
+| 98 | Kanawha County | WV | 55-6000295 | kanawha.us |
+| 99 | Natrona County | WY | 83-6000155 | natronacounty-wy.gov |
+| 100 | Laramie County | WY | 83-6000140 | laramiecounty.com |
+| 101 | New Haven County | CT | 06-6002044 | newhavenct.gov |
+| 102 | Washoe County | NV | 88-6000161 | washoecounty.gov |
+| 103 | Volusia County | FL | 59-6000895 | volusia.org |
+| 104 | Brevard County | FL | 59-6000510 | brevardtc.com |
+| 105 | Pasco County | FL | 59-6000806 | pascotaxes.com |
+| 106 | San Joaquin County | CA | 94-6000537 | sjgov.org |
+| 107 | Stanislaus County | CA | 94-6000549 | stancounty.com |
+| 108 | Sonoma County | CA | 94-6000547 | sonomacounty.ca.gov |
+| 109 | Solano County | CA | 94-6000545 | solanocounty.com |
+| 110 | Santa Barbara County | CA | 95-6000936 | sbtaxes.org |
+| 111 | Tulare County | CA | 94-6000553 | tularecounty.ca.gov |
+| 112 | Lake County | IN | 35-6001124 | lakecounty.in.gov |
+| 113 | Allen County | IN | 35-6000965 | allencounty.us |
+| 114 | Sedgwick County | KS | 48-6000720 | sedgwickcounty.org |
+| 115 | Fayette County | KY | 61-6001095 | fayettecountyclerk.com |
+| 116 | East Baton Rouge Parish | LA | 72-6000492 | ebrso.org |
+| 117 | Jefferson Parish | LA | 72-6000581 | jpso.com |
+| 118 | Anne Arundel County | MD | 52-6001041 | aacounty.org |
+| 119 | Baltimore County | MD | 52-6001055 | baltimorecountymd.gov |
+| 120 | Macomb County | MI | 38-6004812 | macombgov.org |
+| 121 | Kent County | MI | 38-6004802 | accesskent.com |
+| 122 | Genesee County | MI | 38-6004774 | gc4me.com |
+| 123 | Dakota County | MN | 41-6004661 | co.dakota.mn.us |
+| 124 | Anoka County | MN | 41-6004585 | anokacountymn.gov |
+| 125 | Ramsey County | MN | 41-6004853 | ramseycounty.us |
+| 126 | Camden County | NJ | 22-6002298 | camdencounty.com |
+| 127 | Passaic County | NJ | 22-6002403 | passaiccountynj.org |
+| 128 | Union County | NJ | 22-6002441 | ucnj.org |
+| 129 | Morris County | NJ | 22-6002380 | morriscountynj.gov |
+| 130 | Burlington County | NJ | 22-6002293 | co.burlington.nj.us |
+| 131 | Mercer County | NJ | 22-6002353 | mercercounty.org |
+| 132 | Somerset County | NJ | 22-6002422 | co.somerset.nj.us |
+| 133 | Gloucester County | NJ | 22-6002334 | gloucestercountynj.gov |
+| 134 | Albany County | NY | 14-6002195 | albanycounty.com |
+| 135 | Onondaga County | NY | 16-6001815 | ongov.net |
+| 136 | Orange County | NY | 14-6003290 | orangecountygov.com |
+| 137 | Rockland County | NY | 13-1748281 | rocklandcountyny.gov |
+| 138 | Dutchess County | NY | 14-6002410 | dutchessny.gov |
+| 139 | Saratoga County | NY | 14-6003665 | saratogacountyny.gov |
+| 140 | Oneida County | NY | 15-6001710 | ocgov.net |
+| 141 | Broome County | NY | 16-6001420 | gobroomecounty.com |
+| 142 | Guilford County | NC | 56-6001374 | guilfordcountync.gov |
+| 143 | Forsyth County | NC | 56-6001356 | forsyth.cc |
+| 144 | Cumberland County | NC | 56-6001332 | cumberlandcountync.gov |
+| 145 | Durham County | NC | 56-6001344 | dconc.gov |
+| 146 | Buncombe County | NC | 56-6001314 | buncombecounty.org |
+| 147 | Gaston County | NC | 56-6001362 | gastongov.com |
+| 148 | New Hanover County | NC | 56-6001446 | nhcgov.com |
+| 149 | Summit County | OH | 34-6400215 | summitoh.net |
+| 150 | Lucas County | OH | 34-6400175 | co.lucas.oh.us |
+| 151 | Stark County | OH | 34-6400210 | starkcountyohio.gov |
+| 152 | Mahoning County | OH | 34-6400180 | mahoningcountyoh.gov |
+| 153 | Butler County | OH | 31-6400120 | butlercountytreasurer.org |
+| 154 | Lorain County | OH | 34-6400173 | loraincountyohio.gov |
+| 155 | Warren County | OH | 31-6400220 | warrencountytreasurer.org |
+| 156 | Lake County | OH | 34-6400165 | lakecountyohio.gov |
+| 157 | Marion County | OR | 93-6002280 | co.marion.or.us |
+| 158 | Lane County | OR | 93-6002268 | lanecounty.org |
+| 159 | Jackson County | OR | 93-6002256 | jacksoncountyor.org |
+| 160 | Deschutes County | OR | 93-6002242 | deschutes.org |
+| 161 | Chester County | PA | 23-6002441 | chesco.org |
+| 162 | Lancaster County | PA | 23-6002570 | co.lancaster.pa.us |
+| 163 | York County | PA | 23-6002821 | yorkcountypa.gov |
+| 164 | Berks County | PA | 23-6002409 | countyofberks.com |
+| 165 | Lehigh County | PA | 23-6002581 | lehighcounty.org |
+| 166 | Northampton County | PA | 23-6002661 | northamptoncounty.org |
+| 167 | Westmoreland County | PA | 25-6000971 | co.westmoreland.pa.us |
+| 168 | Luzerne County | PA | 24-6001221 | luzernecounty.org |
+| 169 | Charleston County | SC | 57-6000491 | charlestoncounty.org |
+| 170 | Richland County | SC | 57-6000621 | richlandcountysc.gov |
+| 171 | Spartanburg County | SC | 57-6000641 | spartanburgcounty.org |
+| 172 | Horry County | SC | 57-6000541 | horrycountysc.gov |
+| 173 | Lexington County | SC | 57-6000571 | lex-co.sc.gov |
+| 174 | Knox County | TN | 62-6000652 | knoxcounty.org/trustee |
+| 175 | Hamilton County | TN | 62-6000641 | hamiltontn.gov |
+| 176 | Rutherford County | TN | 62-6000671 | rutherfordcountytn.gov |
+| 177 | Williamson County | TN | 62-6000691 | williamsoncounty-tn.gov |
+| 178 | Montgomery County | TX | 74-6001550 | mctxou.org |
+| 179 | Williamson County | TX | 74-6002220 | wilco.org |
+| 180 | Galveston County | TX | 74-6000790 | galvestoncountytx.gov |
+| 181 | Nueces County | TX | 74-6001630 | nuecesco.com |
+| 182 | Cameron County | TX | 74-6000490 | cameroncountytx.gov |
+| 183 | Lubbock County | TX | 75-6001080 | lubbockcounty.gov |
+| 184 | Webb County | TX | 74-6002160 | webbcountytx.gov |
+| 185 | Utah County | UT | 87-6000191 | utahcounty.gov |
+| 186 | Davis County | UT | 87-6000131 | daviscountyutah.gov |
+| 187 | Weber County | UT | 87-6000201 | webercountyutah.gov |
+| 188 | Virginia Beach City | VA | 54-6001642 | vbgov.com |
+| 189 | Prince William County | VA | 54-6001461 | pwcva.gov |
+| 190 | Chesterfield County | VA | 54-6001161 | chesterfield.gov |
+| 191 | Henrico County | VA | 54-6001301 | henrico.us |
+| 192 | Loudoun County | VA | 54-6001361 | loudoun.gov |
+| 193 | Spokane County | WA | 91-6001382 | spokanecounty.org |
+| 194 | Clark County | WA | 91-6001222 | clark.wa.gov |
+| 195 | Thurston County | WA | 91-6001392 | thurstoncountywa.gov |
+| 196 | Yakima County | WA | 91-6001421 | yakimacounty.us |
+| 197 | Whatcom County | WA | 91-6001411 | whatcomcounty.us |
+| 198 | Brown County | WI | 39-6005111 | browncountywi.gov |
+| 199 | Outagamie County | WI | 39-6005471 | outagamie.org |
+| 200 | Winnebago County | WI | 39-6005781 | co.winnebago.wi.us |
+| 201 | Kenosha County | WI | 39-6005191 | kenoshacounty.org |
+| 202 | Berkeley County | WV | 55-6000241 | berkeleycounty.org |
+| 203 | Monongalia County | WV | 55-6000331 | monongaliacounty.gov |
+| 204 | Albany County | WY | 83-6000101 | co.albany.wy.us |
+| 205 | Campbell County | WY | 83-6000115 | ccgov.net |
+| 206 | Baldwin County | AL | 63-6000501 | baldwincountyal.gov |
+| 207 | Madison County | AL | 63-6000621 | madisoncountyal.gov |
+| 208 | Mobile County | AL | 63-6000641 | mobilecountyal.gov |
+| 209 | Shelby County | AL | 63-6000721 | shelbyal.com |
+| 210 | Anchorage Municipality | AK | 92-6000021 | muni.org |
+| 211 | Fairbanks North Star | AK | 92-6000041 | fnsb.gov |
+| 212 | Matanuska-Susitna | AK | 92-6000091 | matsugov.us |
+| 213 | Coconino County | AZ | 86-6000241 | coconino.az.gov |
+| 214 | Yuma County | AZ | 86-6000501 | yumacountyaz.gov |
+| 215 | Yavapai County | AZ | 86-6000481 | yavapaiaz.gov |
+| 216 | Mohave County | AZ | 86-6000341 | mohave.gov |
+| 217 | Pulaski County | AR | 71-6000451 | pulaskicounty.net |
+| 218 | Washington County | AR | 71-6000531 | washingtoncountyar.gov |
+| 219 | Benton County | AR | 71-6000121 | bentoncountyar.gov |
+| 220 | Sebastian County | AR | 71-6000491 | sebastiancountyar.gov |
+| 221 | Kern County | CA | 95-6000924 | kerncounty.com |
+| 222 | Imperial County | CA | 95-6000922 | imperialcounty.org |
+| 223 | Marin County | CA | 94-6000517 | marincounty.org |
+| 224 | Napa County | CA | 94-6000521 | countyofnapa.org |
+| 225 | Placer County | CA | 94-6000523 | placer.ca.gov |
+| 226 | Boulder County | CO | 84-6000511 | bouldercounty.gov |
+| 227 | Larimer County | CO | 84-6000561 | larimer.gov |
+| 228 | Arapahoe County | CO | 84-6000505 | arapahoegov.com |
+| 229 | Jefferson County | CO | 84-6000551 | jeffco.us |
+| 230 | Adams County | CO | 84-6000501 | adcogov.org |
+| 231 | Weld County | CO | 84-6000621 | weldgov.com |
+| 232 | Pueblo County | CO | 84-6000591 | pueblo.us |
+| 233 | Litchfield County | CT | 06-6001991 | litchfieldct.com |
+| 234 | Middlesex County | CT | 06-6002011 | middlesexct.gov |
+| 235 | New Castle County | DE | 51-6000211 | nccde.org |
+| 236 | Sussex County | DE | 51-6000251 | sussexcountyde.gov |
+| 237 | Kent County | DE | 51-6000191 | kentcountyde.gov |
+| 238 | Alachua County | FL | 59-6000491 | alachuacollector.com |
+| 239 | Leon County | FL | 59-6000711 | leontaxcollector.net |
+| 240 | Marion County | FL | 59-6000741 | mariontax.com |
+| 241 | Seminole County | FL | 59-6000851 | seminoletax.org |
+| 242 | Sarasota County | FL | 59-6000841 | sarasotataxcollector.com |
+| 243 | Manatee County | FL | 59-6000731 | taxcollector.com |
+| 244 | Collier County | FL | 59-6000541 | colliertaxcollector.com |
+| 245 | Lee County | FL | 59-6000701 | leetc.com |
+| 246 | St. Johns County | FL | 59-6000831 | sjctax.us |
+| 247 | DeKalb County | GA | 58-6000741 | dekalbtax.org |
+| 248 | Chatham County | GA | 58-6000711 | chathamtax.org |
+| 249 | Cherokee County | GA | 58-6000721 | cherokeegatax.org |
+| 250 | Henry County | GA | 58-6000781 | henrycountytax.com |
+| 251 | Maui County | HI | 99-6000121 | mauicounty.gov |
+| 252 | Hawaii County | HI | 99-6000081 | hawaiicounty.gov |
+| 253 | Ada County | ID | 82-6000021 | adacounty.id.gov |
+| 254 | Canyon County | ID | 82-6000111 | canyoncounty.id.gov |
+| 255 | Kootenai County | ID | 82-6000281 | kcgov.us |
+| 256 | Winnebago County | IL | 36-6006451 | winnebagotreasure.com |
+| 257 | St. Clair County | IL | 36-6006151 | scctreasurer.com |
+| 258 | Madison County | IL | 36-6005391 | madco-treasurer.org |
+| 259 | Peoria County | IL | 36-6005721 | peoriacounty.org |
+| 260 | Hamilton County | IN | 35-6001041 | hamiltoncounty.in.gov |
+| 261 | St. Joseph County | IN | 35-6001301 | stjosephcountyindiana.gov |
+| 262 | Elkhart County | IN | 35-6001011 | elkhartcounty.com |
+| 263 | Vanderburgh County | IN | 35-6001351 | vanderburghgov.org |
+| 264 | Polk County | IA | 42-6001191 | polkcountyiowa.gov |
+| 265 | Linn County | IA | 42-6001021 | linncountyiowa.gov |
+| 266 | Scott County | IA | 42-6001251 | scottcountyiowa.gov |
+| 267 | Johnson County | IA | 42-6000951 | johnsoncountyiowa.gov |
+| 268 | Shawnee County | KS | 48-6000731 | snco.us |
+| 269 | Wyandotte County | KS | 48-6000791 | wycokck.org |
+| 270 | Douglas County | KS | 48-6000541 | douglascountyks.org |
+| 271 | Kenton County | KY | 61-6000301 | kentoncounty.org |
+| 272 | Boone County | KY | 61-6000041 | boonecountyky.org |
+| 273 | Warren County | KY | 61-6000621 | warrencountyky.gov |
+| 274 | Caddo Parish | LA | 72-6000421 | caddosheriff.org |
+| 275 | St. Tammany Parish | LA | 72-6000851 | stpso.com |
+| 276 | Lafayette Parish | LA | 72-6000621 | lafayettesheriff.com |
+| 277 | Cumberland County | ME | 01-6000121 | cumberlandcounty.org |
+| 278 | York County | ME | 01-6000321 | yorkcountyme.gov |
+| 279 | Penobscot County | ME | 01-6000211 | penobscot-county.net |
+| 280 | Howard County | MD | 52-6001221 | howardcountymd.gov |
+| 281 | Harford County | MD | 52-6001151 | harfordcountymd.gov |
+| 282 | Frederick County | MD | 52-6001121 | frederickcountymd.gov |
+| 283 | Essex County | MA | 04-6001351 | mass.gov/essex-county |
+| 284 | Bristol County | MA | 04-6001321 | bristolcountyma.gov |
+| 285 | Plymouth County | MA | 04-6001421 | plymouthcountyma.gov |
+| 286 | Washtenaw County | MI | 38-6004871 | washtenaw.org |
+| 287 | Ingham County | MI | 38-6004781 | ingham.org |
+| 288 | Kalamazoo County | MI | 38-6004791 | kalcounty.com |
+| 289 | Ottawa County | MI | 38-6004841 | miottawa.org |
+| 290 | Olmsted County | MN | 41-6004811 | olmstedcounty.gov |
+| 291 | Stearns County | MN | 41-6004891 | stearnscountymn.gov |
+| 292 | St. Louis County | MN | 41-6004881 | stlouiscountymn.gov |
+| 293 | Hinds County | MS | 64-6000291 | hindscountyms.com |
+| 294 | Harrison County | MS | 64-6000261 | co.harrison.ms.us |
+| 295 | DeSoto County | MS | 64-6000151 | desotocountyms.gov |
+| 296 | Jackson County | MO | 44-6000551 | jacksongov.org |
+| 297 | St. Charles County | MO | 43-6001131 | sccmo.org |
+| 298 | Greene County | MO | 43-6000451 | greenecountymo.gov |
+| 299 | Yellowstone County | MT | 81-6000551 | yellowstonecountymt.gov |
+| 300 | Missoula County | MT | 81-6000331 | missoulacounty.us |
+
+
+---
+
+## Bloco 3: Canadá 
+
+
+
+| Órgão / Município | BN (Business Number) | Província / Abrangência | Site Oficial |
+
+
+Imposto de Renda da Empresa (Corporate Tax): "BN" RC 0001 (com o sufixo RC)
+
+Imposto sobre Vendas (GST/HST, equivalente ao nosso IVA/ICMS federal): "BN" RT 0001 (com o sufixo RT) 
+
+Folha de pagamento (Payroll): "BN" RP 0001 (com o sufixo RP)
+
+
+---------------------------------------------------------------------------------------
+
+
+Pagar Imposto de Renda	133691238 (Account: Income Tax)	Receiver General for Canada /
+CRA	Toda a arrecadação de imposto de renda vai para o Tesouro Federal (Receiver General) sob o registro central da CRA.
+
+Província / Território,Órgão Responsável,Número de Registro para Recolhimento (BN / NEQ)
+Ontário,Ministry of Finance,124089201 RT0001
+Québec,Revenu Québec,1143491417 (NEQ Estadual)
+Colúmbia Britânica,Ministry of Finance,107864738 RT0001
+Alberta,Treasury Board and Finance,106692296 RT0001
+Manitoba,Department of Finance,107659427 RT0001
+Saskatchewan,Ministry of Finance,107981508 RT0001
+Nova Escócia,Department of Finance,107788739 RT0001
+Novo Brunswick,Department of Finance,107788572 RT0001
+Terra Nova e Labrador,Department of Finance,107788226 RT0001
+Ilha do Príncipe Eduardo,Department of Finance,107851925 RT0001
+Territórios do Noroeste,Department of Finance,107788416 RT0001
+Yukon,Department of Finance,108223637 RT0001
+Nunavut,Department of Finance,863897723 RT0001
+
+
+#,Prefeitura (Cidade),Província,Business Number (BN / CRA)
+1,Toronto,Ontário,122119935
+2,Montreal,Québec,118021160
+3,Calgary,Alberta,108083817
+4,Ottawa,Ontário,131343840
+5,Edmonton,Alberta,108083833
+6,Winnipeg,Manitoba,108223801
+7,Mississauga,Ontário,107011280
+8,Vancouver,Colúmbia Britânica,130706245
+9,Brampton,Ontário,106808728
+10,Hamilton,Ontário,107460917
+11,Surrey,Colúmbia Britânica,108048265
+12,Quebec City,Québec,118021202
+13,Halifax,Nova Escócia,107788895
+14,Laval,Québec,118021228
+15,London,Ontário,108083890
+16,Markham,Ontário,108083908
+17,Vaughan,Ontário,108083916
+18,Gatineau,Québec,118021269
+19,Saskatoon,Saskatchewan,108083932
+20,Kitchener,Ontário,108083940
+21,Longueuil,Québec,118021285
+22,Burnaby,Colúmbia Britânica,108083965
+23,Windsor,Ontário,108083981
+24,Regina,Saskatchewan,108083999
+25,Richmond,Colúmbia Britânica,108084013
+26,Richmond Hill,Ontário,108084021
+27,Oakville,Ontário,108084039
+28,Burlington,Ontário,108084047
+29,Greater Sudbury,Ontário,108084054
+30,Sherbrooke,Québec,118021301
+31,Oshawa,Ontário,108084070
+32,Saguenay,Québec,118021327
+33,Lévis,Québec,118021343
+34,Barrie,Ontário,108084088
+35,Abbotsford,Colúmbia Britânica,108084096
+36,Coquitlam,Colúmbia Britânica,108084104
+37,Trois-Rivières,Québec,118021368
+38,St. Catharines,Ontário,108084112
+39,Cambridge,Ontário,108084120
+40,Whitby,Ontário,108084138
+41,Guelph,Ontário,108084146
+42,Kelowna,Colúmbia Britânica,108084153
+43,Kingston,Ontário,108084161
+44,Ajax,Ontário,108084179
+45,Langley (District),Colúmbia Britânica,108084187
+46,Saanich,Colúmbia Britânica,108084195
+47,Terrebonne,Québec,118021384
+48,Milton,Ontário,108084203
+49,St. John's,Terra Nova,108084211
+50,Thunder Bay,Ontário,108084229
+51,Waterloo,Ontário,108084237
+52,Delta,Colúmbia Britânica,108084245
+53,Chatham-Kent,Ontário,108084252
+54,Red Deer,Alberta,108084260
+55,Strathcona County,Alberta,108084278
+56,Brantford,Ontário,108084286
+57,Saint-Jean-sur-Richelieu,Québec,118021400
+58,Cape Breton,Nova Escócia,108084294
+59,Lethbridge,Alberta,108084302
+60,Clarington,Ontário,108084310
+61,Pickering,Ontário,108084328
+62,Nanaimo,Colúmbia Britânica,108084336
+63,Kamloops,Colúmbia Britânica,108084344
+64,Niagara Falls,Ontário,108084351
+65,Victoria,Colúmbia Britânica,108084369
+66,Brossard,Québec,118021426
+67,Repentigny,Québec,118021442
+68,Newmarket,Ontário,108084377
+69,Chilliwack,Colúmbia Britânica,108084385
+70,Maple Ridge,Colúmbia Britânica,108084393
+71,Peterborough,Ontário,108084401
+72,Kawartha Lakes,Ontário,108084419
+73,Drummondville,Québec,118021467
+74,Saint-Jérôme,Québec,118021483
+75,Prince George,Colúmbia Britânica,108084427
+76,Sarnia,Ontário,108084435
+77,Wood Buffalo,Alberta,108084443
+78,New Westminster,Colúmbia Britânica,108084450
+79,Saint John,Novo Brunswick,108084468
+80,Caledon,Ontário,108084476
+81,Granby,Québec,118021509
+82,St. Albert,Alberta,108084484
+83,Norfolk County,Ontário,108084492
+84,Medicine Hat,Alberta,108084500
+85,Grande Prairie,Alberta,108084518
+86,Moncton,Novo Brunswick,108084526
+87,Halton Hills,Ontário,108084534
+88,Fredericton,Novo Brunswick,108084542
+89,Port Coquitlam,Colúmbia Britânica,108084559
+90,Mirabel,Québec,118021525
+91,North Vancouver (District),Colúmbia Britânica,108084567
+92,Saint-Hyacinthe,Québec,118021541
+93,Welland,Ontário,108084575
+94,Belleville,Ontário,108084583
+95,North Bay,Ontário,108084591
+96,Blainville,Québec,118021566
+97,Charlottetown,Ilha Príncipe Eduardo,108084609
+98,Whitehorse,Yukon,108084617
+99,Yellowknife,Territórios Noroeste,108084625
+100,Iqaluit,Nunavut,863897731
+
+
+---
+
+

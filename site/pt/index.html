@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Luggom: pague o seu imposto, minere LUG</title>
+  <meta name="description" content="O Luggom é uma cadeia Cosmos onde se minera LUG pagando imposto real, provado por TLSNotary. Sem KYC, sem terceiros. Uma moeda que não promete: cumpre uma fórmula.">
+  <meta name="theme-color" content="#f2e8dc">
+  <link rel="icon" href="../assets/img/mark-square-t.png">
+  <link rel="stylesheet" href="../assets/css/site.css?v=20261021b">
+  <link rel="alternate" hreflang="en" href="../index.html">
+</head>
+<body>
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="Luggom, início">
+        <img src="../assets/img/wordmark.svg" alt="Luggom">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+      <nav class="nav" id="primary-nav" aria-label="Principal">
+        <a href="#como">Como funciona</a>
+        <a href="#tokenomics">Tokenomics</a>
+        <a href="whitepaper.html">Whitepaper</a>
+        <a href="download.html">Baixar</a>
+        <a href="validators.html">Validadores</a>
+        <span class="lang">
+          <a href="../index.html" lang="en">EN</a>
+          <a href="index.html" aria-current="true" lang="pt-BR">PT</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Hero: the receipt is the proof object -->
+    <section class="hero">
+      <div class="wrap grid">
+        <div>
+          <span class="eyebrow">Cadeia Cosmos · prova TLSNotary · sem KYC</span>
+          <p class="quote">Dai a César o que é de César. Pegue o seu LUG.</p>
+          <h1>Pague o seu imposto.<br>Minere LUG.</h1>
+          <p class="lede">O Luggom transforma imposto pago de verdade em moeda. Sem terceiros, sem KYC: só a prova criptográfica de que você pagou.</p>
+          <div class="btn-row">
+            <a class="btn btn--primary" href="#como">Ver como funciona</a>
+            <a class="btn btn--ghost" href="#cesta">A fórmula da moeda</a>
+          </div>
+          <div class="meta">
+            <span>TLSNotary</span>
+            <span>Sem custódia</span>
+            <span>Endowment em BTC</span>
+          </div>
+        </div>
+
+        <figure class="receipt" aria-label="Exemplo de comprovante que minera LUG">
+          <div class="receipt__head">
+            <strong>Comprovante de pagamento</strong>
+            <span class="receipt__stamp">pago</span>
+          </div>
+          <dl class="receipt__rows">
+            <div class="receipt__row"><dt>Ente arrecadador</dt><dd>Fazenda Municipal</dd></div>
+            <div class="receipt__row"><dt>Valor pago</dt><dd>R$ 1.291,49</dd></div>
+            <div class="receipt__row"><dt>Data</dt><dd>15 jul 2026</dd></div>
+            <div class="receipt__row"><dt>Comprovante</dt><dd>EXEMPLO…</dd></div>
+            <div class="receipt__row"><dt>Prova on-chain</dt><dd>75EEF27E… · altura 1284</dd></div>
+          </dl>
+          <div class="receipt__out">
+            <span class="num">21,09</span>
+            <span class="lbl">LUG recebido</span>
+          </div>
+          <figcaption class="receipt__note">Mineração real na testnet em 21/10/2026: R$ 1.291,49 → 21,09 LUG (tx 75EEF27E…, altura 1284). O notário TLSNotary termina a conexão TLS fora do navegador e revela só o comprovante, assina-o; a chain confere a assinatura e cunha. A sua sessão bancária nunca é exposta.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="como" class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Como funciona</span>
+        <h2>Três passos, nenhum deles o seu banco.</h2>
+        <div class="steps">
+          <article class="step reveal">
+            <span class="step__n">01 / pagar</span>
+            <h3>Pague o imposto</h3>
+            <p>No seu banco, como sempre. O Luggom não toca no dinheiro nem pede acesso à sua conta.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">02 / provar</span>
+            <h3>Prove o pagamento</h3>
+            <p>O TLSNotary termina a conexão TLS fora do navegador e revela apenas o comprovante. Sem senha, sem dados pessoais.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step__n">03 / minerar</span>
+            <h3>Minere LUG</h3>
+            <p>O notário assina o comprovante; a rede verifica a assinatura e cunha. Cada comprovante mina uma única vez.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- The basket -->
+    <div class="band">
+      <section id="cesta">
+        <div class="wrap">
+          <span class="eyebrow">A referência da moeda</span>
+          <h2>Não é uma promessa. É uma fórmula.</h2>
+          <p class="lede">O valor de referência do LUG é a média de três moedas fortes, vezes três, crescendo 10% ao ano. O multiplicador vive no código, fora do alcance da governança.</p>
+          <p class="eq">LUG = ( <span class="tok">EUR/USD</span> + <span class="tok">GBP/USD</span> + <span class="tok">CHF/USD</span> ) / 3 × 3 · <span class="tok">+10%</span>/ano</p>
+          <div class="growth">
+            <div class="cell"><span class="yr">Ano 0</span><span class="val">$3,60</span></div>
+            <div class="cell"><span class="yr">Ano 5</span><span class="val">$5,80</span></div>
+            <div class="cell"><span class="yr">Ano 10</span><span class="val">$9,34</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Tokenomics -->
+    <section id="tokenomics">
+      <div class="wrap">
+        <span class="eyebrow">Tokenomics</span>
+        <h2>Onde vai cada LUG minerado.</h2>
+        <p class="lede">Três fases, cada uma fechando 100%. A fatia do OTC entra na Fase 2, quando a pool abre.</p>
+        <div class="table-scroll">
+          <table>
+            <caption>Percentuais do que se minera · teto de 7B LUG, −5% ao ano</caption>
+            <thead>
+              <tr><th scope="col">Componente</th><th scope="col">Fase 1</th><th scope="col">Transição</th><th scope="col">Fase 2</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Minerador</td><td class="num">30</td><td class="num">30</td><td class="num">30</td></tr>
+              <tr><td>Pre-sale</td><td class="num">35</td><td class="num">–</td><td class="num">–</td></tr>
+              <tr><td>OTC LOCKED</td><td class="num">–</td><td class="num">–</td><td class="num">40</td></tr>
+              <tr><td>Reserva de staking</td><td class="num">7,5</td><td class="num">30</td><td class="num">10</td></tr>
+              <tr><td>Reserva ATOM</td><td class="num">7,5</td><td class="num">30</td><td class="num">10</td></tr>
+              <tr><td>Fundador</td><td class="num">5</td><td class="num">5</td><td class="num">5</td></tr>
+              <tr><td>Validadores</td><td class="num">3</td><td class="num">3</td><td class="num">3</td></tr>
+              <tr><td>Reserva de governança</td><td class="num">2</td><td class="num">2</td><td class="num">2</td></tr>
+              <tr><td>POOL</td><td class="num">10</td><td class="num">–</td><td class="num">–</td></tr>
+              <tr class="total"><td>Total</td><td class="num">100</td><td class="num">100</td><td class="num">100</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Endowment -->
+    <section id="reserva" class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">A reserva</span>
+        <h2>Patrimônio, não lastro.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">40% de tudo o que se minera vai para o cofre OTC. Só se compra LUG com BTC, em lotes de 100 mil LUG, ao preço da cesta desse dia.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>O BTC nunca é vendido</h3>
+              <p>Só sairia com 87% da governança, para migrar a uma custódia igual ou mais forte — que hoje não existe. Na prática, o BTC morre no endowment. A reserva não defende o preço: elimina a corrida.</p>
+            </div>
+            <div class="item">
+              <h3>Não é tesouraria</h3>
+              <p>O LUG só sai do cofre comprado à cesta, nunca por voto. É uma parede de oferta, não uma caixa para gastar.</p>
+            </div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Só BTC</span>
+          <span class="tag">Lote ≥ 100k LUG</span>
+          <span class="tag">Preço = cesta</span>
+          <span class="tag">BTC imóvel</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Three sources of value -->
+    <section id="fontes" class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Três fontes de valor</span>
+        <h2>De onde vem o valor do LUG.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">Um centro de gravidade e duas reservas. Nenhuma é promessa: as três vivem no código.</p>
+            <div class="cosmos">
+              <img src="../assets/img/cosmos-logo.png" alt="Cosmos">
+              <span>Rede Cosmos · ATOM</span>
+            </div>
+          </div>
+          <div>
+            <div class="item">
+              <h3>1. A cesta</h3>
+              <p>A referência sobe 10% ao ano, composta desde o ano zero. É o centro de gravidade do LUG: o preço de mercado orbita em volta da cesta, acima e abaixo, sem estar preso a ela.</p>
+            </div>
+            <div class="item">
+              <h3>2. Reserva de staking</h3>
+              <p>10% ao ano sobre o saldo, financiados pela fatia da mineração. Não imprime moeda nova nem fura o teto de 7B LUG.</p>
+            </div>
+            <div class="item">
+              <h3>3. Reserva ATOM</h3>
+              <p>Mais 10% ao ano para quem tranca 100 ATOM, até o teto combinado de 25% ao ano. <strong>100 ATOM, staking a dobrar.</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Where you mine -->
+    <section id="minerar" class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Onde se minera</span>
+        <h2>A mineração é no desktop.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">A prova exige um ambiente que o celular não dá de forma honesta. Por isso só o minerador é uma aplicação de desktop — a carteira vive no bolso ou no computador.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>Desktop: o minerador</h3>
+              <p>App nativa (Tauri). Liga-se ao nó, prova o pagamento e mina. A sua chave nunca sai da máquina.</p>
+            </div>
+            <div class="item">
+              <h3>Celular ou desktop: a carteira</h3>
+              <p>Saldo, receber, enviar e extrato. Tudo assinado no aparelho, sem servidor pelo meio.</p>
+            </div>
+          </div>
+        </div>
+        <h3>Quem ensina a minerar: os GoldHunters</h3>
+        <p>Pessoas que explicam a contribuintes e empresas como pagar o IPTU, o property tax e outros impostos reais e receber LUG — cobrando uma comissão em LUG negociada livremente. O protocolo não fixa nem cobra essa comissão.</p>
+        <div class="tags">
+          <span class="tag">Linux: .deb / AppImage</span>
+          <span class="tag">Windows depois</span>
+          <span class="tag">Carteira PT/EN</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- For companies -->
+    <section id="empresas" class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Para empresas</span>
+        <h2>Minere o imposto que já paga. Distribua o valor.</h2>
+        <div class="split">
+          <div>
+            <p class="lede">Empresas de qualquer setor já pagam imposto. Ao minerar, transformam esse pagamento em LUG — e podem distribuir parte aos funcionários. A pool nativa (AMM) é a saída onde o preço se forma: orbita a cesta, acima e abaixo.</p>
+          </div>
+          <div>
+            <div class="item">
+              <h3>Sem custo extra</h3>
+              <p>É o imposto que já ia sair, transformado em ativo. O protocolo não toca no dinheiro nem pede acesso à conta.</p>
+            </div>
+            <div class="item">
+              <h3>Distribua à equipa</h3>
+              <p>Parte do LUG minerado pode ir para os funcionários como participação — o valor circula dentro da rede.</p>
+            </div>
+            <div class="item">
+              <h3>A AMM é a saída</h3>
+              <p>A pool nativa dá liquidez ao LUG. O preço orbita a cesta, acima e abaixo, sem chão nem teto impostos pelo protocolo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How banks join -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Cobertura</span>
+        <h2>Novos bancos entram por evidência, não por código.</h2>
+        <p class="lede">Hoje há um banco comprovado de ponta a ponta — o Viacredi, no Brasil. Um banco novo acende quando um membro da comunidade entrega um recibo real sanitizado: confirmamos o campo canônico do rail e todos os clientes daquele banco passam a minerar.</p>
+      </div>
+    </section>
+
+    <!-- Immutability -->
+    <section class="section-line">
+      <div class="wrap">
+        <span class="eyebrow">Imutabilidade</span>
+        <h2>O que não muda nunca vive no código.</h2>
+        <p class="lede">A cesta, o teto, a taxa e o split são constantes compiladas: não há voto que as mude. O que deve evoluir, como a lista de bancos e as entidades, vive nos parâmetros, com regras. A imutabilidade de verdade é o Shamir: guarda o código.</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta">
+      <div class="wrap">
+        <div>
+          <h2>A testnet está no ar.</h2>
+          <p class="lede">A rede pública corre <code>luggom-test</code>. Os binários já estão disponíveis; o guia do validador acompanha o pacote da testnet.</p>
+        </div>
+        <div class="btn-row" style="margin-top:0">
+          <a class="btn btn--secondary" href="#como">Revisar como funciona</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <a class="brand" href="index.html" aria-label="Luggom, início" style="margin-bottom:14px">
+            <img src="../assets/img/wordmark.svg" alt="Luggom" style="height:30px">
+          </a>
+          <p style="max-width:34ch;color:var(--ink)">O Luggom é uma reserva auto-ancorada no algoritmo da cesta: escassa, mas elástica, cresce com a economia real e não com a especulação. Não guarda USD nem USDT em reserva, é livre (sem KYC, sem fronteiras), e a sua referência sobe 10% ao ano. Estabilidade ancorada na cesta, não numa promessa.</p>
+        </div>
+        <div>
+          <h4>Navegar</h4>
+          <ul>
+            <li><a href="#como">Como funciona</a></li>
+            <li><a href="#tokenomics">Tokenomics</a></li>
+            <li><a href="whitepaper.html">Whitepaper</a></li>
+            <li><a href="download.html">Baixar</a></li>
+            <li><a href="validators.html">Validadores</a></li>
+          <li><a href="developers.html">Developers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Estado</h4>
+          <ul>
+            <li>Testnet em operação · luggom-test</li>
+            <li>Sem KYC · sem custódia</li>
+            <li>Prova TLSNotary</li>
+            <li>PT / EN</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Comunidade</h4>
+          <ul>
+            <li><a class="social" href="https://t.me/+XRWgwPwvz4hkOTJh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · grupo</span></a></li>
+            <li><a class="social" href="https://t.me/Luggomchain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram · canal</span></a></li>
+            <li><a class="social" href="https://x.com/luggom_chain" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>X</span></a></li>
+            <li><a class="social" href="https://forum.cosmos.network/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg><span>Cosmos Forum</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="fine">
+        <span>© <span data-year>2026</span> Luggom</span>
+        <span>Autocustódia · código aberto</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+syntax = "proto3";
+package luggom.luggom.v1;
+
+import "amino/amino.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "luggom/luggom/v1/params.proto";
+import "cosmos/msg/v1/msg.proto";
+
+option go_package = "luggom/x/luggom/types";
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (amino.name) = "luggom/x/luggom/MsgUpdateParams";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // params defines the module parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}
+
+// MsgMine is the message for mining LUG$ tokens via proof-of-sacrifice.
+// Requires two comprovantes: PIX (banco) + governo (portal oficial).
+message MsgMine {
+  option (amino.name) = "luggom/x/luggom/MsgMine";
+  option (cosmos.msg.v1.signer) = "miner_address";
+
+  // miner_address is the address of the miner (who will receive the LUG$ tokens).
+  string miner_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // brl_amount is the amount paid in BRL (Brazilian Real).
+  // Used to calculate the amount of LUG$ to mint: brl_amount / paridade_fixa_mvp = amount_LUG$
+  string brl_amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+
+  // destination_cnpj is the CNPJ of the entity that received the payment (must be in whitelist).
+  string destination_cnpj = 3;
+
+  // pix_receipt_hash is the SHA256 hash of the PIX comprovante (from bank app).
+  // This hash is stored in UsedDocumentHashes to prevent double-spend.
+  string pix_receipt_hash = 4;
+
+  // government_receipt_hash is the SHA256 hash of the government comprovante (from official portal).
+  // This hash is stored in UsedDocumentHashes to prevent double-spend.
+  string government_receipt_hash = 5;
+
+  // payment_id is the payment identifier (e.g., End-to-End ID from PIX).
+  // Used for match validation: both comprovantes must reference the same payment.
+  string payment_id = 6;
+
+  // proof_icp is the ICP-Brasil validation proof (optional in MVP, required in production).
+  // In MVP, can be a placeholder; in production, must be validated with ACs.
+  // Used in ramo 6.1 (two comprovantes: PIX + governo with ICP).
+  string proof_icp = 7;
+
+  // iptu_ipva_exception = true: ramo 6.2 (IPTU/IPVA). Only PIX comprovante; validation done off-chain
+  // (API PagSeguro/PagBank + forense digital). When true, government_receipt_hash is optional;
+  // only pix_receipt_hash is used for double-spend. When false, both hashes required (ramo 6.1).
+  bool iptu_ipva_exception = 8;
+}
+
+// MsgMineResponse defines the response structure for executing a MsgMine message.
+message MsgMineResponse {
+  // amount_mined is the net amount of LUG$ tokens minted (after taxes).
+  string amount_mined = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // tax_root is the amount sent to the founder (2.5% of total mint).
+  string tax_root = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // tax_staking: share to x/distribution (2.5% of minted LUG when pool_active; 10.5% when pre-POOL merges 2.5%+8%).
+  string tax_staking = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // tax_validator: share to POOL treasury when pool_active (8% of minted LUG); zero when pre-POOL.
+  string tax_validator = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgMineUSD is the message for mining LUG$ tokens via US tax proof (EUA-first MVP 1.5).
+message MsgMineUSD {
+  option (amino.name) = "luggom/x/luggom/MsgMineUSD";
+  option (cosmos.msg.v1.signer) = "miner_address";
+
+  // miner_address is the wallet that receives mined LUG$.
+  string miner_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // payment_amount is the eligible amount paid in USD.
+  string payment_amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+
+  // tax_entity identifies the US tax entity (IRS/state/county) and must be in whitelist.
+  string tax_entity = 3;
+
+  // document_hash is the unique proof hash used for anti double-spend.
+  string document_hash = 4;
+
+  // ssn_hash is a hashed identifier to aid off-chain correlation without leaking PII on-chain.
+  string ssn_hash = 5;
+
+  // proof_irs is a proof handle or verifier output from the US pipeline.
+  string proof_irs = 6;
+}
+
+message MsgMineUSDResponse {
+  string amount_mined = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string tax_root = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string tax_staking = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string tax_validator = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgUpdateUsdOracleBasket updates CHF/USD, EUR/USD, GBP/USD for the dynamic oracle (Etapa C2 / testnet).
+message MsgUpdateUsdOracleBasket {
+  option (amino.name) = "luggom/x/luggom/MsgUpdateUsdOracleBasket";
+  option (cosmos.msg.v1.signer) = "signer";
+
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string chf_usd = 2 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string eur_usd = 3 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string gbp_usd = 4 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUpdateUsdOracleBasketResponse {}
+
+// MsgMineTaxPayment is the unified message for mining LUG$ via TLSNotary proof of tax payment.
+// Replaces MsgMineUSD (Plaid/Attom legacy) with global TLSNotary (Reclaim Protocol) verification.
+message MsgMineTaxPayment {
+  option (amino.name) = "luggom/x/luggom/MsgMineTaxPayment";
+  option (cosmos.msg.v1.signer) = "miner_address";
+
+  string miner_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  string payment_amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+
+  string tax_entity = 3;
+  string currency_code = 4;
+  string proof_commitment = 5;
+  string payment_id = 6;
+  string api_attestation = 7;
+  int64 payment_date = 8;
+  string payer_tax_id = 9; // EIN (EUA) or CNPJ (Brasil) of the payer — blocks government-to-government mining
+
+  // tax_nature_hash is the SHA-256 hash of a tax-nature fragment extracted by a
+  // country extractor (off-chain, API). Proves the payment is a real tax
+  // collection (DARF/GPS/IPTU/IPVA, property tax bill, CRA BN+RT) and not a
+  // common PIX/transfer to a whitelisted CNPJ/EIN (anti-cycle, §13.34).
+  string tax_nature_hash = 10;
+
+  // provider_id é o BANCO cuja prova foi atestada (o mesmo id da whitelist
+  // on-chain `bank_providers`). A chain TEM de o verificar: sem isto, um
+  // atacante com prova válida de um banco fora da whitelist minerava na mesma
+  // (§13.131, achado A4 — a API era o único portão). Vai no digest assinado.
+  string provider_id = 11;
+}
+
+message MsgMineTaxPaymentResponse {
+  string amount_mined = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string tax_root = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string tax_staking = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string tax_validator = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// --- BLOCO D: PRE-SALE ON-CHAIN (§13.132 §4) ---
+//
+// Venda de 3,5M LUG a $0,10 com vesting LINEAR de 3 meses. O preço, o cap e a
+// duração do vesting são CONSTANTES COMPILADAS (x/luggom/types/presale.go):
+// fora do alcance da governança, como a cesta ×3 e o chão $0,03. O LUG vendido
+// sai de `luggom_presale` (que acumula os 35% da Fase 1) à medida que veste.
+
+// MsgBuyPreSale compra LUG do pre-sale pagando em `usdt`.
+message MsgBuyPreSale {
+  option (amino.name) = "luggom/x/luggom/MsgBuyPreSale";
+  option (cosmos.msg.v1.signer) = "buyer";
+
+  string buyer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // usdt_amount é o montante pago, em unidades base do denom `usdt` (6 casas).
+  string usdt_amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgBuyPreSaleResponse {
+  // lug_amount é o LUG comprado (posição de vesting criada).
+  string lug_amount = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  // unlock_time é quando a posição fica 100% vestida (Unix).
+  int64 unlock_time = 2;
+}
+
+// MsgDistributePreSaleProceeds move o USDT acumulado no pre-sale para um
+// destino (muro/pool/marketing). Gated pela authority do módulo (x/gov):
+// um module account não pode ser gasto por um utilizador com um send normal.
+message MsgDistributePreSaleProceeds {
+  option (amino.name) = "luggom/x/luggom/MsgDistributePreSaleProceeds";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string destination = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgDistributePreSaleProceedsResponse {}
+
+// Service Msg — gRPC service for all mining/tax/oracle messages.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+  rpc Mine(MsgMine) returns (MsgMineResponse);
+  rpc MineUSD(MsgMineUSD) returns (MsgMineUSDResponse);
+  rpc UpdateUsdOracleBasket(MsgUpdateUsdOracleBasket) returns (MsgUpdateUsdOracleBasketResponse);
+  rpc MineTaxPayment(MsgMineTaxPayment) returns (MsgMineTaxPaymentResponse);
+  rpc LockSavings(MsgLockSavings) returns (MsgLockSavingsResponse);
+  rpc UnlockSavings(MsgUnlockSavings) returns (MsgUnlockSavingsResponse);
+  // FASE 5 — governance of operational lists (67%, §13.42)
+  rpc AddTaxEntity(MsgAddTaxEntity) returns (MsgAddTaxEntityResponse);
+  rpc RemoveTaxEntity(MsgRemoveTaxEntity) returns (MsgRemoveTaxEntityResponse);
+  rpc AddBankProvider(MsgAddBankProvider) returns (MsgAddBankProviderResponse);
+  rpc RemoveBankProvider(MsgRemoveBankProvider) returns (MsgRemoveBankProviderResponse);
+  rpc AddPoolAsset(MsgAddPoolAsset) returns (MsgAddPoolAssetResponse);
+  rpc RemovePoolAsset(MsgRemovePoolAsset) returns (MsgRemovePoolAssetResponse);
+  // FASE 6A — Pool nativa (AMM, §13.76)
+  rpc AddLiquidity(MsgAddLiquidity) returns (MsgAddLiquidityResponse);
+  rpc RemoveLiquidity(MsgRemoveLiquidity) returns (MsgRemoveLiquidityResponse);
+  rpc Swap(MsgSwap) returns (MsgSwapResponse);
+  // FASE 6B — Escrow P2P on-chain (§13.76/§13.24)
+  rpc CreateEscrow(MsgCreateEscrow) returns (MsgCreateEscrowResponse);
+  rpc AcceptEscrow(MsgAcceptEscrow) returns (MsgAcceptEscrowResponse);
+  rpc CancelEscrow(MsgCancelEscrow) returns (MsgCancelEscrowResponse);
+  // BLOCO D — pre-sale on-chain (§13.132 §4)
+  rpc BuyPreSale(MsgBuyPreSale) returns (MsgBuyPreSaleResponse);
+  rpc DistributePreSaleProceeds(MsgDistributePreSaleProceeds) returns (MsgDistributePreSaleProceedsResponse);
+}
+
+// MsgAddTaxEntity adds a tax entity slug to the whitelist (operational list).
+// Only the module authority (x/gov, 67% governance) may submit.
+message MsgAddTaxEntity {
+  option (amino.name) = "luggom/x/luggom/MsgAddTaxEntity";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // entity is the whitelist slug (e.g. "br:iptu_sao_paulo", "us:county:cook_il", "ca:city:toronto").
+  string entity = 2;
+}
+
+message MsgAddTaxEntityResponse {}
+
+// MsgRemoveTaxEntity removes a tax entity slug from the whitelist (operational list).
+message MsgRemoveTaxEntity {
+  option (amino.name) = "luggom/x/luggom/MsgRemoveTaxEntity";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string entity = 2;
+}
+
+message MsgRemoveTaxEntityResponse {}
+
+// MsgAddBankProvider adds a TLSNotary bank provider ID (operational list).
+message MsgAddBankProvider {
+  option (amino.name) = "luggom/x/luggom/MsgAddBankProvider";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string provider_id = 2;
+}
+
+message MsgAddBankProviderResponse {}
+
+// MsgRemoveBankProvider removes a TLSNotary bank provider ID (operational list).
+message MsgRemoveBankProvider {
+  option (amino.name) = "luggom/x/luggom/MsgRemoveBankProvider";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string provider_id = 2;
+}
+
+message MsgRemoveBankProviderResponse {}
+
+// MsgAddPoolAsset adds a pool asset denom (operational list).
+message MsgAddPoolAsset {
+  option (amino.name) = "luggom/x/luggom/MsgAddPoolAsset";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string asset = 2;
+}
+
+message MsgAddPoolAssetResponse {}
+
+// MsgRemovePoolAsset removes a pool asset denom (operational list).
+message MsgRemovePoolAsset {
+  option (amino.name) = "luggom/x/luggom/MsgRemovePoolAsset";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string asset = 2;
+}
+
+message MsgRemovePoolAssetResponse {}
+
+// MsgLockSavings locks LUG in the savings account (Bolsão — §13.64/§13.65).
+// Tranches: 90 / 180 / 365 dias. Principal + yield voltam AUTOMATICAMENTE no fim do lock (§13.38).
+message MsgLockSavings {
+  option (amino.name) = "luggom/x/luggom/MsgLockSavings";
+  option (cosmos.msg.v1.signer) = "depositor";
+
+  // depositor is the address locking LUG.
+  string depositor = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // amount is the LUG amount to lock (uluggom).
+  string amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // tranche_days: 90, 180 or 365.
+  uint32 tranche_days = 3;
+}
+
+message MsgLockSavingsResponse {
+  // lock_id é o ID do lock criado.
+  uint64 lock_id = 1;
+  // unlock_height é a altura em que principal + yield são liberados automaticamente.
+  int64 unlock_height = 2;
+}
+
+// MsgUnlockSavings cancela um lock ANTES do fim (early exit).
+// Devolve o principal à carteira; o yield pendente fica no Bolsão (§13.38 — nunca confisca,
+// mas quem sai antes não rende o período incompleto).
+message MsgUnlockSavings {
+  option (amino.name) = "luggom/x/luggom/MsgUnlockSavings";
+  option (cosmos.msg.v1.signer) = "depositor";
+
+  string depositor = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // lock_id identifica o lock a cancelar (índice do lock do depositor).
+  uint64 lock_id = 2;
+}
+
+message MsgUnlockSavingsResponse {
+  // released is the principal returned to the depositor.
+  string released = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// FASE 6A — Pool nativa (AMM, §13.76)
+
+// MsgAddLiquidity deposits LUG + a pool asset into a pair, minting LP shares.
+// Only available after the pool opens (100M LUG mined, §13.55/§13.76).
+message MsgAddLiquidity {
+  option (amino.name) = "luggom/x/luggom/MsgAddLiquidity";
+  option (cosmos.msg.v1.signer) = "depositor";
+
+  string depositor = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // asset is the pool asset denom (btc/atom/usdt/usdc/xmr — §13.24).
+  string asset = 2;
+
+  // amount_lug is the LUG amount to add (uluggom).
+  string amount_lug = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // amount_asset is the asset amount to add (base units of the asset denom).
+  string amount_asset = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // min_lp_shares is the minimum LP shares to mint (slippage protection).
+  string min_lp_shares = 5 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgAddLiquidityResponse {
+  // lp_shares minted to the depositor.
+  string lp_shares = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  // lug_deposited is the LUG actually deposited (after ratio adjustment).
+  string lug_deposited = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  // asset_deposited is the asset actually deposited (after ratio adjustment).
+  string asset_deposited = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgRemoveLiquidity burns LP shares, returning a proportional share of the pair reserves.
+message MsgRemoveLiquidity {
+  option (amino.name) = "luggom/x/luggom/MsgRemoveLiquidity";
+  option (cosmos.msg.v1.signer) = "depositor";
+
+  string depositor = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  string asset = 2;
+
+  // lp_shares is the amount of LP shares to burn.
+  string lp_shares = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // min_lug_out / min_asset_out protect against slippage on withdrawal.
+  string min_lug_out = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string min_asset_out = 5 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgRemoveLiquidityResponse {
+  string lug_out = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string asset_out = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgSwap swaps LUG for a pool asset (or the reverse) using the x·y=k curve.
+// Charges 0.3% fee (stays in the pair, grows LP value) + 0.005 LUG fixed fee (ante-handler).
+message MsgSwap {
+  option (amino.name) = "luggom/x/luggom/MsgSwap";
+  option (cosmos.msg.v1.signer) = "trader";
+
+  string trader = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // asset is the pool asset denom to swap against LUG.
+  string asset = 2;
+
+  // buy_lug: true = swap asset → LUG (sell the asset, receive LUG);
+  // false = swap LUG → asset (sell LUG, receive the asset).
+  bool buy_lug = 3;
+
+  // amount_in is the amount of the input token (asset when buy_lug=true, LUG when false).
+  string amount_in = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // min_amount_out is the minimum output to accept (slippage protection).
+  string min_amount_out = 5 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgSwapResponse {
+  // amount_out is what the trader receives.
+  string amount_out = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// FASE 6B — Escrow P2P on-chain (§13.76/§13.24)
+
+// EscrowStatus tracks the lifecycle of a P2P trade.
+enum EscrowStatus {
+  ESCROW_STATUS_UNSPECIFIED = 0;
+  // Seller deposited; waiting for the buyer to deposit the asset.
+  ESCROW_STATUS_OPEN = 1;
+  // Both sides deposited; the swap was executed atomically.
+  ESCROW_STATUS_COMPLETED = 2;
+  // Cancelled: reversed (timeout or both agreed).
+  ESCROW_STATUS_CANCELLED = 3;
+}
+
+// MsgCreateEscrow creates a P2P offer: the seller deposits LUG and asks for
+// an external asset (BTC/XMR/USDT...) to be deposited by the buyer.
+message MsgCreateEscrow {
+  option (amino.name) = "luggom/x/luggom/MsgCreateEscrow";
+  option (cosmos.msg.v1.signer) = "seller";
+
+  string seller = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // amount_lug is the LUG the seller offers (uluggom), locked in the escrow.
+  string amount_lug = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // asset is the asset requested (btc/xmr/usdt/usdc/atom — denom on-chain).
+  string asset = 3;
+
+  // amount_asset is the amount of the asset requested.
+  string amount_asset = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // timeout_minutes is the trade timeout (default 60, §13.24).
+  uint32 timeout_minutes = 5;
+}
+
+message MsgCreateEscrowResponse {
+  uint64 escrow_id = 1;
+}
+
+// MsgAcceptEscrow accepts an offer and DEPOSITS the requested asset on-chain.
+// When both sides are deposited, the swap executes atomically:
+// the asset goes to the seller and the LUG to the buyer — no trust, no manual step.
+message MsgAcceptEscrow {
+  option (amino.name) = "luggom/x/luggom/MsgAcceptEscrow";
+  option (cosmos.msg.v1.signer) = "buyer";
+
+  string buyer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 escrow_id = 2;
+
+  // amount_asset is the asset amount the buyer deposits (must match the offer).
+  string amount_asset = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgAcceptEscrowResponse {}
+
+// MsgCancelEscrow cancels a trade before completion:
+// - seller cancels while OPEN → LUG returned to the seller.
+// - after timeout, either party cancels → both sides reversed (LUG to seller,
+//   asset back to the buyer).
+message MsgCancelEscrow {
+  option (amino.name) = "luggom/x/luggom/MsgCancelEscrow";
+  option (cosmos.msg.v1.signer) = "canceller";
+
+  string canceller = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 escrow_id = 2;
+}
+
+message MsgCancelEscrowResponse {}
