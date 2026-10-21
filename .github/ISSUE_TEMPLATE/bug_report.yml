@@ -1,0 +1,87 @@
+name: Bug report
+description: Report a reproducible bug in the testnet, miner, API, notary or site.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report.
+
+        **Do not paste** seeds, private keys, cookies, full bank receipts or personal data.
+        Sanitise logs and redact the payer. For security vulnerabilities, follow `SECURITY.md` instead of opening an issue.
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      description: Where did it happen?
+      placeholder: chain/keeper, API, notary, desktop miner, collector, site, docs
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      description: Commit hash, release version, or the testnet date.
+      placeholder: 9324d74 / testnet 2026-10-21
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Go, Rust, Node and Firefox versions, as applicable.
+      placeholder: Ubuntu 24.04, Go 1.23.8, Rust 1.98, Firefox 158
+    validations:
+      required: true
+  - type: input
+    id: chain
+    attributes:
+      label: Chain and height
+      description: chain-id and block height when it happened.
+      placeholder: luggom-test, height 1284
+  - type: input
+    id: endpoint
+    attributes:
+      label: Endpoint or UI path
+      description: API/LCD/RPC URL, app screen or page.
+      placeholder: https://api.luggom.com/api/v1/chain/info
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / evidence (sanitised)
+      description: Redact seeds, keys, cookies, payer data and identifying receipt IDs.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched the existing issues.
+          required: true
+        - label: I removed secrets and personal data from this report.
+          required: true
+        - label: This is not a security vulnerability (those go to SECURITY.md).
+          required: true

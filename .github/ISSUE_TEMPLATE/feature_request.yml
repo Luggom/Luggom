@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose a change to the chain, API, miner, collector, site or docs.
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      placeholder: chain/keeper, API, notary, desktop miner, collector, site, docs
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is missing or hard today? Who is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Keep it concrete. If it changes consensus, tokenomics or the API, say so.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links, diagrams, related issues. Do not include secrets or personal data.
