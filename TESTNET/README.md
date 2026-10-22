@@ -4,12 +4,14 @@ Tudo o que é **publicável** para rodar, validar e notariar a testnet. Esta pas
 é pública (GitHub / webpage / VPS dos validadores): **nunca** coloque aqui chaves,
 seeds, keyrings, caminhos locais ou nomes reais.
 
-Quatro fluxos, nesta ordem:
+Seis fluxos, nesta ordem:
 
 1. [Rodar um nó / validador](#1-rodar-um-nó--validador)
 2. [Ser notário](#2-ser-notário)
 3. [Minerar pela carteira desktop](#3-minerar-pela-carteira-desktop)
 4. [Adicionar um banco (developer guide)](DEVELOPER_GUIDE.md) · [EN](DEVELOPER_GUIDE.en.md)
+5. [Validadores por convite (guia rápido)](VALIDATORS.md) · [EN](VALIDATORS.en.md)
+6. [Adicionar banco/rail — test kit](RAILS.md) · [EN](RAILS.en.md)
 
 > **Roadmap / estado do lançamento:** [ROADMAP.md](ROADMAP.md) · [EN](ROADMAP.en.md)
 
@@ -17,14 +19,13 @@ Quatro fluxos, nesta ordem:
 
 ## Pré-requisitos
 
-- Go (toolchain local: `export PATH="$PWD/.go1.23.8/bin:$PATH"`).
+- Go 1.23.8 (ou usa o `luggomd` da release da testnet).
 - Rust (para o notário).
 - Os binários em `build/`: `luggomd`, `luggom-api`, `luggom-extract`.
 
-Build:
+Build (só se não usares o binário da release):
 
 ```sh
-export PATH="$PWD/.go1.23.8/bin:$PATH"
 go build -ldflags="-checklinkname=0" -o build/luggomd       ./cmd/luggomd
 go build -ldflags="-checklinkname=0" -o build/luggom-api     ./cmd/luggom-api
 go build -ldflags="-checklinkname=0" -o build/luggom-extract ./cmd/luggom-extract

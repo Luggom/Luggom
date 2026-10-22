@@ -4,12 +4,14 @@ Everything that is **publishable** for running, validating and notarizing the te
 This folder is public (GitHub / webpage / validators' VPS): **never** put keys, seeds,
 keyrings, local paths or real names here.
 
-Four flows, in this order:
+Six flows, in this order:
 
 1. [Run a node / validator](#1-run-a-node--validator)
 2. [Be a notary](#2-be-a-notary)
 3. [Mine via the desktop wallet](#3-mine-via-the-desktop-wallet)
 4. [Add a bank (developer guide)](DEVELOPER_GUIDE.md) · [EN](DEVELOPER_GUIDE.en.md)
+5. [Validators by invitation (quick guide)](VALIDATORS.en.md) · [PT](VALIDATORS.md)
+6. [Add a bank/rail — test kit](RAILS.en.md) · [PT](RAILS.md)
 
 > **Roadmap / launch status:** [ROADMAP.md](ROADMAP.md) · [EN](ROADMAP.en.md)
 
@@ -17,14 +19,13 @@ Four flows, in this order:
 
 ## Prerequisites
 
-- Go (local toolchain: `export PATH="$PWD/.go1.23.8/bin:$PATH"`).
+- Go 1.23.8 (or use `luggomd` from the testnet release).
 - Rust (for the notary).
 - Binaries in `build/`: `luggomd`, `luggom-api`, `luggom-extract`.
 
-Build:
+Build (only if you are not using the release binary):
 
 ```sh
-export PATH="$PWD/.go1.23.8/bin:$PATH"
 go build -ldflags="-checklinkname=0" -o build/luggomd       ./cmd/luggomd
 go build -ldflags="-checklinkname=0" -o build/luggom-api     ./cmd/luggom-api
 go build -ldflags="-checklinkname=0" -o build/luggom-extract ./cmd/luggom-extract

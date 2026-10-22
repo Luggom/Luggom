@@ -1,0 +1,73 @@
+name: Rail report (add a bank)
+description: Submit a sanitised real receipt to light up a new bank or rail.
+title: "[rail] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to propose a new bank/rail (US, Canada or another country).
+
+        **Do not paste** the real receipt, names, addresses, account numbers or payer tax IDs.
+        Sanitise everything first. Read `TESTNET/RAILS.en.md` before submitting.
+  - type: input
+    id: bank
+    attributes:
+      label: Bank
+      placeholder: Chase, Wells Fargo, RBC, ...
+    validations:
+      required: true
+  - type: input
+    id: country
+    attributes:
+      label: Country / currency
+      placeholder: US / USD, CA / CAD, BR / BRL
+    validations:
+      required: true
+  - type: input
+    id: domain
+    attributes:
+      label: Bank domain
+      placeholder: chase.com
+    validations:
+      required: true
+  - type: input
+    id: tax_entity
+    attributes:
+      label: Tax entity (slug)
+      description: The on-chain slug, e.g. us:county:yavapai_az, ca:city:toronto, br:iptu_sao_paulo.
+      placeholder: us:county:...
+  - type: input
+    id: canonical
+    attributes:
+      label: Canonical payment field
+      description: The only field the anti-replay and extractor rely on.
+      placeholder: EIN, BN, receipt id, PIX E2E ...
+    validations:
+      required: true
+  - type: textarea
+    id: receipt
+    attributes:
+      label: Sanitised receipt
+      description: Redact the payer, address, account and any session data. Keep the canonical field, amount, date and beneficiary.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: extractor
+    attributes:
+      label: Proposed extractor
+      description: Which field maps to which value (e.g. WS_RESULT.idTransacao -> payment_id).
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: The receipt is real and paid.
+          required: true
+        - label: The receipt is sanitised and contains no personal data.
+          required: true
+        - label: The payer is not a government entity.
+          required: true
+        - label: The payment is a real tax, not a transfer.
+          required: true
