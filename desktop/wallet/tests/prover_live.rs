@@ -51,7 +51,10 @@ fn proves_a_real_https_request_end_to_end() {
 
     // O portão de aprovação: aqui aprova-se sempre; o que se verifica é que o
     // notário **conclui a verificação** (é isso que guarda a atestação).
-    let decision = prove(ProveSource::Ready(request), notary, |preview| {
+    // v4: o notário assina o destinatário; o teste usa um endereço de referência.
+    let miner = std::env::var("LUGGOM_MINER_ADDRESS")
+        .unwrap_or_else(|_| "luggom1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5n0k6".to_string());
+    let decision = prove(ProveSource::Ready(request), miner, notary, |preview| {
         println!(
             "fase 1: HTTP {} · {} descritores de revelação",
             preview.status,

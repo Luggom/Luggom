@@ -1207,6 +1207,11 @@ func (s *Server) handleMineTaxPayment(w http.ResponseWriter, r *http.Request) {
 	//
 	//    Sem notário (dev local), mantém-se o caminho antigo: a API assina.
 	fields := types.AttestationFields{
+		// v4: o destinatário e a chain entram no digest. Aqui só servem para a
+		// comparação do proof_commitment abaixo — os campos que vão na tx são os
+		// do notário (bloco seguinte).
+		MinerAddress:    req.DestAddress,
+		ChainID:         s.cfg.ChainID,
 		ProofCommitment: proofCommitment,
 		PaymentID:       claims.TransactionID,
 		PaymentAmount:        claims.PaymentAmount,
@@ -1248,6 +1253,25 @@ func (s *Server) handleMineTaxPayment(w http.ResponseWriter, r *http.Request) {
 		log.Printf("mine/tax: proof_commitment mismatch: notary=%s submitted=%s", nFields.ProofCommitment, fields.ProofCommitment)
 		writeJSON(w, http.StatusBadRequest, MineTaxPaymentResponse{
 			Error: "notary attestation does not match the submitted proof (proof_commitment mismatch)",
+			Code:  1,
+		})
+		return
+	}
+	// v4: a atestação nomeia o destinatário da cunhagem e a chain onde vale.
+	// Se não baterem com a tx que estamos a montar, a chain recusa a assinatura
+	// — recusa-se aqui, com um erro claro, em vez de devolver uma tx morta.
+	if strings.TrimSpace(nFields.MinerAddress) != strings.TrimSpace(req.DestAddress) {
+		log.Printf("mine/tax: notary miner_address mismatch: notary=%s dest=%s", nFields.MinerAddress, req.DestAddress)
+		writeJSON(w, http.StatusBadRequest, MineTaxPaymentResponse{
+			Error: "notary attestation was signed for a different miner_address (v4 binds the recipient)",
+			Code:  1,
+		})
+		return
+	}
+	if strings.TrimSpace(nFields.ChainID) != strings.TrimSpace(s.cfg.ChainID) {
+		log.Printf("mine/tax: notary chain_id mismatch: notary=%s api=%s", nFields.ChainID, s.cfg.ChainID)
+		writeJSON(w, http.StatusBadRequest, MineTaxPaymentResponse{
+			Error: "notary attestation was signed for a different chain_id (v4 binds the chain)",
 			Code:  1,
 		})
 		return

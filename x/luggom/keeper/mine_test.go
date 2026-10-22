@@ -114,6 +114,10 @@ type mineFixture struct {
 // e a registar o endereço dela em `api_verifier_address`.
 const testNotaryKeyHex = "2222222222222222222222222222222222222222222222222222222222222222"
 
+// testChainID é o chain-id da fixture. Entra no digest v4: a atestação vale
+// para esta chain e não para outra (não se replay-a de testnet para mainnet).
+const testChainID = "luggom-test"
+
 var testNotaryAddress = func() string {
 	addr, err := reclaimverify.AttestationSignerAddress(testNotaryKeyHex)
 	if err != nil {
@@ -170,6 +174,8 @@ func taxPaymentMsgForTest(t *testing.T, f *mineFixture, miner, unique string, lu
 func signAttestationForTest(t *testing.T, msg *types.MsgMineTaxPayment) {
 	t.Helper()
 	sig, err := reclaimverify.SignClaims(testNotaryKeyHex, types.AttestationFields{
+		MinerAddress:    msg.MinerAddress,
+		ChainID:         testChainID,
 		ProofCommitment: msg.ProofCommitment,
 		PaymentID:       msg.PaymentId,
 		PaymentAmount:        msg.PaymentAmount.String(),
@@ -192,6 +198,7 @@ func initMineFixture(t *testing.T) *mineFixture {
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 	storeService := runtime.NewKVStoreService(storeKey)
 	ctx := testutil.DefaultContextWithDB(t, storeKey, storetypes.NewTransientStoreKey("transient_test")).Ctx
+	ctx = ctx.WithChainID(testChainID)
 
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
 	bank := &trackingBankKeeper{}

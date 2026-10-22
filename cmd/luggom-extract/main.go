@@ -14,7 +14,7 @@
 //
 // Uso: escreve um JSON em stdin, lê um JSON de stdout.
 //
-//	{"server_name":"...","transcript_recv_b64":"..."}
+//	{"server_name":"...","miner_address":"luggom1...","chain_id":"luggom-test","transcript_recv_b64":"..."}
 //	→ {"fields":{...},"payload":"..."}  |  {"error":"..."}
 package main
 
@@ -41,7 +41,11 @@ func init() {
 }
 
 type request struct {
-	ServerName        string `json:"server_name"`
+	ServerName string `json:"server_name"`
+	// MinerAddress e ChainID entram no digest v4: o destinatário da cunhagem e
+	// a chain onde a atestação vale. São obrigatórios (fail-closed).
+	MinerAddress      string `json:"miner_address"`
+	ChainID           string `json:"chain_id"`
 	TranscriptRecvB64 string `json:"transcript_recv_b64"`
 }
 
@@ -69,7 +73,7 @@ func main() {
 	if err := json.NewDecoder(os.Stdin).Decode(&req); err != nil {
 		fail(fmt.Errorf("invalid input json: %w", err))
 	}
-	fields, payload, err := extract(req.ServerName, req.TranscriptRecvB64)
+	fields, payload, err := extract(req.ServerName, req.MinerAddress, req.ChainID, req.TranscriptRecvB64)
 	if err != nil {
 		fail(err)
 	}
@@ -86,7 +90,13 @@ func fail(err error) {
 
 // extract resolve o banco a partir do server_name atestado, corre o extrator e
 // devolve os campos canónicos + o payload a assinar.
-func extract(serverName, recvB64 string) (*types.AttestationFields, string, error) {
+func extract(serverName, minerAddress, chainID, recvB64 string) (*types.AttestationFields, string, error) {
+	if strings.TrimSpace(minerAddress) == "" {
+		return nil, "", fmt.Errorf("miner_address is empty (v4 requires the recipient in the signed payload)")
+	}
+	if strings.TrimSpace(chainID) == "" {
+		return nil, "", fmt.Errorf("chain_id is empty (v4 binds the attestation to a chain)")
+	}
 	providerID, err := resolveProvider(serverName)
 	if err != nil {
 		return nil, "", err
@@ -117,9 +127,11 @@ func extract(serverName, recvB64 string) (*types.AttestationFields, string, erro
 	}
 
 	fields := &types.AttestationFields{
+		MinerAddress:    strings.TrimSpace(minerAddress),
+		ChainID:         strings.TrimSpace(chainID),
 		ProofCommitment: proofCommitment,
 		PaymentID:       claims.TransactionID,
-		PaymentAmount:        claims.PaymentAmount,
+		PaymentAmount:   claims.PaymentAmount,
 		TaxEntity:       claims.TaxEntityMatch,
 		CurrencyCode:    claims.PaymentCurrency,
 		PaymentDate:     claims.PaymentDate,

@@ -29,7 +29,12 @@ import (
 // assinatura noutro contexto). v2: o digest passou a cobrir TODOS os campos.
 // v3: acrescentado o ProviderID (o banco atestado) — §13.131 achado A4: sem ele
 // no digest, uma API comprometida podia trocar o banco e a chain não dava por isso.
-const AttestationDomain = "luggom-attestation/v3"
+// v4: acrescentados o MinerAddress e o ChainID. Sem o minerador no digest, quem
+// visse a MsgMineTaxPayment no mempool reenviava a mesma atestação com a sua
+// carteira e ficava com o LUG (o pagador real apanhava ErrProofAlreadyUsed).
+// Sem o chain-id, uma atestação da testnet podia ser minerada outra vez na
+// mainnet se a chave do notário fosse reutilizada.
+const AttestationDomain = "luggom-attestation/v4"
 
 // AttestationFields são TODOS os campos da mineração que afetam o resultado.
 //
@@ -37,11 +42,14 @@ const AttestationDomain = "luggom-attestation/v3"
 // fique FORA da assinatura pode ser manipulado por uma API comprometida sem
 // quebrar a assinatura (A1.4, §13.121): `payment_date` contornaria a janela de
 // 365 dias (1205) e `tax_nature_hash` contornaria o portão de natureza fiscal
-// (1207); `provider_id` contornaria a whitelist de bancos (A4, §13.131).
+// (1207); `provider_id` contornaria a whitelist de bancos (A4, §13.131);
+// `miner_address` permitiria roubar a cunhagem (v4).
 type AttestationFields struct {
+	MinerAddress    string
+	ChainID         string
 	ProofCommitment string
 	PaymentID       string
-	PaymentAmount        string
+	PaymentAmount   string
 	TaxEntity       string
 	CurrencyCode    string
 	PaymentDate     int64
@@ -62,6 +70,8 @@ type AttestationFields struct {
 func BuildAttestationPayload(f AttestationFields) string {
 	return strings.Join([]string{
 		AttestationDomain,
+		strings.TrimSpace(f.MinerAddress),
+		strings.TrimSpace(f.ChainID),
 		strings.TrimSpace(f.ProofCommitment),
 		strings.TrimSpace(f.PaymentID),
 		canonicalDecimal(f.PaymentAmount),

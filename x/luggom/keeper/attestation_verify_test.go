@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 	"github.com/stretchr/testify/require"
@@ -33,6 +34,8 @@ func attestationMsg(attestation string) *types.MsgMineTaxPayment {
 func signForMsg(t *testing.T, key *secp256k1.PrivateKey, msg *types.MsgMineTaxPayment) string {
 	t.Helper()
 	digest := types.BuildAttestationDigest(types.AttestationFields{
+		MinerAddress:    msg.MinerAddress,
+		ChainID:         testChainID,
 		ProofCommitment: msg.ProofCommitment,
 		PaymentID:       msg.PaymentId,
 		PaymentAmount:        msg.PaymentAmount.String(),
@@ -115,6 +118,18 @@ func TestVerifyApiAttestation_Phase2_RejectsForged(t *testing.T) {
 	emptied := attestationMsg(validSig)
 	emptied.ProviderId = ""
 	require.ErrorIs(t, f.keeper.VerifyApiAttestation(f.ctx, emptied), types.ErrInvalidAttestation)
+
+	// (9) v4 — trocar o destinatário da cunhagem. Era o ataque do mempool: ver a
+	// msg, reenviá-la a partir de outra carteira e ficar com o LUG.
+	otherMiner, _ := makeAddr(t, f.addressCodec, 0x33)
+	stolen := attestationMsg(validSig)
+	stolen.MinerAddress = otherMiner
+	require.ErrorIs(t, f.keeper.VerifyApiAttestation(f.ctx, stolen), types.ErrInvalidAttestation)
+
+	// (10) v4 — a mesma atestação noutra chain (replay testnet → mainnet).
+	otherChain := sdk.UnwrapSDKContext(f.ctx).WithChainID("luggom-mainnet")
+	require.ErrorIs(t, f.keeper.VerifyApiAttestation(otherChain, attestationMsg(validSig)),
+		types.ErrInvalidAttestation)
 }
 
 // TestVerifyApiAttestation_Phase2_FailsClosedWithoutVerifier: sem endereço

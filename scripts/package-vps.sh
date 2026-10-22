@@ -229,6 +229,9 @@ Type=simple
 WorkingDirectory=/opt/luggom/notary
 EnvironmentFile=/opt/luggom/.env
 Environment=LUGGOM_EXTRACTOR_BIN=/opt/luggom/build/luggom-extract
+# v4: o chain-id entra no payload assinado (impede replay testnet → mainnet).
+# Tem de coincidir com o chain-id da chain e com o da API.
+Environment=LUGGOM_CHAIN_ID=luggom-test
 Environment=PORT=7047
 ExecStart=/opt/luggom/build/tlsn-verifier-server
 Restart=on-failure
@@ -247,6 +250,7 @@ Type=simple
 Environment=LUGGOM_HOME=/opt/luggom/home
 Environment=LUGGOMD_BIN=/opt/luggom/build/luggomd
 Environment=LUGGOM_API_PORT=8082
+Environment=LUGGOM_CHAIN_ID=luggom-test
 Environment=LUGGOM_KEYRING=GGOM
 Environment=LUGGOM_NOTARY_URL=http://127.0.0.1:7047
 Environment=LUGGOM_NODE=tcp://127.0.0.1:26657

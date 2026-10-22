@@ -193,6 +193,7 @@ impl ProveSource {
 
 pub fn prove(
     source: ProveSource,
+    miner_address: String,
     notary_url: String,
     approve: impl FnOnce(ProvePreview) -> bool + Send,
 ) -> Result<ProveDecision, WalletError> {
@@ -201,18 +202,19 @@ pub fn prove(
         .build()
         .map_err(|e| WalletError::Network(format!("runtime do prover: {e}")))?;
 
-    runtime.block_on(prove_async(source, notary_url, approve))
+    runtime.block_on(prove_async(source, miner_address, notary_url, approve))
 }
 
 async fn prove_async(
     source: ProveSource,
+    miner_address: String,
     notary_url: String,
     approve: impl FnOnce(ProvePreview) -> bool,
 ) -> Result<ProveDecision, WalletError> {
     let (hostname, port) = source.host_and_port()?;
 
     // 1. Registar a sessão no notário (é ESTE socket que leva o reveal_config).
-    let (mut session_ws, session_id) = register_session(&notary_url).await?;
+    let (mut session_ws, session_id) = register_session(&notary_url, &miner_address).await?;
     tracing::info!("sessão registada: {session_id}");
 
     // 2. Prover + MPC setup (igual ao CLI).
@@ -324,8 +326,12 @@ fn ws_base(notary_url: &str) -> Result<String, WalletError> {
 }
 
 /// Regista a sessão e devolve o socket (que leva depois o `reveal_config`).
+///
+/// `miner_address` vai no `sessionData`: é o destinatário da cunhagem, e o
+/// notário inclui-o no payload assinado (v4) — a API já não o pode escolher.
 async fn register_session(
     notary_url: &str,
+    miner_address: &str,
 ) -> Result<(WebSocketStream<MaybeTlsStream<TcpStream>>, String), WalletError> {
     let (mut ws, _) = connect_async(format!("{}/session", ws_base(notary_url)?))
         .await
@@ -335,7 +341,7 @@ async fn register_session(
         "type": "register",
         "maxRecvData": MAX_RECV_DATA,
         "maxSentData": MAX_SENT_DATA,
-        "sessionData": { "purpose": "luggom_desktop" },
+        "sessionData": { "purpose": "luggom_desktop", "miner_address": miner_address },
     });
     ws.send(Message::Text(register.to_string()))
         .await

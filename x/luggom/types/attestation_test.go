@@ -22,15 +22,18 @@ func TestAttestationInterop_RustSignature(t *testing.T) {
 	const (
 		// O valor é canónico do Go (LegacyDec.String() → 18 casas); é este payload
 		// que o extrator Go produz e que o notário assina.
-		// v3 (2026-09-18): domínio novo + o `provider_id` no fim (A4, §13.131). O
-		// pagador é vazio — daí o "\n\n" antes do banco.
-		rustPayload = "luggom-attestation/v3\ncommit-abc\npay-1\n240.500000000000000000\nbr:receita_federal\nBRL\n1770000000\nnature-hash-abc\n\nviacredi"
+		// v4 (2026-10-22): domínio novo + `miner_address` e `chain_id` a seguir ao
+		// domínio, na ordem do BuildAttestationPayload. O pagador é vazio — daí o
+		// "\n\n" antes do banco.
+		rustPayload = "luggom-attestation/v4\nluggom1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5n0k6\nluggom-test\ncommit-abc\npay-1\n240.500000000000000000\nbr:receita_federal\nBRL\n1770000000\nnature-hash-abc\n\nviacredi"
 		// header 0x20 = 27 + recid(1) + 4 (chave comprimida) — formato decred/Bitcoin.
-		rustSig = "209f90f24d37167fd37ca5fdb049307b5270e49f581b7f2450aa8751ce5305457266e0449fc278e32bcec008c2ed510ff4294d153103fb94cf624bbf2a3c851d44"
+		rustSig = "20342658f42eb2dc44f97139b747c1b83136e440cba458cb026956dd68af02d4486de78b6d3cba736309c5f4839d626a35f454ebb5089642535ba861c87bc4bf66"
 	)
 
 	// 1) A canonização do Go tem de produzir EXATAMENTE o payload do Rust.
 	fields := AttestationFields{
+		MinerAddress:    "luggom1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5n0k6",
+		ChainID:         "luggom-test",
 		ProofCommitment: "commit-abc",
 		PaymentID:       "pay-1",
 		PaymentAmount:        "240.500000000000000000",
@@ -67,6 +70,8 @@ func signAttestation(t *testing.T, key *secp256k1.PrivateKey, digest []byte) str
 // baseFields são campos de referência para os testes.
 func baseFields() AttestationFields {
 	return AttestationFields{
+		MinerAddress:    "luggom1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5n0k6",
+		ChainID:         "luggom-test",
 		ProofCommitment: "commit-abc",
 		PaymentID:       "pay-1",
 		PaymentAmount:        "240.50",
@@ -103,6 +108,11 @@ func TestAttestationDigest_CoversAllFields(t *testing.T) {
 	base := digestHex(baseFields())
 
 	mutations := map[string]func(*AttestationFields){
+		// v4: o destinatário da cunhagem e a chain em que a atestação vale.
+		"miner_address": func(f *AttestationFields) {
+			f.MinerAddress = "luggom1zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+		},
+		"chain_id":         func(f *AttestationFields) { f.ChainID = "luggom-mainnet" },
 		"proof_commitment": func(f *AttestationFields) { f.ProofCommitment = "outro" },
 		"payment_id":       func(f *AttestationFields) { f.PaymentID = "outro" },
 		"payment_amount":        func(f *AttestationFields) { f.PaymentAmount = "999" },
@@ -166,6 +176,17 @@ func TestAttestationVerify_RejectsTampered(t *testing.T) {
 	i := baseFields()
 	i.TaxNatureHash = "hash-inventado"
 	require.Error(t, VerifyAttestationSignature(sig, BuildAttestationDigest(i), signer))
+
+	// v4: outra carteira a receber a cunhagem — é o roubo que o miner_address
+	// no digest fecha (quem visse a tx no mempool reenviava-a para si).
+	j := baseFields()
+	j.MinerAddress = "luggom1zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+	require.Error(t, VerifyAttestationSignature(sig, BuildAttestationDigest(j), signer))
+
+	// v4: a mesma atestação noutra chain (testnet → mainnet) tem de falhar.
+	k := baseFields()
+	k.ChainID = "luggom-mainnet"
+	require.Error(t, VerifyAttestationSignature(sig, BuildAttestationDigest(k), signer))
 
 	// Outro signatário (atacante com a sua própria chave).
 	attacker := secp256k1.PrivKeyFromBytes(bytes.Repeat([]byte{0x22}, 32))

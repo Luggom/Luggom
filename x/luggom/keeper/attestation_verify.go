@@ -4,6 +4,8 @@ import (
 	"context"
 	"strings"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"luggom/x/luggom/types"
 )
 
@@ -41,7 +43,14 @@ func (k Keeper) VerifyApiAttestation(ctx context.Context, msg *types.MsgMineTaxP
 		// `payment_date` (janela de 365d, 1205) e `tax_nature_hash` (1207)
 		// sem quebrar a assinatura. E o `provider_id` (A4, §13.131): sem ele no
 		// digest, a API trocava o banco e a chain não dava por isso.
+		//
+		// v4: o `miner_address` e o `chain_id` entram no digest. O primeiro liga
+		// a cunhagem a quem a atestação nomeia (sem ele, qualquer um reenviava a
+		// msg a partir da sua carteira e ficava com o LUG); o segundo impede que
+		// uma atestação da testnet seja minerada na mainnet.
 		digest := types.BuildAttestationDigest(types.AttestationFields{
+			MinerAddress:    msg.MinerAddress,
+			ChainID:         sdk.UnwrapSDKContext(ctx).ChainID(),
 			ProofCommitment: msg.ProofCommitment,
 			PaymentID:       msg.PaymentId,
 			PaymentAmount:        msg.PaymentAmount.String(),

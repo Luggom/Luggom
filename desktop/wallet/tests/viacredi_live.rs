@@ -40,9 +40,13 @@ fn builds_the_request_and_proves_it() {
 
     let notary =
         std::env::var("LUGGOM_NOTARY_URL").unwrap_or_else(|_| "http://127.0.0.1:7047".to_string());
+    // v4: o notário assina o destinatário; o teste usa um endereço de referência.
+    let miner = std::env::var("LUGGOM_MINER_ADDRESS")
+        .unwrap_or_else(|_| "luggom1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5n0k6".to_string());
 
     let decision = prove(
         ProveSource::Viacredi { capture, call },
+        miner,
         notary,
         |preview| {
             println!(

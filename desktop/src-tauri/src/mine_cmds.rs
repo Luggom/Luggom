@@ -144,9 +144,11 @@ pub async fn mine_run(
 
     // O prover faz `block_on` internamente → thread própria. A UI recebe a
     // pré-visualização por evento e responde com `mine_decide`.
+    let prover_address = address.clone();
     let decision = tauri::async_runtime::spawn_blocking(move || {
         prover::prove(
             ProveSource::Viacredi { capture, call },
+            prover_address,
             notary_url,
             move |preview| {
                 let _ = app.emit("mine-preview", &preview);
