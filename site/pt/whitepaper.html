@@ -280,7 +280,8 @@
           <p>Os limiares de quórum e de veto da governança estão congelados no código. Quem quiser mudá-los não pode fazê-lo por votação.</p>
 
           <h3>Os notários</h3>
-          <p>Os notários saem de um pool de voluntários entre os validadores, que são no máximo 180. O notariado começa com 1 notário no arranque, passa a 3 (quórum de 2 em 3) e depois a 5 (quórum de 3 em 5). São pagos a partir de 0,5% da reserva de governança, guardada numa conta de módulo separada. O dinheiro dos notários não é votável.</p>
+          <p>Os notários saem de um pool de voluntários entre os validadores, que são no máximo 180. O notariado começa com 1 notário no arranque, passa a 3 (quórum de 2 em 3) e depois a 5 (quórum de 3 em 5). A partir da Fase 2 são pagos com 0,5% de cada cunhagem, guardados numa conta de módulo separada — a reserva do notariado. O voto da tesouraria não a alcança, e nunca é queimada.</p>
+          <p>Esses 0,5% são um <strong>orçamento de atestação</strong>. Se o rail de Open Finance for ligado, o saldo paga a atestação nesse rail: o operador converte-o e liquida a factura do agregador, ao preço e na moeda do agregador. O custo da prova não desaparece; muda de fornecedor. O contrato com o agregador (burocracia, acordos, responsabilidade) é da empresa operadora; o protocolo paga o dado, não a empresa. Se a reserva e o operador não cobrirem uma factura, esse rail pára — a chain continua a produzir blocos, e o outro rail de atestação continua a funcionar. A governança pode mudar <em>quem é elegível</em> para atestar; não pode mudar <em>para onde vai o orçamento</em>.</p>
           <p>A mainnet só abre com um mínimo de 12 validadores.</p>
 
           <h3>A lista de bancos e entidades</h3>

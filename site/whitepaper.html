@@ -279,7 +279,8 @@
           <p>The quorum and veto thresholds of governance are frozen in the code. Whoever wants to change them cannot do it by vote.</p>
 
           <h3>The notaries</h3>
-          <p>Notaries come from a pool of volunteers among the validators, who number at most 180. Notarisation starts with 1 notary at launch, moves to 3 (2-of-3 quorum) and then to 5 (3-of-5 quorum). They are paid from 0.5% of the governance reserve, held in a separate module account. The notary money is not votable.</p>
+          <p>Notaries come from a pool of volunteers among the validators, who number at most 180. Notarisation starts with 1 notary at launch, moves to 3 (2-of-3 quorum) and then to 5 (3-of-5 quorum). From Phase 2 they are paid from 0.5% of each mint, held in a separate module account — the notary reserve. The treasury vote cannot reach it, and it is never burned.</p>
+          <p>That 0.5% is an <strong>attestation budget</strong>. If the Open Finance rail is switched on, the balance pays for the attestation in that rail: the operator converts it and settles the aggregator's invoice, at the aggregator's price, in the aggregator's currency. The cost of the proof does not disappear; it changes supplier. The aggregator contract (bureaucracy, agreements, liability) is held by the operating company; the protocol pays for the data, not for the company. If the reserve and the operator cannot cover an invoice, that rail pauses — the chain keeps producing blocks, and any other attestation rail keeps working. Governance may change <em>who is eligible</em> to attest; it may not change <em>where the budget goes</em>.</p>
           <p>Mainnet only opens with a minimum of 12 validators.</p>
 
           <h3>The list of banks and entities</h3>
