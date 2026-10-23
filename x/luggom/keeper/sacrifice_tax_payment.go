@@ -114,14 +114,29 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 		return nil, types.ErrPaymentIDAlreadyUsed
 	}
 
-	// 5. Check staleness
+	// 5. Check staleness — and reject future dates explicitly. A payment date a
+	//    few days ahead would otherwise resolve to a past fixing (the lookback
+	//    goes backwards) instead of failing closed, letting the prover pick a
+	//    price that has not happened yet.
+	//
+	//    A janela é comparada em DIAS UTC, não em instantes: a data do pagamento é
+	//    uma data civil (00:00 UTC) e comparar instantes tornava os "365 dias" em
+	//    364 na prática, contradizendo a constante e a mensagem de erro.
 	blockTime := sdk.UnwrapSDKContext(ctx).BlockTime()
+	if msg.PaymentDate <= 0 {
+		return nil, fmt.Errorf("payment_date is required")
+	}
 	maxAge := types.TaxPaymentMaxAgeDaysFrozen
 	if maxAge == 0 {
 		maxAge = 365
 	}
-	paymentTime := time.Unix(msg.PaymentDate, 0)
-	if blockTime.Sub(paymentTime) > time.Duration(maxAge)*24*time.Hour {
+	paymentTime := time.Unix(msg.PaymentDate, 0).UTC()
+	if paymentTime.After(blockTime) {
+		return nil, types.ErrFuturePayment.Wrapf("payment date %s is after block time %s",
+			paymentTime.Format("2006-01-02"), blockTime.UTC().Format(time.RFC3339))
+	}
+	cutoff := blockTime.UTC().Truncate(24 * time.Hour).AddDate(0, 0, -int(maxAge))
+	if paymentTime.Before(cutoff) {
 		return nil, types.ErrStalePayment.Wrapf("payment date %s exceeds max age %d days",
 			paymentTime.Format("2006-01-02"), maxAge)
 	}
@@ -147,28 +162,42 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 	}
 
 	// 7. Validate payment_amount
-	if msg.PaymentAmount.LTE(sdkmath.LegacyZeroDec()) {
+	if msg.PaymentAmount.IsNil() || msg.PaymentAmount.LTE(sdkmath.LegacyZeroDec()) {
 		return nil, fmt.Errorf("payment_amount must be positive")
 	}
 
-	// 8. Convert BRL/CAD → USD if needed
-	amountUSD := msg.PaymentAmount
-	if cc == "BRL" {
-		brlPerUSD, err := k.brlUsdRate(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("cannot resolve BRL/USD rate: %w", err)
-		}
-		amountUSD = msg.PaymentAmount.Quo(brlPerUSD)
-	} else if cc == "CAD" {
-		cadPerUSD, err := k.cadUsdRate(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("cannot resolve CAD/USD rate: %w", err)
-		}
-		amountUSD = msg.PaymentAmount.Quo(cadPerUSD)
+	// 8. Preço NA DATA DO PAGAMENTO: um recibo não pode ser uma opção gratuita
+	//    sobre a cesta (365 dias de janela) nem sobre o salto anual do
+	//    multiplicador. Usa-se a fixing em vigor no início do dia do pagamento
+	//    (convenção PTAX). Sem fixing na janela → fail-closed.
+	daySnap, err := k.UsdOracleSnapshotForPaymentDay(ctx, msg.PaymentDate)
+	if err != nil {
+		return nil, err
 	}
 
-	// 9. Resolve USD/LUG parity via existing oracle
-	usdParity, err := k.usdParityForMineUSD(ctx)
+	// 8a. Convert BRL/CAD → USD com a taxa da fixing em vigor. Sem taxa no
+	//     snapshot, a mineração PÁRA: as constantes 5,0/1,37 foram removidas
+	//     (o desvio ao mercado sobre/sub-cunhava, §13.174).
+	amountUSD := msg.PaymentAmount
+	if cc == "BRL" {
+		if daySnap.BrlUsd.IsNil() || !daySnap.BrlUsd.IsPositive() {
+			return nil, fmt.Errorf("no BRL/USD rate for the fixing in force on %s: mining is PAUSED",
+				paymentTime.Format("2006-01-02"))
+		}
+		amountUSD = msg.PaymentAmount.Quo(daySnap.BrlUsd)
+	} else if cc == "CAD" {
+		if daySnap.CadUsd.IsNil() || !daySnap.CadUsd.IsPositive() {
+			return nil, fmt.Errorf("no CAD/USD rate for the fixing in force on %s: mining is PAUSED",
+				paymentTime.Format("2006-01-02"))
+		}
+		amountUSD = msg.PaymentAmount.Quo(daySnap.CadUsd)
+	}
+
+	// 9. Resolve USD/LUG parity with the basket and multiplier of the PAYMENT
+	//    date (not the mining date).
+	usdParity, err := k.usdParityFromBasketRatesAt(ctx,
+		time.Unix(msg.PaymentDate, 0).UTC(),
+		daySnap.ChfUsd, daySnap.EurUsd, daySnap.GbpUsd)
 	if err != nil {
 		return nil, err
 	}
@@ -246,16 +275,4 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 		TaxStaking:   split.Staking,
 		TaxValidator: split.Pool,
 	}, nil
-}
-
-// brlUsdRate returns a fixed BRL/USD rate (MVP ~5.0 BRL per 1 USD).
-// In production this should be replaced by an oracle.
-func (k Keeper) brlUsdRate(ctx context.Context) (sdkmath.LegacyDec, error) {
-	return sdkmath.LegacyNewDecWithPrec(500000, 5), nil // 5.0
-}
-
-// cadUsdRate returns a fixed CAD/USD rate (MVP ~1.37 CAD per 1 USD).
-// In production this should be replaced by an oracle.
-func (k Keeper) cadUsdRate(ctx context.Context) (sdkmath.LegacyDec, error) {
-	return sdkmath.LegacyNewDecWithPrec(137000, 5), nil // 1.37
 }

@@ -24,6 +24,7 @@ const htmlSandboxBR = `<html><body>
 <p>ID da operação: E99999991202609070000AR01BB02CC1</p>
 <p>Autenticação: 3F2A9C11DD550E88</p>
 <p>Tipo: ARRECADAÇÃO IPTU - BR.GOV.BR/AREC</p>
+<p>{"data":"07/09/2026 10:11:12"}</p>
 </body></html>`
 
 func b64(b []byte) string { return base64.StdEncoding.EncodeToString(b) }
@@ -98,6 +99,7 @@ func TestVerifyTlsnProofBR_NoCanonicalID_FailsClosed(t *testing.T) {
 <p>ID da operação: ARREC20260907000123ABC</p>
 <p>Autenticação: 3F2A9C11DD550E88</p>
 <p>Tipo: ARRECADAÇÃO IPTU - BR.GOV.BR/AREC</p>
+<p>{"data":"07/09/2026 10:11:12"}</p>
 </body></html>`
 	b := Bundle{
 		SessionID:  "sem-e2e",
@@ -117,7 +119,7 @@ func TestVerifyTlsnProofBR_NoCanonicalID_FailsClosed(t *testing.T) {
 // um extracto com vários PIX), e o valor é lido independentemente do id: a
 // escolha não seria uma identidade de pagamento. Fail-closed.
 func TestVerifyTlsnProof_MultipleE2E_FailsClosed(t *testing.T) {
-	body := `{"recebedorDocumento":"**.392.130/0001-**","beneficiario":"Prefeitura do Município","valor":"R$ 1.291,49","id1":"E99999991202601010000VC1YWGD3E47","id2":"E99999991202601010001VC1YWGD3E47","descricao":"ARRECADACAO IPTU"}`
+	body := `{"recebedorDocumento":"**.392.130/0001-**","beneficiario":"Prefeitura do Município","valor":"R$ 1.291,49","data":"15/07/2026 18:07:44","id1":"E99999991202601010000VC1YWGD3E47","id2":"E99999991202601010001VC1YWGD3E47","descricao":"ARRECADACAO IPTU"}`
 	b := Bundle{
 		SessionID:  "multi-e2e",
 		ServerName: "internetbanking.caixa.gov.br",
@@ -132,7 +134,7 @@ func TestVerifyTlsnProof_MultipleE2E_FailsClosed(t *testing.T) {
 // sampleViacrediPix é um recorte do comprovante REAL da Viacredi (PIX de IPTU para
 // a Secretaria Municipal da Fazenda de SP, CNPJ mascarado "**.392.130/0001-**").
 // Sem o marcador data-tax-entity: o ente tributário tem de ser resolvido PELO CNPJ.
-const sampleViacrediPix = `{"data":{"OUTPUT_DATA":{"WS_RESULT":{"recebedorInstituicao":"BCO BRADESCO S.A.","recebedorNome":"SECRETARIA MUNICIPAL DA F","valorOriginalPix":"R$ 1.267,82","numeroDocumento":"867599291","recebedorDocumento":"**.392.130/0001-**","identificacao":"26073147005482490600399830","valor":"R$ 1.267,82","idTransacao":"E99999991202601010002VC1YWGD3E47"}},"RESPONSE_CODE":0}}`
+const sampleViacrediPix = `{"data":{"OUTPUT_DATA":{"WS_RESULT":{"recebedorInstituicao":"BCO BRADESCO S.A.","recebedorNome":"SECRETARIA MUNICIPAL DA F","valorOriginalPix":"R$ 1.267,82","numeroDocumento":"867599291","recebedorDocumento":"**.392.130/0001-**","identificacao":"26073147005482490600399830","valor":"R$ 1.267,82","data":"15/07/2026 18:07:44","idTransacao":"E99999991202601010002VC1YWGD3E47"}},"RESPONSE_CODE":0}}`
 
 func TestVerifyTlsnProofBR_RealViacrediPix(t *testing.T) {
 	b := Bundle{
@@ -194,11 +196,29 @@ func TestVerifyTlsnProofBR_RealViacrediPixFull(t *testing.T) {
 //   - `conta.chave` é a chave PIX de um titular (UUID) — NÃO é id de pagamento.
 const caixaPixReceipt = `{"detalheExtrato":{"E99999991202601010000VC1YWGD3E47":{"id":"E99999991202601010000VC1YWGD3E47","valor":"999,99","situacaoTransacao":"CONCLUIDA","autenticacao":"3F2A9C11DD550E88","usuarioPagador":{"cnpj":"","cpf":"00000000000","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
 
+// caixaPixReceiptWithDate é o MESMO comprovante com a data do pagamento
+// atestada — o rail tem de a trazer para a mineração ser preçada pela data.
+const caixaPixReceiptWithDate = `{"detalheExtrato":{"E99999991202601010000VC1YWGD3E47":{"id":"E99999991202601010000VC1YWGD3E47","valor":"999,99","situacaoTransacao":"CONCLUIDA","data":"17/09/2026 10:11:12","autenticacao":"3F2A9C11DD550E88","usuarioPagador":{"cnpj":"","cpf":"00000000000","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
+
+// O formato real capturado NÃO traz a data do pagamento. Sem data atestada não
+// há preço na data do pagamento (o prover escolheria o dia) ⇒ fail-closed.
+func TestVerifyTlsnProofCaixa_NoDate_FailsClosed(t *testing.T) {
+	b := Bundle{
+		SessionID:  "caixa-nodate",
+		ServerName: "internetbanking.caixa.gov.br",
+		Transcript: Transcript{Recv: b64(httpResp(caixaPixReceipt))},
+	}
+	_, _, err := VerifyTlsnProof("caixa", b)
+	if err == nil || !strings.Contains(err.Error(), "no payment date") {
+		t.Fatalf("recibo sem data devia falhar fechado, veio: %v", err)
+	}
+}
+
 func TestVerifyTlsnProofCaixa_FormatoRealDePix(t *testing.T) {
 	b := Bundle{
 		SessionID:  "caixa-1",
 		ServerName: "internetbanking.caixa.gov.br",
-		Transcript: Transcript{Recv: b64(httpResp(caixaPixReceipt))},
+		Transcript: Transcript{Recv: b64(httpResp(caixaPixReceiptWithDate))},
 	}
 	claims, _, err := VerifyTlsnProof("caixa", b)
 	if err != nil {
@@ -423,21 +443,39 @@ func TestUSFirstValueFallbackRemoved(t *testing.T) {
 	}
 }
 
-// §13.131 (2d): sem data ATESTADA, US/CA são rejeitados — carimbar "agora"
-// tornaria a janela de 365 dias (1205) inútil. O BR mantém o fallback.
-func TestPaymentDateFailClosedUSCA(t *testing.T) {
-	b := Bundle{
-		SessionID:  "us-nodate",
-		ServerName: "chase.com",
-		Transcript: Transcript{Recv: b64(httpResp(
-			`{"beneficiary":"Yavapai County Treasurer","amountPaid":"$ 240","description":"property tax year 2026 parcel apn 12345"}`))},
+// §13.131 (2d) / §13.174: sem data ATESTADA, nenhum país mina — carimbar
+// "agora" tornaria a janela de 365 dias (1205) inútil e, com o preço na data do
+// pagamento, deixaria o prover escolher o preço. O BR deixou de ter fallback.
+func TestPaymentDateFailClosed_AllCountries(t *testing.T) {
+	casos := []struct {
+		provider   string
+		serverName string
+		body       string
+	}{
+		{
+			provider:   "chase",
+			serverName: "chase.com",
+			body:       `{"beneficiary":"Yavapai County Treasurer","amountPaid":"$ 240","description":"property tax year 2026 parcel apn 12345"}`,
+		},
+		{
+			provider:   "viacredi",
+			serverName: "contaonline.viacredi.coop.br",
+			body:       `{"data":{"OUTPUT_DATA":{"WS_RESULT":{"recebedorNome":"SECRETARIA MUNICIPAL DA F","recebedorDocumento":"**.392.130/0001-**","valor":"R$ 1.267,82","idTransacao":"E99999991202601010002VC1YWGD3E47"}}}}`,
+		},
 	}
-	_, _, err := VerifyTlsnProof("chase", b)
-	if err == nil {
-		t.Fatal("US sem data devia ser rejeitado (fail-closed, 2d)")
-	}
-	if !strings.Contains(err.Error(), "payment date") {
-		t.Fatalf("esperado erro de data, veio: %v", err)
+	for _, tc := range casos {
+		b := Bundle{
+			SessionID:  "nodate-" + tc.provider,
+			ServerName: tc.serverName,
+			Transcript: Transcript{Recv: b64(httpResp(tc.body))},
+		}
+		_, _, err := VerifyTlsnProof(tc.provider, b)
+		if err == nil {
+			t.Fatalf("%s sem data devia ser rejeitado (fail-closed)", tc.provider)
+		}
+		if !strings.Contains(err.Error(), "payment date") {
+			t.Fatalf("%s: esperado erro de data, veio: %v", tc.provider, err)
+		}
 	}
 }
 
@@ -481,7 +519,7 @@ func TestPayerTaxID_NestedJSONPayerField(t *testing.T) {
 	}
 }
 
-const caixaPixReceiptPayerCNPJ = `{"detalheExtrato":{"E99999991202601010000VC1YWGD3E47":{"id":"E99999991202601010000VC1YWGD3E47","valor":"999,99","situacaoTransacao":"CONCLUIDA","usuarioPagador":{"cnpj":"12.345.678/0001-90","cpf":"","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
+const caixaPixReceiptPayerCNPJ = `{"detalheExtrato":{"E99999991202601010000VC1YWGD3E47":{"id":"E99999991202601010000VC1YWGD3E47","valor":"999,99","situacaoTransacao":"CONCLUIDA","data":"17/09/2026 10:11:12","usuarioPagador":{"cnpj":"12.345.678/0001-90","cpf":"","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
 
 // O comprovante da Caixa traz `usuarioPagador` ANTES de `usuarioRecebedor`. Com o
 // pagador a ser extraído (item 3), o CNPJ dele não pode ser confundido com o do

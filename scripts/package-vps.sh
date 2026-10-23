@@ -303,7 +303,13 @@ cat > "$STAGE/$PKG/deploy/systemd/luggom-oracle-feeder.timer" <<'INI'
 Description=Run luggom-oracle-feeder daily
 
 [Timer]
-OnCalendar=*-*-* 00:15:00
+# A fixing do dia só existe depois das publicações (BCE ~15:00 UTC, PTAX de
+# fecho ~16:00 UTC). Corre a cada 30 min entre as 20:00 e as 23:30 UTC: a
+# primeira execução depois da publicação escreve o dia; as seguintes são
+# idempotentes ("já estava escrita" = sucesso). Isso deixa margem antes das
+# 00:00 UTC — a partir daí o `rate_date` do dia anterior já não é aceite e a
+# mineração de recibos datados de amanhã ficaria sem fixing.
+OnCalendar=*-*-* 20..23:00/30:00 UTC
 Persistent=true
 
 [Install]

@@ -25,13 +25,17 @@ type Source interface {
 	Rates(ctx context.Context) (Rates, error)
 }
 
+// oracleLegs são as cinco pernas que uma fonte tem de fornecer, e a fixing date.
+// CHF/EUR/GBP vêm como USD por unidade; BRL/CAD como unidades por 1 USD.
+var oracleLegs = []string{"chf", "eur", "gbp", "brl", "cad"}
+
 // sourceConfig é uma fonte declarada no ficheiro de configuração.
 type sourceConfig struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
-	// Paths mapeia a perna ("chf" | "eur" | "gbp") para um caminho pontilhado no
-	// JSON da resposta (ex.: "EUR_USD" ou "data.0.amount"). Assim o MESMO
-	// httpSource serve qualquer API, sem um cliente escrito por fornecedor.
+	// Paths mapeia a perna ("chf" | "eur" | "gbp" | "brl" | "cad") e a fixing
+	// date ("date") para um caminho pontilhado no JSON da resposta. Assim o
+	// MESMO httpSource serve qualquer API, sem um cliente por fornecedor.
 	Paths map[string]string `json:"paths"`
 }
 
@@ -47,9 +51,9 @@ func newHTTPSource(c sourceConfig) (*httpSource, error) {
 	if c.Name == "" || c.URL == "" {
 		return nil, fmt.Errorf("fonte sem nome ou url")
 	}
-	for _, leg := range []string{"chf", "eur", "gbp"} {
+	for _, leg := range append(append([]string{}, oracleLegs...), "date") {
 		if c.Paths[leg] == "" {
-			return nil, fmt.Errorf("fonte %q sem caminho para a perna %q", c.Name, leg)
+			return nil, fmt.Errorf("fonte %q sem caminho para %q", c.Name, leg)
 		}
 	}
 	return &httpSource{
@@ -85,8 +89,15 @@ func (s *httpSource) Rates(ctx context.Context) (Rates, error) {
 		return Rates{}, fmt.Errorf("%s: json: %w", s.name, err)
 	}
 
-	var out Rates
+	rawDate, err := lookupDotPath(doc, s.paths["date"])
+	if err != nil {
+		return Rates{}, fmt.Errorf("%s: fixing date: %w", s.name, err)
+	}
+	out := Rates{Date: rawDate}
 	for leg, path := range s.paths {
+		if leg == "date" {
+			continue
+		}
 		raw, err := lookupDotPath(doc, path)
 		if err != nil {
 			return Rates{}, fmt.Errorf("%s: perna %s: %w", s.name, leg, err)
@@ -102,6 +113,10 @@ func (s *httpSource) Rates(ctx context.Context) (Rates, error) {
 			out.EurUsd = v
 		case "gbp":
 			out.GbpUsd = v
+		case "brl":
+			out.BrlUsd = v
+		case "cad":
+			out.CadUsd = v
 		}
 	}
 	return out, nil

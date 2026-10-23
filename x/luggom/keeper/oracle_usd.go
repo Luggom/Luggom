@@ -36,29 +36,39 @@ var (
 	minFxLegUSD = sdkmath.LegacyMustNewDecFromStr("0.05")
 	maxFxLegUSD = sdkmath.LegacyMustNewDecFromStr("50.00")
 
+	// Pernas cotadas em UNIDADES POR 1 USD (BRL, CAD): banda estreita. Inverter
+	// uma delas (USD por BRL ≈ 0.20) tem de ser rejeitado, não aceite.
+	minPerUsdLeg = sdkmath.LegacyMustNewDecFromStr("0.50")
+	maxPerUsdLeg = sdkmath.LegacyMustNewDecFromStr("20.00")
+
 	// Annual basket epoch: +10% compound every 365 days (§13.173).
 	basketAnnualGrowth = sdkmath.LegacyMustNewDecFromStr("1.10")
 	basketYearDuration = 365 * 24 * time.Hour
 )
 
-const (
-	defaultUsdOracleMaxStaleBlocks = uint64(60)
-	// Default TIME-based staleness (§13.56): 36h. Replaces block-counting.
-	defaultUsdOracleMaxStaleSeconds = uint64(36 * 60 * 60)
-)
+// O preço é resolvido por DIA (ver usdParityForMineUSDAt); a frescura do último
+// snapshot deixou de ser o que decide a mineração — o que decide é existir o
+// snapshot do dia do PAGAMENTO.
 
 // basketMultiplierAt returns the current basket multiplier applying the +10% a.a. compound
 // since the chain start (annual epoch, deterministic by timestamp).
 // Immutable tokenomics (§13.173): starts at 3, grows 10% compound per year, no cap.
 func (k Keeper) basketMultiplierAt(ctx context.Context) (sdkmath.LegacyDec, error) {
+	return k.basketMultiplierAtTime(ctx, sdk.UnwrapSDKContext(ctx).BlockTime())
+}
+
+// basketMultiplierAtTime aplica o +10% a.a. composto NUM INSTANTE concreto.
+// É isto que permite preçar a cunhagem na data do PAGAMENTO: o mesmo recibo dá
+// sempre o mesmo LUG, independentemente de quando é submetido (sem opção grátis
+// sobre o salto de aniversário).
+func (k Keeper) basketMultiplierAtTime(ctx context.Context, at time.Time) (sdkmath.LegacyDec, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	blockTime := sdkCtx.BlockTime()
 	// §13.170 Grupo D — a âncora do epoch é derivada (bloco 0), não um param.
 	startTime := k.chainStartTime(sdkCtx)
 
 	years := 0
-	if blockTime.After(startTime) {
-		elapsed := blockTime.Sub(startTime)
+	if at.After(startTime) {
+		elapsed := at.Sub(startTime)
 		years = int(math.Floor(float64(elapsed) / float64(basketYearDuration)))
 	}
 
@@ -73,10 +83,17 @@ func (k Keeper) basketMultiplierAt(ctx context.Context) (sdkmath.LegacyDec, erro
 // usdParityFromBasketRates computes LUG = (CHF+EUR+GBP)/3 × current multiplier.
 // The floor is proportional: 0.75 × multiplier (§13.48/§13.52). No upper cap.
 func (k Keeper) usdParityFromBasketRates(ctx context.Context, chfUSD, eurUSD, gbpUSD sdkmath.LegacyDec) (sdkmath.LegacyDec, error) {
-	if chfUSD.LTE(sdkmath.LegacyZeroDec()) || eurUSD.LTE(sdkmath.LegacyZeroDec()) || gbpUSD.LTE(sdkmath.LegacyZeroDec()) {
+	return k.usdParityFromBasketRatesAt(ctx, sdk.UnwrapSDKContext(ctx).BlockTime(), chfUSD, eurUSD, gbpUSD)
+}
+
+// usdParityFromBasketRatesAt computes the parity with the multiplier of `at`
+// (the payment date for the mining path).
+func (k Keeper) usdParityFromBasketRatesAt(ctx context.Context, at time.Time, chfUSD, eurUSD, gbpUSD sdkmath.LegacyDec) (sdkmath.LegacyDec, error) {
+	if chfUSD.IsNil() || eurUSD.IsNil() || gbpUSD.IsNil() ||
+		chfUSD.LTE(sdkmath.LegacyZeroDec()) || eurUSD.LTE(sdkmath.LegacyZeroDec()) || gbpUSD.LTE(sdkmath.LegacyZeroDec()) {
 		return sdkmath.LegacyZeroDec(), fmt.Errorf("oracle fx legs must be positive")
 	}
-	mult, err := k.basketMultiplierAt(ctx)
+	mult, err := k.basketMultiplierAtTime(ctx, at)
 	if err != nil {
 		return sdkmath.LegacyZeroDec(), err
 	}
@@ -132,44 +149,107 @@ func validateOracleFxLeg(label string, d sdkmath.LegacyDec) error {
 	return nil
 }
 
-// usdParityForMineUSD resolves USD/LUG parity for the mining path.
-//
-// §13.28 / §6b / §13.56: com o oráculo dinâmico LIGADO **não há fallback para a
-// cesta fixa**. Snapshot ausente ou stale (>36 h) ⇒ **ERRO** ⇒ a mineração
-// **PÁRA** (fail-closed) até o feeder repor o snapshot ou a governança intervir.
-//
-// O fallback estático C1 só existe com `DynamicUsdOracleEnabled=false` (dev/
-// teste) — **nunca** é um caminho de produção. Antes desta mudança o código caía
-// no C1 quando o snapshot faltava ou estava stale, contradizendo a decisão (e
-// deixando a mineração correr sobre uma cesta hardcoded que ninguém podia parar).
-func (k Keeper) usdParityForMineUSD(ctx context.Context) (sdkmath.LegacyDec, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	snap, err := k.UsdOracleSnapshot.Get(ctx)
-	if err != nil {
-		if errors.Is(err, collections.ErrNotFound) {
-			return sdkmath.LegacyZeroDec(), fmt.Errorf(
-				"usd oracle has no snapshot: mining is PAUSED until the feeder commits one (§13.28/§6b)")
-		}
-		return sdkmath.LegacyZeroDec(), err
+// validateOraclePerUsdLeg valida as pernas cotadas em UNIDADES POR 1 USD (BRL,
+// CAD). A banda é estreita de propósito: um valor invertido ou no fundo de uma
+// banda larga (0.05) sobre-cunharia dezenas de vezes, e a chave do feeder é a
+// única autorizada a escrever.
+func validateOraclePerUsdLeg(label string, d sdkmath.LegacyDec) error {
+	if d.IsNil() || d.LTE(sdkmath.LegacyZeroDec()) {
+		return fmt.Errorf("%s must be positive", label)
 	}
-
-	// §13.170 Grupo B — congelado em código (36 h).
-	maxStaleSecs := types.UsdOracleMaxStaleSecondsFrozen
-
-	// Staleness por tempo: compara BlockTime com UpdatedAt do snapshot.
-	if snap.UpdatedAt > 0 {
-		updatedAt := time.Unix(snap.UpdatedAt, 0)
-		if sdkCtx.BlockTime().Sub(updatedAt) > time.Duration(maxStaleSecs)*time.Second {
-			return sdkmath.LegacyZeroDec(), fmt.Errorf(
-				"usd oracle snapshot is stale (older than %ds): mining is PAUSED until the feeder refreshes it (§13.56)",
-				maxStaleSecs)
-		}
-	} else if sdkCtx.BlockHeight()-snap.BlockHeight > int64(defaultUsdOracleMaxStaleBlocks) {
-		// Snapshots antigos sem UpdatedAt (antes da Fase 1).
-		return sdkmath.LegacyZeroDec(), fmt.Errorf(
-			"usd oracle snapshot is stale (older than %d blocks): mining is PAUSED (§13.56)",
-			defaultUsdOracleMaxStaleBlocks)
+	if d.LT(minPerUsdLeg) || d.GT(maxPerUsdLeg) {
+		return fmt.Errorf("%s out of bounds [%s,%s]", label, minPerUsdLeg.String(), maxPerUsdLeg.String())
 	}
-
-	return k.usdParityFromBasketRates(ctx, snap.ChfUsd, snap.EurUsd, snap.GbpUsd)
+	return nil
 }
+
+// --- Preço na data do PAGAMENTO (revisão do Zealynx) ------------------------
+//
+// A cunhagem tem de depender do pagamento, não do momento da submissão. Sem
+// isto, um recibo é uma opção gratuita durante 365 dias: espera-se pelo dia com
+// a cesta mais baixa e mina-se antes do aniversário da chain, quando o
+// multiplicador salta +10% (1/1.1 ⇒ ~9% menos LUG no bloco seguinte).
+//
+// O keeper guarda um snapshot por DIA DE FIXING (a data que a taxa é publicada
+// para) e preça tudo na data atestada:
+//   - taxas da cesta (CHF/EUR/GBP) da fixing em vigor;
+//   - multiplicador calculado no instante do pagamento;
+//   - taxas BRL/USD e CAD/USD da fixing em vigor.
+//
+// PTAX não publica fins de semana/feriados: a procura recua até 7 dias, para um
+// pagamento de sábado usar a última taxa publicada (convenção PTAX).
+//
+// Um recibo datado D usa a última fixing publicada ANTES de D — nunca a de D.
+// Como um dia só pode ser escrito durante esse mesmo dia (ver
+// UpdateUsdOracleBasket) e nunca é reescrito, o conjunto de candidatos para D
+// está congelado antes das 00:00 de D: nenhuma escrita tardia, backfill ou retry
+// pode mudar o que um recibo já resolveu.
+
+const (
+	oracleDayLayout       = "2006-01-02"
+	maxOracleLookbackDays = 7
+)
+
+// OracleDayKey devolve a chave canónica do dia UTC ("2026-10-22").
+func OracleDayKey(unix int64) string {
+	return time.Unix(unix, 0).UTC().Format(oracleDayLayout)
+}
+
+// UsdOracleSnapshotForPaymentDay devolve a fixing em vigor no início do dia do
+// pagamento — a última publicada ESTRITAMENTE antes de D (convenção PTAX).
+// Fail-closed: sem nenhuma fixing nos 7 dias anteriores, a mineração pára.
+func (k Keeper) UsdOracleSnapshotForPaymentDay(ctx context.Context, paymentDate int64) (types.UsdOracleSnapshot, error) {
+	base := time.Unix(paymentDate, 0).UTC()
+	if base.Unix() <= 0 {
+		return types.UsdOracleSnapshot{}, fmt.Errorf("payment_date is required")
+	}
+
+	for i := 1; i <= maxOracleLookbackDays; i++ {
+		day := base.AddDate(0, 0, -i).Format(oracleDayLayout)
+		snap, found, err := k.oracleSnapshotForDay(ctx, day)
+		if err != nil {
+			return types.UsdOracleSnapshot{}, err
+		}
+		if found {
+			return snap, nil
+		}
+	}
+	return types.UsdOracleSnapshot{}, fmt.Errorf(
+		"no usd oracle snapshot for %s (or the %d days before): mining is PAUSED until the oracle has a fixing for that window",
+		base.Format(oracleDayLayout), maxOracleLookbackDays)
+}
+
+// oracleSnapshotForDay resolve um dia de fixing. A tabela embutida é a verdade
+// para a janela que cobre (é compilada, logo igual em todos os nós); o store só
+// serve os dias posteriores a essa janela. Na primeira utilização de um dia da
+// tabela, o valor fica registado on-chain, para auditoria.
+func (k Keeper) oracleSnapshotForDay(ctx context.Context, day string) (types.UsdOracleSnapshot, bool, error) {
+	snap, covered, err := oracleHistoryForDay(day)
+	if err != nil {
+		return types.UsdOracleSnapshot{}, false, err
+	}
+	if covered {
+		has, err := k.UsdOracleDaily.Has(ctx, day)
+		if err != nil {
+			return types.UsdOracleSnapshot{}, false, err
+		}
+		if !has {
+			if err := k.UsdOracleDaily.Set(ctx, day, snap); err != nil {
+				return types.UsdOracleSnapshot{}, false, err
+			}
+		}
+		return snap, true, nil
+	}
+
+	snap, err = k.UsdOracleDaily.Get(ctx, day)
+	if err == nil {
+		return snap, true, nil
+	}
+	if !errors.Is(err, collections.ErrNotFound) {
+		return types.UsdOracleSnapshot{}, false, err
+	}
+	return types.UsdOracleSnapshot{}, false, nil
+}
+
+// usdParityFromBasketRatesAt is called by the mining path with the snapshot of
+// the fixing in force on the payment day (see `UsdOracleSnapshotForPaymentDay`).

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	"cosmossdk.io/core/address"
 	sdkmath "cosmossdk.io/math"
@@ -201,6 +202,15 @@ func initMineFixture(t *testing.T) *mineFixture {
 	ctx := testutil.DefaultContextWithDB(t, storeKey, storetypes.NewTransientStoreKey("transient_test")).Ctx
 	ctx = ctx.WithChainID(testChainID)
 
+	// A tabela embutida (366 dias) é AUTORITATIVA para a janela que cobre: um
+	// snapshot escrito no store para um desses dias é ignorado. A fixture corre
+	// depois do fim da tabela para que o que os testes semeiam seja o que decide.
+	_, historyEnd, err := keeper.OracleHistoryWindowForTest()
+	require.NoError(t, err)
+	tableEnd, err := time.Parse("2006-01-02", historyEnd)
+	require.NoError(t, err)
+	ctx = ctx.WithBlockTime(tableEnd.AddDate(0, 0, 60).Add(12 * time.Hour))
+
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
 	bank := &trackingBankKeeper{}
 
@@ -228,16 +238,25 @@ func initMineFixture(t *testing.T) *mineFixture {
 	// directo, como antes desta feature); os testes do vesting sobrepoem isto.
 	require.NoError(t, k.FounderVestingStart.Set(ctx, uint64(1)))
 
-	// A mineração é FAIL-CLOSED sem oráculo fresco (§13.28/§6b/§13.56): a fixture
-	// fornece um snapshot como o feeder faz em produção, senão nenhum teste que
-	// minere passaria. Quem quiser exercitar o fail-closed apaga-o ou envelhece-o.
-	require.NoError(t, k.UsdOracleSnapshot.Set(ctx, types.UsdOracleSnapshot{
+	// A mineração é FAIL-CLOSED sem fixing (§13.28/§6b): a fixture fornece a
+	// fixing dos dias anteriores, como o feeder faz em produção. Um recibo
+	// datado D resolve pela fixing de D-1, por isso NÃO se semeia o próprio dia
+	// (isso bloquearia a escrita do update do oráculo no mesmo teste).
+	now := sdk.UnwrapSDKContext(ctx).BlockTime()
+	daySnap := types.UsdOracleSnapshot{
 		ChfUsd:      sdkmath.LegacyMustNewDecFromStr("1.10"),
 		EurUsd:      sdkmath.LegacyMustNewDecFromStr("1.18"),
 		GbpUsd:      sdkmath.LegacyMustNewDecFromStr("1.37"),
 		BlockHeight: 1,
-		UpdatedAt:   sdk.UnwrapSDKContext(ctx).BlockTime().Unix(),
-	}))
+		UpdatedAt:   now.Unix(),
+		BrlUsd:      sdkmath.LegacyMustNewDecFromStr("5.0"),
+		CadUsd:      sdkmath.LegacyMustNewDecFromStr("1.37"),
+	}
+	require.NoError(t, k.UsdOracleSnapshot.Set(ctx, daySnap))
+	for i := 1; i <= 3; i++ {
+		d := now.AddDate(0, 0, -i)
+		require.NoError(t, k.UsdOracleDaily.Set(ctx, keeper.OracleDayKey(d.Unix()), daySnap))
+	}
 
 	return &mineFixture{
 		ctx:          ctx,

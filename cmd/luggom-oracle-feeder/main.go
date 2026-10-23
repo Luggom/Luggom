@@ -1,12 +1,15 @@
 // luggom-oracle-feeder — o feeder do oráculo (§13.28 + §13.56).
 //
-// 1×/DIA: lê EUR/USD, GBP/USD e CHF/USD de N fontes independentes, toma a
-// **mediana por perna** e submete `MsgUpdateUsdOracleBasket`.
+// 1×/DIA: lê CHF/USD, EUR/USD, GBP/USD (USD por unidade) e BRL/USD, CAD/USD
+// (unidades por 1 USD) de N fontes independentes, toma a **mediana por perna** e
+// submete `MsgUpdateUsdOracleBasket` com a fixing date do dia.
 //
 // **Fail-closed, dos dois lados:**
-//   - aqui: se responderem menos de `-min-sources` fontes, ou se as fontes
-//     discordarem acima de `-max-spread`, **NÃO submete**;
-//   - na chain: sem snapshot fresco a mineração **PÁRA** (§13.56 / `oracle_usd.go`).
+//   - aqui: se responderem menos de `-min-sources` fontes, se as fontes
+//     discordarem acima de `-max-spread`, ou se nenhuma publicar uma fixing para
+//     hoje, **NÃO submete**;
+//   - na chain: sem fixing na janela do pagamento a mineração **PÁRA**
+//     (`oracle_usd.go`).
 //
 // ⚠️ As fontes são **CONFIGURAÇÃO** (`-sources-file`), não constantes: o Chainlink
 // e a Band são **on-chain por natureza** (EVM / chain próprio) e precisam de um
@@ -94,9 +97,19 @@ func main() {
 		}
 		log.Printf("MEDIANA: %s", agg.String())
 
+		// A fixing date tem de ser a de hoje (UTC). Num fim de semana/feriado as
+		// fontes reportam a última publicação e NÃO se escreve nada: a mineração
+		// usa a fixing anterior (convenção PTAX). Escrever a taxa de sexta com a
+		// data de sábado seria inventar uma fixing que não existe.
+		today := time.Now().UTC().Format("2006-01-02")
+		if agg.Date != today {
+			log.Printf("sem fixing publicada hoje (fontes dizem %s, hoje é %s) — NÃO submetido", agg.Date, today)
+			return nil
+		}
+
 		if *dryRun {
-			log.Printf("dry-run: NÃO submetido (seria chf=%s eur=%s gbp=%s)",
-				agg.ChfUsd.String(), agg.EurUsd.String(), agg.GbpUsd.String())
+			log.Printf("dry-run: NÃO submetido (seria rate_date=%s chf=%s eur=%s gbp=%s brl=%s cad=%s)",
+				agg.Date, agg.ChfUsd, agg.EurUsd, agg.GbpUsd, agg.BrlUsd, agg.CadUsd)
 			return nil
 		}
 		return submit(*bin, extra, agg)
@@ -171,9 +184,12 @@ func buildTxArgs(home, chainID, keyring, from, node string) []string {
 func submit(bin string, extra []string, r Rates) error {
 	args := []string{
 		"tx", "luggom", "update-usd-oracle-basket",
+		"--rate-date", r.Date,
 		"--chf-usd", r.ChfUsd.String(),
 		"--eur-usd", r.EurUsd.String(),
 		"--gbp-usd", r.GbpUsd.String(),
+		"--brl-usd", r.BrlUsd.String(),
+		"--cad-usd", r.CadUsd.String(),
 		"--yes",
 	}
 	args = append(args, extra...)
@@ -181,6 +197,13 @@ func submit(bin string, extra []string, r Rates) error {
 	cmd.Env = os.Environ()
 	out, err := cmd.CombinedOutput()
 	if err != nil {
+		// Idempotência: se o dia já foi escrito (retry na mesma janela, ou uma
+		// execução anterior que chegou à chain), isto é SUCESSO — não é falha.
+		if strings.Contains(string(out), "oracle days are immutable") ||
+			strings.Contains(string(out), "already written") {
+			log.Printf("fixing de %s já estava escrita — nada a fazer", r.Date)
+			return nil
+		}
 		return fmt.Errorf("luggomd tx falhou: %w — %s", err, strings.TrimSpace(string(out)))
 	}
 	log.Printf("submetido: %s", strings.TrimSpace(string(out)))

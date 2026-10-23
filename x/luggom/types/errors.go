@@ -31,4 +31,12 @@ var (
 	// sem assinatura, sem atestação e ignorando a fase. O caminho com prova é o
 	// MsgMineTaxPayment.
 	ErrMiningMsgDisabled = errors.Register(ModuleName, 1216, "MsgMine/MsgMineUSD are disabled — use MsgMineTaxPayment (TLSNotary)")
+	// §13.174 — a cunhagem é preçada na data do pagamento. Datas futuras não
+	// podem passar: com o lookback a andar para trás, uma data alguns dias à
+	// frente resolvia para uma fixing passada em vez de falhar fechado.
+	ErrFuturePayment = errors.Register(ModuleName, 1217, "payment date is in the future")
+	// O snapshot diário é chaveado pela fixing date e é imutável: aceitar uma
+	// segunda escrita deixaria uma escrita tardia mudar o preço de um recibo já
+	// resolvido.
+	ErrOracleDayAlreadyWritten = errors.Register(ModuleName, 1218, "fixing for that day is already written (oracle days are immutable)")
 )

@@ -47,6 +47,7 @@ const htmlReceipt = `<html><body><h1>Comprovante de Pagamento</h1>
 <p>ID da operação: SBOX20260908123456ABC</p>
 <p>Autenticação: 3F2A9C11DD550E88</p>
 <p>Tipo: ARRECADAÇÃO IPTU - BR.GOV.BR/AREC</p>
+<p>{"data":"08/09/2026 10:11:12"}</p>
 </body></html>`
 
 // ailosReceipt reproduz o formato do Ailos/Viacredi: JSON com OUTPUT_DATA.WS_RESULT.
@@ -61,7 +62,7 @@ const caixaExtrato = `{"extrato":[{"data":"15/07/2026","descricao":"ARRECADACAO 
 // canónico no campo `id` (o E2E do PIX), estado em `situacaoTransacao`, e o ente
 // em `usuarioRecebedor.cnpj` (aqui mascarado → br:iptu_sao_paulo). O pagador é
 // pessoa física (`cpf`), logo o portão 1206 não dispara.
-const caixaPixReceipt = `{"detalheExtrato":{"E99999991202601010000VC1YWGD3E47":{"id":"E99999991202601010000VC1YWGD3E47","valor":"1.291,49","situacaoTransacao":"CONCLUIDA","autenticacao":"3F2A9C11DD550E88","descricao":"ARRECADACAO IPTU","usuarioPagador":{"cnpj":"","cpf":"00000000000","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
+const caixaPixReceipt = `{"detalheExtrato":{"E99999991202601010000VC1YWGD3E47":{"id":"E99999991202601010000VC1YWGD3E47","valor":"1.291,49","situacaoTransacao":"CONCLUIDA","data":"17/09/2026 10:11:12","autenticacao":"3F2A9C11DD550E88","descricao":"ARRECADACAO IPTU","usuarioPagador":{"cnpj":"","cpf":"00000000000","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
 
 // bbReceipt é o formato BB **DE REFERÊNCIA** — não é um layout real (não há
 // recibo do BB): é a forma que o SPEC do adapter pede a um portal (valor pago

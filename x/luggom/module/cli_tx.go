@@ -123,9 +123,12 @@ const (
 	flagDestination = "destination"
 	flagAmount      = "amount"
 	// Oráculo dinâmico (o feeder usa este comando, 1×/dia — §13.28/§13.56)
-	flagChfUsd = "chf-usd"
-	flagEurUsd = "eur-usd"
-	flagGbpUsd = "gbp-usd"
+	flagChfUsd   = "chf-usd"
+	flagEurUsd   = "eur-usd"
+	flagGbpUsd   = "gbp-usd"
+	flagBrlUsd   = "brl-usd"
+	flagCadUsd   = "cad-usd"
+	flagRateDate = "rate-date"
 )
 
 // NewUpdateUsdOracleBasketCliCmd returns the cobra command for
@@ -134,7 +137,7 @@ const (
 func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-usd-oracle-basket",
-		Short: "Commit the FX basket (CHF/EUR/GBP vs USD) to the dynamic oracle (daily feeder)",
+		Short: "Commit the FX fixing of one day (CHF/EUR/GBP/BRL/CAD) to the dynamic oracle (daily feeder)",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -144,6 +147,9 @@ func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 			chf, _ := cmd.Flags().GetString(flagChfUsd)
 			eur, _ := cmd.Flags().GetString(flagEurUsd)
 			gbp, _ := cmd.Flags().GetString(flagGbpUsd)
+			brl, _ := cmd.Flags().GetString(flagBrlUsd)
+			cad, _ := cmd.Flags().GetString(flagCadUsd)
+			rateDate, _ := cmd.Flags().GetString(flagRateDate)
 
 			chfDec, err := sdkmath.LegacyNewDecFromStr(strings.TrimSpace(chf))
 			if err != nil {
@@ -157,22 +163,39 @@ func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("gbp-usd: %w", err)
 			}
+			brlDec, err := sdkmath.LegacyNewDecFromStr(strings.TrimSpace(brl))
+			if err != nil {
+				return fmt.Errorf("brl-usd: %w", err)
+			}
+			cadDec, err := sdkmath.LegacyNewDecFromStr(strings.TrimSpace(cad))
+			if err != nil {
+				return fmt.Errorf("cad-usd: %w", err)
+			}
 
 			msg := &types.MsgUpdateUsdOracleBasket{
-				Signer: clientCtx.GetFromAddress().String(),
-				ChfUsd: chfDec,
-				EurUsd: eurDec,
-				GbpUsd: gbpDec,
+				Signer:   clientCtx.GetFromAddress().String(),
+				ChfUsd:   chfDec,
+				EurUsd:   eurDec,
+				GbpUsd:   gbpDec,
+				BrlUsd:   brlDec,
+				CadUsd:   cadDec,
+				RateDate: strings.TrimSpace(rateDate),
 			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
-	cmd.Flags().String(flagChfUsd, "", "taxa CHF/USD (string decimal, ex.: 1.10)")
-	cmd.Flags().String(flagEurUsd, "", "taxa EUR/USD (string decimal, ex.: 1.18)")
-	cmd.Flags().String(flagGbpUsd, "", "taxa GBP/USD (string decimal, ex.: 1.37)")
+	cmd.Flags().String(flagChfUsd, "", "CHF/USD — USD por 1 CHF (ex.: 1.10)")
+	cmd.Flags().String(flagEurUsd, "", "EUR/USD — USD por 1 EUR (ex.: 1.18)")
+	cmd.Flags().String(flagGbpUsd, "", "GBP/USD — USD por 1 GBP (ex.: 1.37)")
+	cmd.Flags().String(flagBrlUsd, "", "BRL/USD — BRL por 1 USD (ex.: 5.04)")
+	cmd.Flags().String(flagCadUsd, "", "CAD/USD — CAD por 1 USD (ex.: 1.40)")
+	cmd.Flags().String(flagRateDate, "", "fixing date, YYYY-MM-DD (dia UTC da publicação)")
 	_ = cmd.MarkFlagRequired(flagChfUsd)
 	_ = cmd.MarkFlagRequired(flagEurUsd)
 	_ = cmd.MarkFlagRequired(flagGbpUsd)
+	_ = cmd.MarkFlagRequired(flagBrlUsd)
+	_ = cmd.MarkFlagRequired(flagCadUsd)
+	_ = cmd.MarkFlagRequired(flagRateDate)
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }

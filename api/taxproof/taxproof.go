@@ -510,19 +510,17 @@ func VerifyTlsnProof(providerID string, b Bundle) (*reclaimverify.VerifiedClaims
 	claims.TaxEntityMatch = taxEntityFromBody(b.ResponseBody, claims.RecipientName, country)
 	claims.Description = natureFragment(text, country)
 	// Data do pagamento: vem do CORPO ATESTADO (o comprovante traz a data da
-	// transação). Fallback para "agora" só quando o comprovante não a traz —
-	// sem isto a janela de 365 dias (1205 ErrStalePayment) não seria aplicada.
+	// transação). Sem data atestada, FAIL-CLOSED para TODOS os países: carimbar
+	// "agora" deixaria o prover escolher o dia — e, com o preço na data do
+	// pagamento, escolher o preço. (Antes só US/CA falhavam; BR caía no relógio.)
 	if claims.PaymentDate == 0 {
 		claims.PaymentDate = receiptPaymentDate(text)
 	}
 	if claims.PaymentDate == 0 {
-		// BR: mantém-se o fallback "agora" (formatos por testar, ex.: a Caixa).
-		// US/CA: fail-closed (2d) — sem data ATESTADA, carimbar "agora" tornaria
-		// a janela de 365 dias (1205) inútil.
-		if country == "US" || country == "CA" {
-			return nil, "", fmt.Errorf("attested receipt has no payment date (required for %s)", country)
-		}
-		claims.PaymentDate = time.Now().Unix()
+		return nil, "", fmt.Errorf("attested receipt has no payment date: a prover-selectable date is refused")
+	}
+	if claims.PaymentDate > time.Now().Unix()+300 {
+		return nil, "", fmt.Errorf("attested receipt has a payment date in the future")
 	}
 
 	// §13.146 B — o anti-replay é SEMÂNTICO (a identidade do pagamento), não os

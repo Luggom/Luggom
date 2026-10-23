@@ -14,6 +14,11 @@ type UsdOracleSnapshot struct {
 	// UpdatedAt is the Unix seconds (UTC) when the snapshot was committed.
 	// Usado para o staleness por tempo (§13.56: >36h sem update → fallback/pausa).
 	UpdatedAt int64 `protobuf:"varint,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at"`
+	// BrlUsd is BRL per 1 USD (e.g. 5.0). Guardado por DIA para a conversão de um
+	// pagamento em BRL usar a taxa da data do pagamento, não a da mineração.
+	BrlUsd sdkmath.LegacyDec `protobuf:"bytes,6,opt,name=brl_usd,json=brlUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"brl_usd"`
+	// CadUsd is CAD per 1 USD.
+	CadUsd sdkmath.LegacyDec `protobuf:"bytes,7,opt,name=cad_usd,json=cadUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"cad_usd"`
 }
 
 func (m *UsdOracleSnapshot) Reset()         { *m = UsdOracleSnapshot{} }

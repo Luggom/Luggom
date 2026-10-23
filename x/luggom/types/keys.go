@@ -84,6 +84,13 @@ var UsedPaymentIDsPrefix = collections.NewPrefix("used_payid_")
 // UsdOracleSnapshotKey stores the last committed USD basket FX rates (Etapa C2).
 var UsdOracleSnapshotKey = collections.NewPrefix("usd_ora_snap")
 
+// UsdOracleDailyPrefix stores one snapshot per UTC day (key "YYYY-MM-DD"), so a
+// mint can be priced at the ATTESTED PAYMENT DATE instead of the mining date.
+// Sem isto, um recibo vira uma opção gratuita por 365 dias: espera-se pelo dia
+// com a cesta mais baixa (e pelo dia antes do aniversário, quando o multiplicador
+// salta +10%). Ver checkpoint §10 / revisão do Zealynx.
+var UsdOracleDailyPrefix = collections.NewPrefix("usd_ora_day")
+
 // MiningCapDailyBucketsPrefix stores the daily mining buckets for the 365d sliding window
 // (annual maximum cap §13.49/§13.52: 15B year 0, −5% a.a.). Key: "mining_cap_" + YYYYMMDD.
 var MiningCapDailyBucketsPrefix = collections.NewPrefix("mining_cap_")

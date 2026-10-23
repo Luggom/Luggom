@@ -3,18 +3,24 @@
     "name": "frankfurter",
     "url": "http://127.0.0.1:9911/frankfurter",
     "paths": {
+      "date": "date",
       "chf": "rates.CHF",
       "eur": "rates.EUR",
-      "gbp": "rates.GBP"
+      "gbp": "rates.GBP",
+      "brl": "rates.BRL",
+      "cad": "rates.CAD"
     }
   },
   {
     "name": "erapi",
     "url": "http://127.0.0.1:9911/erapi",
     "paths": {
+      "date": "date",
       "chf": "rates.CHF",
       "eur": "rates.EUR",
-      "gbp": "rates.GBP"
+      "gbp": "rates.GBP",
+      "brl": "rates.BRL",
+      "cad": "rates.CAD"
     }
   }
 ]

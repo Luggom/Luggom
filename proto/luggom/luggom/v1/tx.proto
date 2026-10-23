@@ -152,7 +152,17 @@ message MsgMineUSDResponse {
   ];
 }
 
-// MsgUpdateUsdOracleBasket updates CHF/USD, EUR/USD, GBP/USD for the dynamic oracle (Etapa C2 / testnet).
+// MsgUpdateUsdOracleBasket commits the FX fixing of ONE day for the dynamic
+// oracle (Etapa C2 / testnet).
+//
+// rate_date is the FIXING date the rates are published for ("YYYY-MM-DD",
+// UTC). The keeper keys the daily snapshot by it and refuses to overwrite a
+// day already written, so a late or backfilled write can never change what a
+// receipt already resolves to.
+//
+// Conventions (do not mix them up):
+//   - chf_usd / eur_usd / gbp_usd: USD per 1 unit of the currency;
+//   - brl_usd / cad_usd:           units of the currency per 1 USD.
 message MsgUpdateUsdOracleBasket {
   option (amino.name) = "luggom/x/luggom/MsgUpdateUsdOracleBasket";
   option (cosmos.msg.v1.signer) = "signer";
@@ -169,6 +179,17 @@ message MsgUpdateUsdOracleBasket {
     (gogoproto.nullable) = false
   ];
   string gbp_usd = 4 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string rate_date = 5;
+  string brl_usd = 6 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string cad_usd = 7 [
     (cosmos_proto.scalar) = "cosmos.Dec",
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false

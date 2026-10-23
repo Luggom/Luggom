@@ -15,7 +15,7 @@ func TestIsHash64(t *testing.T) {
 	require.False(t, IsHash64(valid[:63]))
 	require.False(t, IsHash64(valid+"00"))
 	require.False(t, IsHash64(strings.Repeat("zz", 32)))
-	require.False(t, IsHash64("E82639451202607152106LZ1QCIXXYE6")) // E2E cru
+	require.False(t, IsHash64("E99999991202601010002VC1YWGD3E47")) // E2E cru
 }
 
 func TestHashTaxID_Normalizes(t *testing.T) {
@@ -29,7 +29,7 @@ func TestHashTaxID_Normalizes(t *testing.T) {
 func TestHashPaymentID_Normalizes(t *testing.T) {
 	require.Equal(t, HashPaymentID("  abc123  "), HashPaymentID("ABC123"))
 	require.Equal(t, "", HashPaymentID("   "))
-	require.True(t, IsHash64(HashPaymentID("E82639451202607152106LZ1QCIXXYE6")))
+	require.True(t, IsHash64(HashPaymentID("E99999991202601010002VC1YWGD3E47")))
 }
 
 // TestIsGovernmentEntityHash_CoversMaskedIDs: um recibo que mascara parte do

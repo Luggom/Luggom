@@ -44,7 +44,10 @@ func ValidateClaims(claims *VerifiedClaims) error {
 	if claims.TransactionID == "" {
 		return fmt.Errorf("transaction_id is empty")
 	}
-	if claims.PaymentDate > time.Now().Unix()+86400 {
+	// Só tolerância de relógio: a chain rejeita qualquer data futura
+	// (ErrFuturePayment). Uma margem de um dia deixava passar aqui o que a
+	// chain recusava — e, com o preço na data do pagamento, escolhia o preço.
+	if claims.PaymentDate > time.Now().Unix()+300 {
 		return fmt.Errorf("payment_date is in the future")
 	}
 	if claims.TaxEntityMatch == "" {

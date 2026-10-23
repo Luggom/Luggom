@@ -21,7 +21,7 @@ func TestMine_RejectsRawPaymentID(t *testing.T) {
 	miner, _ := makeAddr(t, f.addressCodec, 0x11)
 
 	msg := taxPaymentMsgForTest(t, f, miner, "raw-payment-id", 100)
-	msg.PaymentId = "E82639451202607152106LZ1QCIXXYE6" // E2E cru do comprovante
+	msg.PaymentId = "E99999991202601010002VC1YWGD3E47" // E2E cru do comprovante
 	signAttestationForTest(t, msg)
 
 	_, err := f.keeper.MineTaxPayment(f.ctx, msg)
@@ -122,5 +122,5 @@ func TestMine_EventPublishesGovernmentIDOnly(t *testing.T) {
 
 	// O ID do pagador (123456789) e o E2E cru não podem aparecer em lado nenhum.
 	require.NotContains(t, all.String(), "123456789")
-	require.NotContains(t, all.String(), "E82639451202607152106LZ1QCIXXYE6")
+	require.NotContains(t, all.String(), "E99999991202601010002VC1YWGD3E47")
 }
