@@ -61,7 +61,7 @@ func TestMineTaxPayment_TaxNatureHashRequired(t *testing.T) {
 		msg := *base
 		msg.TaxNatureHash = taxNatureHashForTest()
 		msg.ProofCommitment = "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
-		msg.PaymentId = "pay-67890"
+		msg.PaymentId = types.HashPaymentID("pay-67890")
 		signAttestationForTest(t, &msg)
 		resp, err := f.keeper.MineTaxPayment(f.ctx, &msg)
 		require.NoError(t, err)

@@ -48,24 +48,31 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 	//   (1) payer_tax_id matches the on-chain government blacklist (params, gov-67% editable)
 	//   (2) fallback: payer_tax_id matches ANY tax entity in the whitelist (slug→ID map) —
 	//       covers every municipality/county/province in the whitelist without listing them all.
-	payerTaxID := strings.TrimSpace(msg.PayerTaxId)
-	if payerTaxID != "" {
-		norm := types.NormalizeTaxID(payerTaxID)
-		if norm != "" {
-			// Layer 1: blacklist params (governable list)
-			if types.IsGovernmentEntity(norm, params.GovernmentEntityBlacklist) {
-				return nil, types.ErrGovernmentEntityCannotMine.Wrapf(
-					"payer %s is a government entity — government-to-government transfers cannot mine LUG",
-					payerTaxID,
-				)
-			}
-			// Layer 2: fallback — payer ID belongs to a whitelisted tax entity (government)
-			if types.IsIDOfWhitelistedEntity(norm) {
-				return nil, types.ErrGovernmentEntityCannotMine.Wrapf(
-					"payer %s is a government entity (tax whitelist) — government-to-government transfers cannot mine LUG",
-					payerTaxID,
-				)
-			}
+	//
+	// Privacidade: `payer_tax_id` traz o SHA-256 do ID normalizado, nunca o CNPJ/EIN
+	// em claro. As duas camadas passam a comparar hashes — incluindo os hashes dos
+	// substrings ≥6 caracteres, o que preserva o match de recibos que mascaram
+	// parte do número. Um valor que não seja 64 hex é recusado (fail-closed): a
+	// chain não aceita o ID cru de um cliente modificado.
+	payerTaxIDHash := strings.TrimSpace(msg.PayerTaxId)
+	if payerTaxIDHash != "" {
+		if !types.IsHash64(payerTaxIDHash) {
+			return nil, types.ErrInvalidAttestation.Wrap(
+				"payer_tax_id must be a SHA-256 hex — the raw EIN/CNPJ/BN is never stored on-chain")
+		}
+		// Layer 1: blacklist params (governable list)
+		if types.IsGovernmentEntityHash(payerTaxIDHash, params.GovernmentEntityBlacklist) {
+			return nil, types.ErrGovernmentEntityCannotMine.Wrapf(
+				"payer %s is a government entity — government-to-government transfers cannot mine LUG",
+				payerTaxIDHash,
+			)
+		}
+		// Layer 2: fallback — payer ID belongs to a whitelisted tax entity (government)
+		if types.IsHashOfWhitelistedEntity(payerTaxIDHash) {
+			return nil, types.ErrGovernmentEntityCannotMine.Wrapf(
+				"payer %s is a government entity (tax whitelist) — government-to-government transfers cannot mine LUG",
+				payerTaxIDHash,
+			)
 		}
 	}
 
@@ -91,10 +98,13 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 		return nil, types.ErrProofAlreadyUsed
 	}
 
-	// 4. Validate payment_id (anti-replay)
+	// 4. Validate payment_id (anti-replay). O valor é o SHA-256 do identificador
+	//    de liquidação (E2E do PIX / id do comprovante): o valor cru nunca vai
+	//    para a chain. Recusar não-hashes impede que um cliente modificado
+	//    publique o E2E ao contornar o extrator.
 	pid := strings.TrimSpace(msg.PaymentId)
-	if len(pid) < 4 {
-		return nil, fmt.Errorf("payment_id too short (min 4 chars)")
+	if !types.IsHash64(pid) {
+		return nil, fmt.Errorf("payment_id must be a SHA-256 hex (64 chars), got %d", len(pid))
 	}
 	pidUsed, err := k.UsedPaymentIDs.Has(ctx, pid)
 	if err != nil {
@@ -204,16 +214,25 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 	}
 
 	// 15. Emit event
+	//
+	// `tax_entity_id` é o CNPJ/EIN/BN do GOVERNO que recebeu o imposto, derivado
+	// do slug assinado — é público por natureza e fica ao lado do valor. O do
+	// PAGADOR nunca aparece: só o seu hash (`payer_tax_id`).
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	attrs := []sdk.Attribute{
 		sdk.NewAttribute("miner", msg.MinerAddress),
 		sdk.NewAttribute("payment_amount", msg.PaymentAmount.String()),
 		sdk.NewAttribute("tax_entity", msg.TaxEntity),
+	}
+	if ids := types.TaxEntityIDs(msg.TaxEntity); len(ids) > 0 {
+		attrs = append(attrs, sdk.NewAttribute("tax_entity_id", strings.Join(ids, ",")))
+	}
+	attrs = append(attrs,
 		sdk.NewAttribute("currency_code", cc),
 		sdk.NewAttribute("proof_commitment", pc),
 		sdk.NewAttribute("tax_nature_hash", taxNatureHash),
 		sdk.NewAttribute("payment_id", pid),
-	}
+	)
 	attrs = append(attrs, miningSplitAttributes(split)...)
 	attrs = append(attrs,
 		sdk.NewAttribute("pool_active", fmt.Sprintf("%t", k.PoolOpen(ctx))),

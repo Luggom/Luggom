@@ -90,7 +90,7 @@ func NewMineTaxPaymentCliCmd() *cobra.Command {
 	cmd.Flags().String(flagPaymentID, "", "unique payment transaction ID (anti-replay)")
 	cmd.Flags().String(flagApiAttestation, "", "API attestation signature (base64)")
 	cmd.Flags().Int64(flagPaymentDate, 0, "Unix timestamp of the payment")
-	cmd.Flags().String(flagPayerTaxId, "", "EIN (EUA) or CNPJ (Brasil) of the payer — government entities are blocked from mining")
+	cmd.Flags().String(flagPayerTaxId, "", "SHA-256 (64 hex) of the payer's EIN/CNPJ/BN — government entities are blocked from mining")
 	cmd.Flags().String(flagTaxNatureHash, "", "SHA-256 of the tax-nature fragment extracted by the API (anti-cycle §13.34)")
 	cmd.Flags().String(flagProviderID, "", "bank provider id asserted by the notary (e.g. viacredi) — must be in the on-chain whitelist")
 

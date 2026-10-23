@@ -194,10 +194,17 @@ message MsgMineTaxPayment {
   string tax_entity = 3;
   string currency_code = 4;
   string proof_commitment = 5;
+  // payment_id is the SHA-256 (64 hex) of the settlement identifier (PIX E2E /
+  // receipt id). The raw value never goes on-chain: the extractor hashes it and
+  // the keeper rejects anything that is not a digest.
   string payment_id = 6;
   string api_attestation = 7;
   int64 payment_date = 8;
-  string payer_tax_id = 9; // EIN (EUA) or CNPJ (Brasil) of the payer — blocks government-to-government mining
+  // payer_tax_id is the SHA-256 (64 hex) of the payer's EIN/CNPJ/BN (normalized).
+  // The raw ID never goes on-chain. The keeper compares the hash against the
+  // government blacklist and the tax whitelist (1206) — including hashes of
+  // masked fragments, so a receipt that hides part of the CNPJ still matches.
+  string payer_tax_id = 9;
 
   // tax_nature_hash is the SHA-256 hash of a tax-nature fragment extracted by a
   // country extractor (off-chain, API). Proves the payment is a real tax

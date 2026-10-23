@@ -157,11 +157,12 @@ func taxPaymentMsgForTest(t *testing.T, f *mineFixture, miner, unique string, lu
 		TaxEntity:       "irs",
 		CurrencyCode:    "USD",
 		ProofCommitment: hex.EncodeToString(sum[:]),
-		PaymentId:       "pay-" + unique,
-		PaymentDate:     sdk.UnwrapSDKContext(f.ctx).BlockTime().Unix(),
-		PayerTaxId:      "12-3456789",
-		TaxNatureHash:   strings.Repeat("b", 64),
-		ProviderId:      "viacredi",
+		// Pseudónimos (privacidade on-chain): a chain exige 64 hex nos dois campos.
+		PaymentId:     types.HashPaymentID("pay-" + unique),
+		PaymentDate:   sdk.UnwrapSDKContext(f.ctx).BlockTime().Unix(),
+		PayerTaxId:    types.HashTaxID("123456789"),
+		TaxNatureHash: strings.Repeat("b", 64),
+		ProviderId:    "viacredi",
 	}
 	// §13.170 Grupo B: fase 2 — a atestação tem de ser ASSINADA pelo notário.
 	signAttestationForTest(t, msg)

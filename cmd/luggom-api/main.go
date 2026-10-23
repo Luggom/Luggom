@@ -1279,8 +1279,12 @@ func (s *Server) handleMineTaxPayment(w http.ResponseWriter, r *http.Request) {
 	fields = *nFields
 	apiAttestation := nSig
 
-	// 3b. Block government-to-government mining (anti-inflation)
-	if fields.PayerTaxID != "" && isGovernmentPayer(fields.PayerTaxID) {
+	// 3b. Block government-to-government mining (anti-inflation).
+	//
+	// O check usa o ID CRU extraído da prova (`claims.PayerTaxID`): a partir do
+	// v4-hash o `fields.PayerTaxID` é um SHA-256, por isso compará-lo com a lista
+	// de IDs nunca bateria. A chain volta a impor o portão sobre o hash.
+	if claims.PayerTaxID != "" && isGovernmentPayer(claims.PayerTaxID) {
 		writeJSON(w, http.StatusForbidden, MineTaxPaymentResponse{
 			Error: "government entities cannot mine LUG (EIN/CNPJ-to-EIN/CNPJ transfer blocked)",
 			Code:  1206,

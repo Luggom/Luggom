@@ -765,6 +765,20 @@ func WhitelistedEntityForID(normalizedID string) (string, bool) {
 	return "", false
 }
 
+// TaxEntityIDs returns the well-known tax IDs (CNPJ/EIN/BN) of a whitelist
+// slug — e.g. "br:iptu_sao_paulo" → ["46392130000118"]. É o identificador PÚBLICO
+// do governo que recebeu o imposto: vai para o evento da mineração junto ao
+// valor, para o recibo ficar verificável sem depender do slug.
+func TaxEntityIDs(slug string) []string {
+	ids, ok := taxEntityIDs[strings.ToLower(strings.TrimSpace(slug))]
+	if !ok {
+		return nil
+	}
+	out := make([]string, len(ids))
+	copy(out, ids)
+	return out
+}
+
 // NormalizeTaxID normalizes a raw tax ID (CNPJ/EIN/BN) to uppercase digits/letters.
 func NormalizeTaxID(raw string) string {
 	return strings.ToUpper(strings.Map(func(r rune) rune {

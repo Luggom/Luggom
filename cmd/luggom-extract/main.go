@@ -130,16 +130,22 @@ func extract(serverName, minerAddress, chainID, recvB64 string) (*types.Attestat
 		MinerAddress:    strings.TrimSpace(minerAddress),
 		ChainID:         strings.TrimSpace(chainID),
 		ProofCommitment: proofCommitment,
-		PaymentID:       claims.TransactionID,
-		PaymentAmount:   claims.PaymentAmount,
-		TaxEntity:       claims.TaxEntityMatch,
-		CurrencyCode:    claims.PaymentCurrency,
-		PaymentDate:     claims.PaymentDate,
-		TaxNatureHash:   taxnature.Hash(natureFrag),
-		PayerTaxID:      claims.PayerTaxID,
+		// Pseudónimos: nem o E2E do PIX nem o CNPJ/EIN do pagador vão para a
+		// chain em claro. A chain exige 64 hex (IsHash64), por isso o valor cru
+		// não pode ser reintroduzido por um cliente modificado.
+		PaymentID:     types.HashPaymentID(claims.TransactionID),
+		PaymentAmount: claims.PaymentAmount,
+		TaxEntity:     claims.TaxEntityMatch,
+		CurrencyCode:  claims.PaymentCurrency,
+		PaymentDate:   claims.PaymentDate,
+		TaxNatureHash: taxnature.Hash(natureFrag),
+		PayerTaxID:    types.HashTaxID(claims.PayerTaxID),
 		// O banco resolvido a partir do server_name ATESTADO (§13.131 A4): vai no
 		// payload assinado, para a chain poder aplicar a whitelist de bancos.
 		ProviderID: providerID,
+	}
+	if fields.PaymentID == "" {
+		return nil, "", fmt.Errorf("cannot mine without a payment id (the attested receipt has none)")
 	}
 	return fields, types.BuildAttestationPayload(*fields), nil
 }
