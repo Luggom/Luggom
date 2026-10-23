@@ -91,6 +91,22 @@ func (p Params) Validate() error {
 	if len(p.BankProviders) == 0 {
 		return errors.New("bank_providers cannot be empty")
 	}
+	// §14 — destinos permitidos para a reserva do notariado. Vazia é válido
+	// (fail-closed: a reserva não se gasta), mas cada entrada tem de ser um
+	// endereço válido e não pode haver duplicados.
+	if len(p.NotaryPayees) > 64 {
+		return fmt.Errorf("notary_payees cannot have more than 64 entries, got %d", len(p.NotaryPayees))
+	}
+	seenPayee := make(map[string]struct{}, len(p.NotaryPayees))
+	for i, payee := range p.NotaryPayees {
+		if _, err := sdk.AccAddressFromBech32(payee); err != nil {
+			return fmt.Errorf("notary_payees[%d] is not a valid address: %w", i, err)
+		}
+		if _, dup := seenPayee[payee]; dup {
+			return fmt.Errorf("notary_payees[%d] is duplicated: %s", i, payee)
+		}
+		seenPayee[payee] = struct{}{}
+	}
 	if len(p.PoolAssets) == 0 {
 		return errors.New("pool_assets cannot be empty")
 	}

@@ -314,6 +314,31 @@ message MsgDistributePreSaleProceeds {
 
 message MsgDistributePreSaleProceedsResponse {}
 
+// MsgSpendFromReserve gasta a tesouraria (gov) ou a reserva do notariado.
+// Só a authority (x/gov) pode assinar: uma conta de módulo não aceita um
+// `MsgSend` normal, por isso sem esta mensagem o dinheiro das reservas fica
+// preso para sempre (§14).
+//
+// A reserva do notariado NÃO é discricionária: o destino tem de constar em
+// `params.notary_payees` (lista governável). É isso que mantém a promessa
+// "a governança muda QUEM é elegível, não PARA ONDE vai o orçamento".
+message MsgSpendFromReserve {
+  option (amino.name) = "luggom/x/luggom/MsgSpendFromReserve";
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // "gov" (tesouraria, discricionária) | "notary" (reserva do notariado).
+  string reserve = 2;
+  string destination = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string amount = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgSpendFromReserveResponse {}
+
 // Service Msg — gRPC service for all mining/tax/oracle messages.
 service Msg {
   option (cosmos.msg.v1.service) = true;
@@ -342,6 +367,7 @@ service Msg {
   // BLOCO D — pre-sale on-chain (§13.132 §4)
   rpc BuyPreSale(MsgBuyPreSale) returns (MsgBuyPreSaleResponse);
   rpc DistributePreSaleProceeds(MsgDistributePreSaleProceeds) returns (MsgDistributePreSaleProceedsResponse);
+  rpc SpendFromReserve(MsgSpendFromReserve) returns (MsgSpendFromReserveResponse);
 }
 
 // MsgAddTaxEntity adds a tax entity slug to the whitelist (operational list).

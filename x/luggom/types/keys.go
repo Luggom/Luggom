@@ -48,6 +48,12 @@ const (
 	// allowed to stop mining.
 	NotaryReserveModuleName = "luggom_notary_reserve"
 
+	// Nomes aceites em MsgSpendFromReserve. "gov" é a tesouraria (discricionária,
+	// só por voto); "notary" é a reserva do notariado (destino limitado a
+	// params.notary_payees).
+	ReserveGov    = "gov"
+	ReserveNotary = "notary"
+
 	// OtcVaultModuleName is the OTC LOCKED vault (§13.132). It receives the Phase 2
 	// share (40% of each mint, no cap) while mining exists. The LUG is sold for BTC
 	// at the basket price (min lot 100k LUG); BTC only enters via IBC, so settlement
@@ -167,5 +173,6 @@ var FounderVestingHeldKey = collections.NewPrefix("founder_vesting_held")
 const (
 	EventTypeMine           = "mine"
 	EventTypePreSale        = "presale"
+	EventTypeReserveSpend   = "luggom_reserve_spend"
 	EventTypeFounderVesting = "founder_vesting"
 )

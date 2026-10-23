@@ -38,6 +38,7 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 		// BLOCO D — pre-sale on-chain (§13.132 §4)
 		&MsgBuyPreSale{},
 		&MsgDistributePreSaleProceeds{},
+		&MsgSpendFromReserve{},
 	)
 	msgservice.RegisterMsgServiceDesc(registrar, &_Msg_serviceDesc)
 }

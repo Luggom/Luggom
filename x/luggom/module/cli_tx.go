@@ -29,6 +29,7 @@ func (AppModule) GetTxCmd() *cobra.Command {
 	cmd.AddCommand(NewUnlockSavingsCliCmd())
 	cmd.AddCommand(NewBuyPreSaleCliCmd())
 	cmd.AddCommand(NewDistributePreSaleProceedsCliCmd())
+	cmd.AddCommand(NewSpendFromReserveCliCmd())
 	cmd.AddCommand(NewUpdateUsdOracleBasketCliCmd())
 	return cmd
 }
@@ -64,7 +65,7 @@ func NewMineTaxPaymentCliCmd() *cobra.Command {
 			fromAddr := clientCtx.GetFromAddress().String()
 			msg := &types.MsgMineTaxPayment{
 				MinerAddress:    fromAddr,
-				PaymentAmount:        paymentAmount,
+				PaymentAmount:   paymentAmount,
 				TaxEntity:       strings.TrimSpace(taxEntity),
 				CurrencyCode:    strings.ToUpper(strings.TrimSpace(currencyCode)),
 				ProofCommitment: strings.TrimSpace(proofCommitment),
@@ -108,7 +109,7 @@ func NewMineTaxPaymentCliCmd() *cobra.Command {
 }
 
 const (
-	flagPaymentAmount        = "payment-amount"
+	flagPaymentAmount   = "payment-amount"
 	flagTaxEntity       = "tax-entity"
 	flagCurrencyCode    = "currency-code"
 	flagProofCommitment = "proof-commitment"
@@ -129,6 +130,8 @@ const (
 	flagBrlUsd   = "brl-usd"
 	flagCadUsd   = "cad-usd"
 	flagRateDate = "rate-date"
+	// §14 — reservas (tesouraria e notariado)
+	flagReserve = "reserve"
 )
 
 // NewUpdateUsdOracleBasketCliCmd returns the cobra command for
@@ -261,6 +264,47 @@ func NewDistributePreSaleProceedsCliCmd() *cobra.Command {
 	}
 	cmd.Flags().String(flagDestination, "", "endereço de destino (ex.: a tesouraria da pool)")
 	cmd.Flags().String(flagAmount, "", "montante de USDT em unidades base (6 casas)")
+	_ = cmd.MarkFlagRequired(flagDestination)
+	_ = cmd.MarkFlagRequired(flagAmount)
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// NewSpendFromReserveCliCmd returns the cobra command for MsgSpendFromReserve.
+// Só a authority (o x/gov) consegue assinar: na prática é submetida por uma
+// proposta de governança, não pela CLI de um utilizador.
+func NewSpendFromReserveCliCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "spend-from-reserve",
+		Short: "Spend from the treasury (gov) or the notary reserve (gov authority only)",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			reserve, _ := cmd.Flags().GetString(flagReserve)
+			destination, _ := cmd.Flags().GetString(flagDestination)
+			amountStr, _ := cmd.Flags().GetString(flagAmount)
+
+			amount, ok := sdkmath.NewIntFromString(strings.TrimSpace(amountStr))
+			if !ok {
+				return fmt.Errorf("amount must be an integer in uluggom (18 decimals), got %q", amountStr)
+			}
+
+			msg := &types.MsgSpendFromReserve{
+				Authority:   clientCtx.GetFromAddress().String(),
+				Reserve:     strings.TrimSpace(reserve),
+				Destination: strings.TrimSpace(destination),
+				Amount:      amount,
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	cmd.Flags().String(flagReserve, "", "reserva a gastar: \"gov\" (tesouraria) ou \"notary\" (notariado)")
+	cmd.Flags().String(flagDestination, "", "endereço destino (luggom1…)")
+	cmd.Flags().String(flagAmount, "", "montante em uluggom (inteiro, 18 casas)")
+	_ = cmd.MarkFlagRequired(flagReserve)
 	_ = cmd.MarkFlagRequired(flagDestination)
 	_ = cmd.MarkFlagRequired(flagAmount)
 	flags.AddTxFlagsToCmd(cmd)

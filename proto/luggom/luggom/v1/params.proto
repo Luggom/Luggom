@@ -73,6 +73,12 @@ message Params {
   // Operacional — 67% de governança.
   repeated string pool_assets = 33;
 
+  // notary_payees: destinos PERMITIDOS para a reserva do notariado (0,5% de
+  // cada cunhagem na Fase 2). A governança muda QUEM recebe; não pode mandar o
+  // orçamento para um endereço arbitrário. Lista vazia ⇒ a reserva não se gasta
+  // (fail-closed). A tesouraria (1,5%) não usa esta lista: é discricionária.
+  repeated string notary_payees = 34;
+
   // --- Pesos do tally da governança (GOVERNANCE_MVP15) — usados pelo x/gov ---
   // gov_validator_min_for_weight_shift: validadores bonded abaixo disto forçam
   // peso 100% LLC no tally.
