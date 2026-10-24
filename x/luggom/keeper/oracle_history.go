@@ -100,20 +100,28 @@ func loadOracleHistory() {
 }
 
 func parseHistorySnapshot(e oracleHistoryEntry) (types.UsdOracleSnapshot, error) {
-	vals := map[string]string{
-		"chf_usd": e.ChfUsd, "eur_usd": e.EurUsd, "gbp_usd": e.GbpUsd,
-		"brl_usd": e.BrlUsd, "cad_usd": e.CadUsd,
+	// Ordem FIXA: iterar um mapa aqui tornaria a mensagem de erro diferente
+	// entre nós (não muda o estado, mas estraga a auditoria de determinismo).
+	legs := []struct {
+		name string
+		raw  string
+	}{
+		{"chf_usd", e.ChfUsd},
+		{"eur_usd", e.EurUsd},
+		{"gbp_usd", e.GbpUsd},
+		{"brl_usd", e.BrlUsd},
+		{"cad_usd", e.CadUsd},
 	}
-	dec := make(map[string]sdkmath.LegacyDec, len(vals))
-	for name, raw := range vals {
-		d, err := sdkmath.LegacyNewDecFromStr(raw)
+	dec := make(map[string]sdkmath.LegacyDec, len(legs))
+	for _, leg := range legs {
+		d, err := sdkmath.LegacyNewDecFromStr(leg.raw)
 		if err != nil {
-			return types.UsdOracleSnapshot{}, fmt.Errorf("bad %s %q: %w", name, raw, err)
+			return types.UsdOracleSnapshot{}, fmt.Errorf("bad %s %q: %w", leg.name, leg.raw, err)
 		}
 		if !d.IsPositive() {
-			return types.UsdOracleSnapshot{}, fmt.Errorf("%s must be positive, got %s", name, raw)
+			return types.UsdOracleSnapshot{}, fmt.Errorf("%s must be positive, got %s", leg.name, leg.raw)
 		}
-		dec[name] = d
+		dec[leg.name] = d
 	}
 
 	day, err := time.Parse(oracleDayLayout, e.Date)

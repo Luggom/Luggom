@@ -24,6 +24,18 @@ func (k Keeper) InitGenesis(ctx context.Context, genState types.GenesisState) er
 		return err
 	}
 
+	// §16 — um payee do genesis é configuração de confiança, não uma proposta:
+	// entra já elegível (stamp recuado pelo atraso). Sem isto, um genesis com
+	// notary_payees deixava a reserva do notariado impossível de gastar.
+	if len(genState.Params.NotaryPayees) > 0 {
+		stamp := sdk.UnwrapSDKContext(ctx).BlockTime().Unix() - notaryPayeeDelaySeconds
+		for _, payee := range genState.Params.NotaryPayees {
+			if err := k.NotaryPayeeAddedAt.Set(ctx, payee, stamp); err != nil {
+				return err
+			}
+		}
+	}
+
 	// §13.170 Grupo D — ancora do epoch anual (bloco 0). So se fixa uma vez.
 	if _, err := k.ChainStartTime.Get(ctx); errors.Is(err, collections.ErrNotFound) {
 		if err := k.ChainStartTime.Set(ctx, uint64(sdk.UnwrapSDKContext(ctx).BlockTime().Unix())); err != nil {

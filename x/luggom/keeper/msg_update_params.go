@@ -5,6 +5,7 @@ import (
 	"context"
 
 	errorsmod "cosmossdk.io/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"luggom/x/luggom/types"
 )
@@ -39,5 +40,44 @@ func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams)
 		return nil, err
 	}
 
+	// §16 — marca a entrada de cada payee novo (e limpa os removidos). Sem isto,
+	// o mesmo bloco que adiciona um endereço podia pagá-lo.
+	if err := k.syncNotaryPayees(ctx, current.NotaryPayees, req.Params.NotaryPayees); err != nil {
+		return nil, err
+	}
+
 	return &types.MsgUpdateParamsResponse{}, nil
+}
+
+// syncNotaryPayees mantém o registo "entrou em" alinhado com a lista. Remover e
+// voltar a adicionar reinicia o relógio do atraso, como deve ser.
+func (k Keeper) syncNotaryPayees(ctx context.Context, before, after []string) error {
+	now := sdk.UnwrapSDKContext(ctx).BlockTime().Unix()
+
+	prev := make(map[string]struct{}, len(before))
+	for _, a := range before {
+		prev[a] = struct{}{}
+	}
+	next := make(map[string]struct{}, len(after))
+	for _, a := range after {
+		next[a] = struct{}{}
+	}
+
+	for _, a := range after {
+		if _, ok := prev[a]; ok {
+			continue
+		}
+		if err := k.NotaryPayeeAddedAt.Set(ctx, a, now); err != nil {
+			return err
+		}
+	}
+	for _, a := range before {
+		if _, ok := next[a]; ok {
+			continue
+		}
+		if err := k.NotaryPayeeAddedAt.Remove(ctx, a); err != nil {
+			return err
+		}
+	}
+	return nil
 }

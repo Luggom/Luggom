@@ -1,11 +1,14 @@
 package keeper_test
 
 import (
+	"context"
 	"testing"
+	"time"
 
 	sdkmath "cosmossdk.io/math"
 	"github.com/stretchr/testify/require"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"luggom/x/luggom/keeper"
@@ -93,8 +96,23 @@ func TestSpendFromReserve_NotaryRequiresPayee(t *testing.T) {
 	})
 	require.Error(t, err)
 
-	// O destinatário elegível passa.
+	// Na lista mas sem tempo de entrada (adicionado agora) → ainda não elegível.
 	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+	_, err = ms.SpendFromReserve(f.ctx, &types.MsgSpendFromReserve{
+		Authority:   auth,
+		Reserve:     types.ReserveNotary,
+		Destination: dest,
+		Amount:      sdkmath.NewInt(1_000_000),
+	})
+	require.Error(t, err, "entrar na lista não pode tornar o payee elegível no mesmo bloco")
+	require.Contains(t, err.Error(), "entry time")
+
+	// Com 8 dias de entrada e dentro do tecto da janela, passa.
+	now := sdk.UnwrapSDKContext(f.ctx).BlockTime().Unix()
+	require.NoError(t, f.keeper.NotaryPayeeAddedAt.Set(f.ctx, dest, now-8*24*3600))
+	f.bank.spendableByAddr = map[string]sdk.Coins{
+		authtypes.NewModuleAddress(types.NotaryReserveModuleName).String(): sdk.NewCoins(sdk.NewCoin("uluggom", sdkmath.NewInt(1_000_000_000))),
+	}
 	_, err = ms.SpendFromReserve(f.ctx, &types.MsgSpendFromReserve{
 		Authority:   auth,
 		Reserve:     types.ReserveNotary,
@@ -160,4 +178,103 @@ func TestNotaryPayees_Validation(t *testing.T) {
 
 	params.NotaryPayees = nil
 	require.NoError(t, params.Validate(), "lista vazia é válida (fail-closed)")
+}
+
+// Tecto por janela: 25% do saldo da reserva em cada 7 dias. Sem isto, uma
+// sequência de propostas esvaziaria a reserva em poucos blocos.
+func TestSpendFromReserve_NotaryWindowCap(t *testing.T) {
+	f := initMineFixture(t)
+	ms := keeper.NewMsgServerImpl(f.keeper)
+
+	dest, _ := makeAddr(t, f.addressCodec, 0x47)
+	auth := govAuthority(t, f)
+
+	params := devParamsForTest()
+	params.NotaryPayees = []string{dest}
+	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+	now := sdk.UnwrapSDKContext(f.ctx).BlockTime().Unix()
+	require.NoError(t, f.keeper.NotaryPayeeAddedAt.Set(f.ctx, dest, now-8*24*3600))
+
+	// 1.000 LUG na reserva → tecto de 250 LUG por janela.
+	f.bank.spendableByAddr = map[string]sdk.Coins{
+		authtypes.NewModuleAddress(types.NotaryReserveModuleName).String(): sdk.NewCoins(
+			sdk.NewCoin("uluggom", sdkmath.NewInt(1_000).MulRaw(1_000_000_000_000_000_000))),
+	}
+	lug := func(n int64) sdkmath.Int {
+		return sdkmath.NewInt(n).MulRaw(1_000_000_000_000_000_000)
+	}
+	spend := func(amount sdkmath.Int) error {
+		_, err := ms.SpendFromReserve(f.ctx, &types.MsgSpendFromReserve{
+			Authority:   auth,
+			Reserve:     types.ReserveNotary,
+			Destination: dest,
+			Amount:      amount,
+		})
+		return err
+	}
+
+	err := spend(lug(300))
+	require.Error(t, err, "300 LUG excede 25%% de 1.000")
+	require.Contains(t, err.Error(), "per-window cap")
+
+	require.NoError(t, spend(lug(100)))
+	require.NoError(t, spend(lug(100)))
+
+	err = spend(lug(100))
+	require.Error(t, err, "300 LUG acumulados na janela excedem o tecto de 250")
+	require.Contains(t, err.Error(), "window cap reached")
+}
+
+// O buraco que o Carlos apontou: uma proposta podia adicionar o payee e pagá-lo
+// na mesma execução. O atraso é imposto no MsgUpdateParams (que marca a entrada),
+// por isso este teste tem de passar pelo msg server — não por Params.Set.
+func TestUpdateParams_NotaryPayeeNeedsDelay(t *testing.T) {
+	f := initMineFixture(t)
+	ms := keeper.NewMsgServerImpl(f.keeper)
+
+	authority := govAuthority(t, f)
+	payee, _ := makeAddr(t, f.addressCodec, 0x51)
+
+	params, err := f.keeper.Params.Get(f.ctx)
+	require.NoError(t, err)
+	params.NotaryPayees = []string{payee}
+
+	_, err = ms.UpdateParams(f.ctx, &types.MsgUpdateParams{Authority: authority, Params: params})
+	require.NoError(t, err)
+
+	now := sdk.UnwrapSDKContext(f.ctx).BlockTime().Unix()
+	stamp, err := f.keeper.NotaryPayeeAddedAt.Get(f.ctx, payee)
+	require.NoError(t, err)
+	require.Equal(t, now, stamp, "a entrada tem de ser marcada no update")
+
+	f.bank.spendableByAddr = map[string]sdk.Coins{
+		authtypes.NewModuleAddress(types.NotaryReserveModuleName).String(): sdk.NewCoins(
+			sdk.NewCoin("uluggom", sdkmath.NewInt(1_000).MulRaw(1_000_000_000_000_000_000))),
+	}
+	spend := func(ctx context.Context) error {
+		_, err := ms.SpendFromReserve(ctx, &types.MsgSpendFromReserve{
+			Authority:   authority,
+			Reserve:     types.ReserveNotary,
+			Destination: payee,
+			Amount:      sdkmath.NewInt(10).MulRaw(1_000_000_000_000_000_000),
+		})
+		return err
+	}
+
+	err = spend(f.ctx)
+	require.Error(t, err, "adicionar e pagar na mesma execução tem de falhar")
+	require.Contains(t, err.Error(), "eligible in")
+
+	// +8 dias: elegível.
+	ctx8 := sdk.WrapSDKContext(sdk.UnwrapSDKContext(f.ctx).WithBlockTime(time.Unix(now+8*24*3600, 0)))
+	require.NoError(t, spend(ctx8))
+
+	// Remover e voltar a adicionar reinicia o relógio.
+	params.NotaryPayees = nil
+	_, err = ms.UpdateParams(ctx8, &types.MsgUpdateParams{Authority: authority, Params: params})
+	require.NoError(t, err)
+	params.NotaryPayees = []string{payee}
+	_, err = ms.UpdateParams(ctx8, &types.MsgUpdateParams{Authority: authority, Params: params})
+	require.NoError(t, err)
+	require.Error(t, spend(ctx8), "re-adicionar tem de reiniciar o atraso")
 }

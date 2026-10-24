@@ -5,7 +5,9 @@ package types
 
 import (
 	context "context"
+	cosmossdk_io_math "cosmossdk.io/math"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	_ "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
@@ -114,34 +116,167 @@ func (m *QueryParamsResponse) GetParams() Params {
 	return Params{}
 }
 
+// QueryOracleFixingRequest asks for the fixing of one day.
+type QueryOracleFixingRequest struct {
+	// day is the fixing date, "YYYY-MM-DD" (UTC).
+	Day string `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
+}
+
+func (m *QueryOracleFixingRequest) Reset()         { *m = QueryOracleFixingRequest{} }
+func (m *QueryOracleFixingRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryOracleFixingRequest) ProtoMessage()    {}
+func (*QueryOracleFixingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_44af95e2dd155fb8, []int{2}
+}
+func (m *QueryOracleFixingRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryOracleFixingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryOracleFixingRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryOracleFixingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryOracleFixingRequest.Merge(m, src)
+}
+func (m *QueryOracleFixingRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryOracleFixingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryOracleFixingRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryOracleFixingRequest proto.InternalMessageInfo
+
+func (m *QueryOracleFixingRequest) GetDay() string {
+	if m != nil {
+		return m.Day
+	}
+	return ""
+}
+
+// QueryOracleFixingResponse carries the fixing of that day. `found` is false
+// when neither the embedded history nor the store covers it — the amounts are
+// then zero.
+type QueryOracleFixingResponse struct {
+	Day    string                      `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
+	Found  bool                        `protobuf:"varint,2,opt,name=found,proto3" json:"found,omitempty"`
+	ChfUsd cosmossdk_io_math.LegacyDec `protobuf:"bytes,3,opt,name=chf_usd,json=chfUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"chf_usd"`
+	EurUsd cosmossdk_io_math.LegacyDec `protobuf:"bytes,4,opt,name=eur_usd,json=eurUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"eur_usd"`
+	GbpUsd cosmossdk_io_math.LegacyDec `protobuf:"bytes,5,opt,name=gbp_usd,json=gbpUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"gbp_usd"`
+	BrlUsd cosmossdk_io_math.LegacyDec `protobuf:"bytes,6,opt,name=brl_usd,json=brlUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"brl_usd"`
+	CadUsd cosmossdk_io_math.LegacyDec `protobuf:"bytes,7,opt,name=cad_usd,json=cadUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"cad_usd"`
+	// source diz de onde veio o valor: "history" (tabela compilada), "store"
+	// (escrito on-chain) ou "none". É o que permite auditar o registo on-chain.
+	Source string `protobuf:"bytes,8,opt,name=source,proto3" json:"source,omitempty"`
+}
+
+func (m *QueryOracleFixingResponse) Reset()         { *m = QueryOracleFixingResponse{} }
+func (m *QueryOracleFixingResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryOracleFixingResponse) ProtoMessage()    {}
+func (*QueryOracleFixingResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_44af95e2dd155fb8, []int{3}
+}
+func (m *QueryOracleFixingResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryOracleFixingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryOracleFixingResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryOracleFixingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryOracleFixingResponse.Merge(m, src)
+}
+func (m *QueryOracleFixingResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryOracleFixingResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryOracleFixingResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryOracleFixingResponse proto.InternalMessageInfo
+
+func (m *QueryOracleFixingResponse) GetDay() string {
+	if m != nil {
+		return m.Day
+	}
+	return ""
+}
+
+func (m *QueryOracleFixingResponse) GetFound() bool {
+	if m != nil {
+		return m.Found
+	}
+	return false
+}
+
+func (m *QueryOracleFixingResponse) GetSource() string {
+	if m != nil {
+		return m.Source
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "luggom.luggom.v1.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "luggom.luggom.v1.QueryParamsResponse")
+	proto.RegisterType((*QueryOracleFixingRequest)(nil), "luggom.luggom.v1.QueryOracleFixingRequest")
+	proto.RegisterType((*QueryOracleFixingResponse)(nil), "luggom.luggom.v1.QueryOracleFixingResponse")
 }
 
 func init() { proto.RegisterFile("luggom/luggom/v1/query.proto", fileDescriptor_44af95e2dd155fb8) }
 
 var fileDescriptor_44af95e2dd155fb8 = []byte{
-	// 297 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xc9, 0x29, 0x4d, 0x4f,
-	0xcf, 0xcf, 0xd5, 0x87, 0x52, 0x65, 0x86, 0xfa, 0x85, 0xa5, 0xa9, 0x45, 0x95, 0x7a, 0x05, 0x45,
-	0xf9, 0x25, 0xf9, 0x42, 0x02, 0x10, 0x61, 0x3d, 0x28, 0x55, 0x66, 0x28, 0x25, 0x98, 0x98, 0x9b,
-	0x99, 0x97, 0xaf, 0x0f, 0x26, 0x21, 0x8a, 0xa4, 0xb4, 0x92, 0xf3, 0x8b, 0x73, 0xf3, 0x8b, 0xf5,
-	0x93, 0x12, 0x8b, 0x53, 0x21, 0xba, 0xf5, 0xcb, 0x0c, 0x93, 0x52, 0x4b, 0x12, 0x0d, 0xf5, 0x0b,
-	0x12, 0xd3, 0x33, 0xf3, 0x12, 0x4b, 0x32, 0xf3, 0xf3, 0xa0, 0x6a, 0x45, 0xd2, 0xf3, 0xd3, 0xf3,
-	0xc1, 0x4c, 0x7d, 0x10, 0x0b, 0x2a, 0x2a, 0x93, 0x9e, 0x9f, 0x9f, 0x9e, 0x93, 0xaa, 0x9f, 0x58,
-	0x90, 0xa9, 0x9f, 0x98, 0x97, 0x97, 0x5f, 0x02, 0xd6, 0x52, 0x0c, 0x95, 0x95, 0xc5, 0x70, 0x62,
-	0x41, 0x62, 0x51, 0x62, 0x2e, 0x54, 0x5a, 0x49, 0x84, 0x4b, 0x28, 0x10, 0x64, 0x69, 0x00, 0x58,
-	0x30, 0x28, 0xb5, 0xb0, 0x34, 0xb5, 0xb8, 0x44, 0x29, 0x88, 0x4b, 0x18, 0x45, 0xb4, 0xb8, 0x20,
-	0x3f, 0xaf, 0x38, 0x55, 0xc8, 0x9a, 0x8b, 0x0d, 0xa2, 0x59, 0x82, 0x51, 0x81, 0x51, 0x83, 0xdb,
-	0x48, 0x42, 0x0f, 0xdd, 0x87, 0x7a, 0x10, 0x1d, 0x4e, 0x9c, 0x27, 0xee, 0xc9, 0x33, 0xac, 0x78,
-	0xbe, 0x41, 0x8b, 0x31, 0x08, 0xaa, 0xc5, 0xa8, 0x81, 0x91, 0x8b, 0x15, 0x6c, 0xa8, 0x50, 0x39,
-	0x17, 0x1b, 0x44, 0x99, 0x90, 0x0a, 0xa6, 0x01, 0x98, 0xae, 0x91, 0x52, 0x25, 0xa0, 0x0a, 0xe2,
-	0x3a, 0x25, 0x85, 0xa6, 0xcb, 0x4f, 0x26, 0x33, 0x49, 0x09, 0x49, 0xe8, 0xe3, 0xf0, 0xb2, 0x93,
-	0xfe, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78, 0x24, 0xc7, 0x38, 0xe1, 0xb1,
-	0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44, 0x89, 0x42, 0xd5, 0x56, 0xc0,
-	0x34, 0x95, 0x54, 0x16, 0xa4, 0x16, 0x27, 0xb1, 0x81, 0x03, 0xc9, 0x18, 0x10, 0x00, 0x00, 0xff,
-	0xff, 0xab, 0xa7, 0x8c, 0x01, 0xe8, 0x01, 0x00, 0x00,
+	// 531 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0xc1, 0x6e, 0xd3, 0x30,
+	0x18, 0xc7, 0x9b, 0x96, 0x66, 0x9b, 0xe1, 0x30, 0x4c, 0x41, 0x59, 0x18, 0x59, 0x15, 0x31, 0x31,
+	0x15, 0x16, 0x2b, 0xe3, 0xc8, 0xad, 0x9a, 0x38, 0x20, 0x24, 0x20, 0x12, 0x17, 0x2e, 0x95, 0x93,
+	0xb8, 0x6e, 0x44, 0x12, 0x67, 0x71, 0x52, 0x16, 0x21, 0x2e, 0x3c, 0x01, 0x12, 0x12, 0x12, 0x6f,
+	0xc0, 0x91, 0x03, 0x0f, 0xb1, 0xe3, 0x04, 0x07, 0x10, 0x87, 0x09, 0xb5, 0x48, 0xbc, 0x06, 0x8a,
+	0xed, 0x49, 0x40, 0x56, 0x31, 0xf5, 0x52, 0xfb, 0xfb, 0xfc, 0xff, 0x7e, 0xfd, 0xd7, 0xfe, 0x17,
+	0x6c, 0xc6, 0x25, 0xa5, 0x2c, 0x41, 0x6a, 0x99, 0xba, 0xe8, 0xa0, 0x24, 0x79, 0xe5, 0x64, 0x39,
+	0x2b, 0x18, 0x5c, 0x97, 0x6d, 0x47, 0x2d, 0x53, 0xd7, 0xbc, 0x8c, 0x93, 0x28, 0x65, 0x48, 0x7c,
+	0x4a, 0x91, 0x39, 0x08, 0x18, 0x4f, 0x18, 0x47, 0x3e, 0xe6, 0x44, 0x4e, 0xa3, 0xa9, 0xeb, 0x93,
+	0x02, 0xbb, 0x28, 0xc3, 0x34, 0x4a, 0x71, 0x11, 0xb1, 0x54, 0x69, 0x37, 0xa4, 0x76, 0x24, 0x2a,
+	0x24, 0x0b, 0x75, 0xd4, 0xa3, 0x8c, 0x32, 0xd9, 0xaf, 0x77, 0xaa, 0xbb, 0x49, 0x19, 0xa3, 0x31,
+	0x41, 0x38, 0x8b, 0x10, 0x4e, 0x53, 0x56, 0x08, 0xda, 0xe9, 0xcc, 0x8d, 0x86, 0xfb, 0x0c, 0xe7,
+	0x38, 0x51, 0xc7, 0x76, 0x0f, 0xc0, 0x27, 0xb5, 0x9f, 0xc7, 0xa2, 0xe9, 0x91, 0x83, 0x92, 0xf0,
+	0xc2, 0xf6, 0xc0, 0x95, 0xbf, 0xba, 0x3c, 0x63, 0x29, 0x27, 0xf0, 0x1e, 0xd0, 0xe5, 0xb0, 0xa1,
+	0xf5, 0xb5, 0x9d, 0x8b, 0x7b, 0x86, 0xf3, 0xef, 0x8f, 0x77, 0xe4, 0xc4, 0x70, 0xed, 0xe8, 0x64,
+	0xab, 0xf5, 0xe1, 0xd7, 0xc7, 0x81, 0xe6, 0xa9, 0x11, 0xfb, 0x0e, 0x30, 0x04, 0xf3, 0x51, 0x8e,
+	0x83, 0x98, 0xdc, 0x8f, 0x0e, 0xa3, 0x94, 0xaa, 0xef, 0x83, 0xeb, 0xa0, 0x13, 0xe2, 0x4a, 0x50,
+	0xd7, 0xbc, 0x7a, 0x6b, 0x7f, 0xed, 0x80, 0x8d, 0x33, 0xe4, 0xca, 0x48, 0x43, 0x0f, 0x7b, 0xa0,
+	0x3b, 0x66, 0x65, 0x1a, 0x1a, 0xed, 0xbe, 0xb6, 0xb3, 0xea, 0xc9, 0x02, 0x3e, 0x00, 0x2b, 0xc1,
+	0x64, 0x3c, 0x2a, 0x79, 0x68, 0x74, 0x6a, 0xed, 0xd0, 0xad, 0x7d, 0x7d, 0x3f, 0xd9, 0xba, 0x2e,
+	0xef, 0x95, 0x87, 0xcf, 0x9d, 0x88, 0xa1, 0x04, 0x17, 0x13, 0xe7, 0x21, 0xa1, 0x38, 0xa8, 0xf6,
+	0x49, 0xf0, 0xf9, 0xd3, 0x2e, 0x50, 0xd7, 0xbe, 0x4f, 0x02, 0x4f, 0x0f, 0x26, 0xe3, 0xa7, 0x5c,
+	0xb0, 0x48, 0x99, 0x0b, 0xd6, 0x85, 0xa5, 0x59, 0xa4, 0xcc, 0x15, 0x8b, 0xfa, 0x99, 0x60, 0x75,
+	0x97, 0x66, 0x51, 0x3f, 0x53, 0x2c, 0x3f, 0x8f, 0x05, 0x4b, 0x5f, 0x9a, 0xe5, 0xe7, 0xb1, 0x62,
+	0x05, 0x38, 0x14, 0xac, 0x95, 0xe5, 0xef, 0x0b, 0x87, 0x35, 0xeb, 0x1a, 0xd0, 0x39, 0x2b, 0xf3,
+	0x80, 0x18, 0xab, 0xe2, 0x99, 0x54, 0xb5, 0xf7, 0xbe, 0x0d, 0xba, 0xe2, 0x65, 0xe1, 0x0b, 0xa0,
+	0xcb, 0xb8, 0xc0, 0x9b, 0xcd, 0x20, 0x35, 0x53, 0x69, 0x6e, 0xff, 0x47, 0x25, 0xc3, 0x61, 0xf7,
+	0x5f, 0x7f, 0xf9, 0xf9, 0xb6, 0x6d, 0x42, 0x03, 0x2d, 0x88, 0x3e, 0x7c, 0xa7, 0x81, 0x4b, 0x7f,
+	0xe6, 0x0a, 0x0e, 0x16, 0x90, 0xcf, 0xc8, 0xaa, 0x79, 0xfb, 0x5c, 0x5a, 0xe5, 0x65, 0x57, 0x78,
+	0xb9, 0x05, 0xb7, 0x9b, 0x5e, 0x98, 0xd0, 0x8f, 0xc6, 0x62, 0x00, 0xbd, 0x0c, 0x71, 0xf5, 0x6a,
+	0x88, 0x8e, 0x66, 0x96, 0x76, 0x3c, 0xb3, 0xb4, 0x1f, 0x33, 0x4b, 0x7b, 0x33, 0xb7, 0x5a, 0xc7,
+	0x73, 0xab, 0xf5, 0x6d, 0x6e, 0xb5, 0x9e, 0x5d, 0x55, 0x83, 0x87, 0xa7, 0x84, 0xa2, 0xca, 0x08,
+	0xf7, 0x75, 0xf1, 0x2f, 0xbe, 0xfb, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x76, 0xb2, 0x92, 0xa5, 0xa4,
+	0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -158,6 +293,11 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// OracleFixing returns the fixing of a given day (YYYY-MM-DD), resolved from
+	// the embedded history first and then from the store. This is the value a
+	// receipt dated the following day is priced with, and it is what the feeder
+	// reads to walk a wild move back towards the median.
+	OracleFixing(ctx context.Context, in *QueryOracleFixingRequest, opts ...grpc.CallOption) (*QueryOracleFixingResponse, error)
 }
 
 type queryClient struct {
@@ -177,10 +317,24 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
+func (c *queryClient) OracleFixing(ctx context.Context, in *QueryOracleFixingRequest, opts ...grpc.CallOption) (*QueryOracleFixingResponse, error) {
+	out := new(QueryOracleFixingResponse)
+	err := c.cc.Invoke(ctx, "/luggom.luggom.v1.Query/OracleFixing", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	// OracleFixing returns the fixing of a given day (YYYY-MM-DD), resolved from
+	// the embedded history first and then from the store. This is the value a
+	// receipt dated the following day is priced with, and it is what the feeder
+	// reads to walk a wild move back towards the median.
+	OracleFixing(context.Context, *QueryOracleFixingRequest) (*QueryOracleFixingResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -189,6 +343,9 @@ type UnimplementedQueryServer struct {
 
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
+}
+func (*UnimplementedQueryServer) OracleFixing(ctx context.Context, req *QueryOracleFixingRequest) (*QueryOracleFixingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OracleFixing not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -213,6 +370,24 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_OracleFixing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryOracleFixingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).OracleFixing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/luggom.luggom.v1.Query/OracleFixing",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).OracleFixing(ctx, req.(*QueryOracleFixingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var Query_serviceDesc = _Query_serviceDesc
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "luggom.luggom.v1.Query",
@@ -221,6 +396,10 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Params",
 			Handler:    _Query_Params_Handler,
+		},
+		{
+			MethodName: "OracleFixing",
+			Handler:    _Query_OracleFixing_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -283,6 +462,133 @@ func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryOracleFixingRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryOracleFixingRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryOracleFixingRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Day) > 0 {
+		i -= len(m.Day)
+		copy(dAtA[i:], m.Day)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Day)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryOracleFixingResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryOracleFixingResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryOracleFixingResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Source) > 0 {
+		i -= len(m.Source)
+		copy(dAtA[i:], m.Source)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Source)))
+		i--
+		dAtA[i] = 0x42
+	}
+	{
+		size := m.CadUsd.Size()
+		i -= size
+		if _, err := m.CadUsd.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x3a
+	{
+		size := m.BrlUsd.Size()
+		i -= size
+		if _, err := m.BrlUsd.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x32
+	{
+		size := m.GbpUsd.Size()
+		i -= size
+		if _, err := m.GbpUsd.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x2a
+	{
+		size := m.EurUsd.Size()
+		i -= size
+		if _, err := m.EurUsd.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x22
+	{
+		size := m.ChfUsd.Size()
+		i -= size
+		if _, err := m.ChfUsd.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x1a
+	if m.Found {
+		i--
+		if m.Found {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Day) > 0 {
+		i -= len(m.Day)
+		copy(dAtA[i:], m.Day)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Day)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -311,6 +617,49 @@ func (m *QueryParamsResponse) Size() (n int) {
 	_ = l
 	l = m.Params.Size()
 	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryOracleFixingRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Day)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryOracleFixingResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Day)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Found {
+		n += 2
+	}
+	l = m.ChfUsd.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	l = m.EurUsd.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	l = m.GbpUsd.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	l = m.BrlUsd.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	l = m.CadUsd.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	l = len(m.Source)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -431,6 +780,392 @@ func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryOracleFixingRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryOracleFixingRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryOracleFixingRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Day", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Day = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryOracleFixingResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryOracleFixingResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryOracleFixingResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Day", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Day = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Found", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Found = bool(v != 0)
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChfUsd", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ChfUsd.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EurUsd", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.EurUsd.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GbpUsd", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.GbpUsd.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BrlUsd", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.BrlUsd.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CadUsd", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.CadUsd.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Source", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Source = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

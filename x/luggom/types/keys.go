@@ -97,6 +97,17 @@ var UsdOracleSnapshotKey = collections.NewPrefix("usd_ora_snap")
 // salta +10%). Ver checkpoint §10 / revisão do Zealynx.
 var UsdOracleDailyPrefix = collections.NewPrefix("usd_ora_day")
 
+// NotaryPayeeAddedAtPrefix guarda QUANDO cada endereço entrou em
+// `notary_payees` (unix seconds). É o que impede uma proposta de adicionar um
+// payee e pagá-lo na mesma execução: sem tempo de entrada, não é elegível.
+var NotaryPayeeAddedAtPrefix = collections.NewPrefix("notary_payee_at")
+
+// NotarySpendWindow* limitam quanto da reserva do notariado sai por janela
+// (7 dias, 25% do saldo). Um tecto por período contém uma sequência de
+// propostas que, sem ele, esvaziaria a reserva em poucos blocos.
+var NotarySpendWindowFromKey = collections.NewPrefix("notary_spend_from")
+var NotarySpendWindowSpentKey = collections.NewPrefix("notary_spend_spent")
+
 // MiningCapDailyBucketsPrefix stores the daily mining buckets for the 365d sliding window
 // (annual maximum cap §13.49/§13.52: 15B year 0, −5% a.a.). Key: "mining_cap_" + YYYYMMDD.
 var MiningCapDailyBucketsPrefix = collections.NewPrefix("mining_cap_")

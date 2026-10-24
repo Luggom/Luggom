@@ -17,6 +17,14 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "params",
 					Short:     "Shows the parameters of the module",
 				},
+				{
+					RpcMethod: "OracleFixing",
+					Use:       "oracle-fixing [day]",
+					Short:     "Fixing of a day (YYYY-MM-DD), embedded history first, then the store",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "day"},
+					},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},

@@ -28,6 +28,9 @@ type Keeper struct {
 	Params                  collections.Item[types.Params]
 	UsdOracleSnapshot       collections.Item[types.UsdOracleSnapshot]
 	UsdOracleDaily          collections.Map[string, types.UsdOracleSnapshot]
+	NotaryPayeeAddedAt      collections.Map[string, int64]
+	NotarySpendWindowFrom   collections.Item[int64]
+	NotarySpendWindowSpent  collections.Item[string]
 	UsedDocumentHashes      collections.KeySet[string]
 	UsedProofIrsTokens      collections.KeySet[string]
 	UsedPaymentIDs          collections.KeySet[string]
@@ -87,6 +90,9 @@ func NewKeeper(
 		Params:                  collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
 		UsdOracleSnapshot:       collections.NewItem(sb, types.UsdOracleSnapshotKey, "usd_oracle_snapshot", codec.CollValue[types.UsdOracleSnapshot](cdc)),
 		UsdOracleDaily:          collections.NewMap(sb, types.UsdOracleDailyPrefix, "usd_oracle_daily", collections.StringKey, codec.CollValue[types.UsdOracleSnapshot](cdc)),
+		NotaryPayeeAddedAt:      collections.NewMap(sb, types.NotaryPayeeAddedAtPrefix, "notary_payee_added_at", collections.StringKey, collections.Int64Value),
+		NotarySpendWindowFrom:   collections.NewItem(sb, types.NotarySpendWindowFromKey, "notary_spend_window_from", collections.Int64Value),
+		NotarySpendWindowSpent:  collections.NewItem(sb, types.NotarySpendWindowSpentKey, "notary_spend_window_spent", collections.StringValue),
 		UsedDocumentHashes:      collections.NewKeySet(sb, types.UsedDocumentHashesPrefix, "used_doc_hashes", collections.StringKey),
 		UsedProofIrsTokens:      collections.NewKeySet(sb, types.UsedProofIrsTokensPrefix, "used_proof_irs", collections.StringKey),
 		UsedPaymentIDs:          collections.NewKeySet(sb, types.UsedPaymentIDsPrefix, "used_payment_ids", collections.StringKey),

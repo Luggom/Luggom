@@ -229,3 +229,77 @@ func TestValidateMinSources_HardFloor(t *testing.T) {
 		require.NoError(t, validateMinSources(n), "min-sources=%d devia ser aceite", n)
 	}
 }
+
+func TestMoveLimit(t *testing.T) {
+	require.True(t, moveLimit(1).Equal(dec("0.10")))
+	require.True(t, moveLimit(3).Equal(dec("0.30")))
+	require.True(t, moveLimit(10).Equal(dec("0.50")), "o tecto é 50%")
+}
+
+// O feeder tem de escrever o passo limitado na direcção do alvo — não deixar a
+// chain sem escrita (o que congelaria a fixing errada e poria a mineração em
+// pausa quando o caminho de volta excedesse o tecto).
+func TestClampTowardsLimit(t *testing.T) {
+	prev := fixingSample{
+		ChfUsd: dec("1.0"), EurUsd: dec("1.0"), GbpUsd: dec("1.0"),
+		BrlUsd: dec("5.0"), CadUsd: dec("1.4"),
+	}
+
+	// Alvo 10× abaixo: escreve 5.0 − 10% = 4.5.
+	down := rates("1.0", "1.0", "1.0", "0.5", "1.4")
+	out := clampTowardsLimit(prev, down, moveLimit(1), func(string, ...any) {})
+	require.True(t, out.BrlUsd.Equal(dec("4.5")), "veio %s", out.BrlUsd)
+	require.True(t, out.ChfUsd.Equal(dec("1.0")), "uma perna dentro do limite não é tocada")
+
+	// Alvo acima: 1.0 + 10% = 1.1.
+	up := rates("2.0", "1.0", "1.0", "5.0", "1.4")
+	out = clampTowardsLimit(prev, up, moveLimit(1), func(string, ...any) {})
+	require.True(t, out.ChfUsd.Equal(dec("1.1")), "veio %s", out.ChfUsd)
+
+	// Alguns dias de gap: o limite escala (30%) e o passo é maior.
+	out = clampTowardsLimit(prev, down, moveLimit(3), func(string, ...any) {})
+	require.True(t, out.BrlUsd.Equal(dec("3.5")), "5.0 − 30%% = 3.5, veio %s", out.BrlUsd)
+}
+
+func TestFetchFixingParsesQueryJSON(t *testing.T) {
+	dir := t.TempDir()
+
+	bin := filepath.Join(dir, "fake.sh")
+	script := `#!/bin/sh
+printf '%s\n' '{"day":"2026-10-23","found":true,"chf_usd":"1.216","eur_usd":"1.120","gbp_usd":"1.338","brl_usd":"5.0377","cad_usd":"1.4004"}'
+`
+	require.NoError(t, os.WriteFile(bin, []byte(script), 0o755))
+
+	fx, ok, err := fetchFixing(bin, "", "", "2026-10-23")
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.True(t, fx.BrlUsd.Equal(dec("5.0377")))
+	require.True(t, fx.ChfUsd.Equal(dec("1.216")))
+
+	nf := filepath.Join(dir, "nf.sh")
+	require.NoError(t, os.WriteFile(nf, []byte("#!/bin/sh\nprintf '%s\\n' '{\"found\":false}'\n"), 0o755))
+	_, ok, err = fetchFixing(nf, "", "", "2020-01-01")
+	require.NoError(t, err)
+	require.False(t, ok)
+}
+
+// Invariante que o keeper aplica: |passo| / anterior <= limite. O Mul arredonda
+// para 18 casas e pode cair 1 ulp acima — este teste é o que impede que o
+// walk-back fique preso num valor que a chain recusa.
+func TestClampStepRespectsLimit(t *testing.T) {
+	limit := moveLimit(1)
+	// Inclui o caso que o revisor reproduziu (18 casas, canto de arredondamento).
+	vals := []string{
+		"0.684197719688542826", "5.0377", "1.216485", "0.001",
+		"12345.678901234567890123", "3.333333333333333333",
+	}
+	for _, s := range vals {
+		p := dec(s)
+		for _, v := range []sdkmath.LegacyDec{p.Mul(dec("1.5")), p.Mul(dec("0.5")), p.Mul(dec("10"))} {
+			out := clampStep(p, v, limit)
+			require.True(t, out.IsPositive(), "passo não positivo para %s", p)
+			require.False(t, out.Sub(p).Abs().Quo(p).GT(limit),
+				"passo %s de %s excede o limite %s (alvo %s)", out, p, limit, v)
+		}
+	}
+}

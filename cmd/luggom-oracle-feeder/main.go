@@ -107,6 +107,23 @@ func main() {
 			return nil
 		}
 
+		// A fixing anterior é o que o keeper usa como referência para limitar o
+		// movimento. Se a mediana estiver fora do limite, escreve-se o passo
+		// máximo NA DIREÇÃO dela: um valor errado é corrigido ao ritmo a que pode
+		// ser corrigido, em vez de deixar a chain sem escrita e a mineração em
+		// pausa até o movimento "caber".
+		prev, prevDay, ok, err := previousFixing(*bin, *home, *node, agg.Date)
+		if err != nil {
+			// Fail-closed: escrever sem o limite é aceitar que o keeper recuse a
+			// tx (ou, pior, que uma fixing errada passe sem correcção).
+			return fmt.Errorf("não consegui ler a fixing anterior (%w): não submeto sem clamp", err)
+		}
+		if ok {
+			days := daysBetween(prevDay, agg.Date)
+			log.Printf("fixing anterior: %s (%d dia(s))", prevDay, days)
+			agg = clampTowardsLimit(prev, agg, moveLimit(days), log.Printf)
+		}
+
 		if *dryRun {
 			log.Printf("dry-run: NÃO submetido (seria rate_date=%s chf=%s eur=%s gbp=%s brl=%s cad=%s)",
 				agg.Date, agg.ChfUsd, agg.EurUsd, agg.GbpUsd, agg.BrlUsd, agg.CadUsd)
@@ -208,4 +225,216 @@ func submit(bin string, extra []string, r Rates) error {
 	}
 	log.Printf("submetido: %s", strings.TrimSpace(string(out)))
 	return nil
+}
+
+// --- Limite de movimento (espelha o keeper) --------------------------------
+
+const (
+	// dias para trás à procura da fixing anterior (igual ao keeper)
+	maxPrevFixingDays = 30
+	moveLimitPerDay   = "0.10"
+	moveLimitTotal    = "0.50"
+)
+
+// fixingSample é a fixing de um dia, como a chain a devolve.
+type fixingSample struct {
+	ChfUsd sdkmath.LegacyDec
+	EurUsd sdkmath.LegacyDec
+	GbpUsd sdkmath.LegacyDec
+	BrlUsd sdkmath.LegacyDec
+	CadUsd sdkmath.LegacyDec
+}
+
+// moveLimit devolve o limite de movimento para `days` dias decorridos, com tecto.
+func moveLimit(days int64) sdkmath.LegacyDec {
+	if days < 1 {
+		days = 1
+	}
+	limit := sdkmath.LegacyMustNewDecFromStr(moveLimitPerDay).MulInt64(days)
+	cap := sdkmath.LegacyMustNewDecFromStr(moveLimitTotal)
+	if limit.GT(cap) {
+		return cap
+	}
+	return limit
+}
+
+func daysBetween(from, to string) int64 {
+	a, err := time.Parse("2006-01-02", from)
+	if err != nil {
+		return 1
+	}
+	b, err := time.Parse("2006-01-02", to)
+	if err != nil {
+		return 1
+	}
+	d := int64(b.Sub(a).Hours() / 24)
+	if d < 1 {
+		d = 1
+	}
+	return d
+}
+
+// previousFixing procura a fixing mais recente antes de `day`, andando para trás.
+func previousFixing(bin, home, node, day string) (fixingSample, string, bool, error) {
+	d, err := time.Parse("2006-01-02", day)
+	if err != nil {
+		return fixingSample{}, "", false, err
+	}
+	for i := 1; i <= maxPrevFixingDays; i++ {
+		key := d.AddDate(0, 0, -i).Format("2006-01-02")
+		fx, ok, err := fetchFixing(bin, home, node, key)
+		if err != nil {
+			return fixingSample{}, "", false, err
+		}
+		if ok {
+			return fx, key, true, nil
+		}
+	}
+	return fixingSample{}, "", false, nil
+}
+
+// fetchFixing pergunta à chain a fixing de um dia (`query luggom oracle-fixing`).
+func fetchFixing(bin, home, node, day string) (fixingSample, bool, error) {
+	base := []string{"query", "luggom", "oracle-fixing"}
+	if home != "" {
+		base = append(base, "--home", home)
+	}
+	if node != "" {
+		base = append(base, "--node", node)
+	}
+	base = append(base, "--output", "json")
+
+	// O contrato do comando depende do autocli: com PositionalArgs o dia é
+	// posicional; sem ele, é uma flag `--day`. Tentar os dois evita que o clamp
+	// desapareça em silêncio com um binário de outra versão.
+	attempts := [][]string{
+		append(append([]string{}, base...), day),
+		append(append([]string{}, base...), "--day", day),
+	}
+	var lastErr error
+	out := []byte(nil)
+	for _, args := range attempts {
+		o, err := exec.Command(bin, args...).Output()
+		if err != nil {
+			lastErr = err
+			continue
+		}
+		out = o
+		lastErr = nil
+		break
+	}
+	if lastErr != nil {
+		return fixingSample{}, false, fmt.Errorf("query oracle-fixing %s: %w", day, lastErr)
+	}
+
+	var doc map[string]json.RawMessage
+	if err := json.Unmarshal(out, &doc); err != nil {
+		return fixingSample{}, false, fmt.Errorf("oracle-fixing %s: json: %w", day, err)
+	}
+
+	found := false
+	if raw, ok := doc["found"]; ok {
+		_ = json.Unmarshal(raw, &found)
+	}
+	if !found {
+		return fixingSample{}, false, nil
+	}
+
+	// O JSON do proto pode vir em snake_case ou camelCase conforme o codec.
+	str := func(keys ...string) string {
+		for _, k := range keys {
+			raw, ok := doc[k]
+			if !ok {
+				continue
+			}
+			var s string
+			if err := json.Unmarshal(raw, &s); err == nil && s != "" {
+				return s
+			}
+		}
+		return ""
+	}
+	dec := func(keys ...string) (sdkmath.LegacyDec, error) {
+		raw := str(keys...)
+		if raw == "" {
+			return sdkmath.LegacyZeroDec(), nil
+		}
+		return sdkmath.LegacyNewDecFromStr(raw)
+	}
+
+	var fx fixingSample
+	var errDec error
+	if fx.ChfUsd, errDec = dec("chf_usd", "chfUsd"); errDec != nil {
+		return fixingSample{}, false, errDec
+	}
+	if fx.EurUsd, errDec = dec("eur_usd", "eurUsd"); errDec != nil {
+		return fixingSample{}, false, errDec
+	}
+	if fx.GbpUsd, errDec = dec("gbp_usd", "gbpUsd"); errDec != nil {
+		return fixingSample{}, false, errDec
+	}
+	if fx.BrlUsd, errDec = dec("brl_usd", "brlUsd"); errDec != nil {
+		return fixingSample{}, false, errDec
+	}
+	if fx.CadUsd, errDec = dec("cad_usd", "cadUsd"); errDec != nil {
+		return fixingSample{}, false, errDec
+	}
+	return fx, true, nil
+}
+
+// clampTowardsLimit aproxima cada perna do alvo quando o salto excede o limite,
+// escrevendo o passo máximo na direcção do alvo. É o que permite corrigir uma
+// fixing errada ao ritmo a que ela pode ser corrigida — em vez de não escrever
+// nada e deixar a mineração em pausa até o movimento "caber".
+func clampTowardsLimit(prev fixingSample, agg Rates, limit sdkmath.LegacyDec, logf func(string, ...any)) Rates {
+	clamp := func(name string, p, v sdkmath.LegacyDec) sdkmath.LegacyDec {
+		if p.IsNil() || !p.IsPositive() || v.IsNil() {
+			return v
+		}
+		if v.Sub(p).Abs().Quo(p).LTE(limit) {
+			return v
+		}
+		stepped := clampStep(p, v, limit)
+		if stepped.Equal(p) {
+			logf("%s: alvo %s fora do limite e o passo não é representável — a manter %s", name, v, p)
+			return p
+		}
+		logf("%s: alvo %s fora do limite de %s — a escrever %s (partindo de %s)",
+			name, v, limit.MulInt64(100).TruncateInt(), stepped, p)
+		return stepped
+	}
+
+	agg.ChfUsd = clamp("chf_usd", prev.ChfUsd, agg.ChfUsd)
+	agg.EurUsd = clamp("eur_usd", prev.EurUsd, agg.EurUsd)
+	agg.GbpUsd = clamp("gbp_usd", prev.GbpUsd, agg.GbpUsd)
+	agg.BrlUsd = clamp("brl_usd", prev.BrlUsd, agg.BrlUsd)
+	agg.CadUsd = clamp("cad_usd", prev.CadUsd, agg.CadUsd)
+	return agg
+}
+
+// clampStep devolve o maior passo aceite na direcção de v. O `Mul` arredonda
+// para 18 casas e pode cair 1 ulp ACIMA do limite — o keeper compara a razão e
+// recusaria, deixando a correcção presa para sempre. Recua até 4 ulp e, se ainda
+// assim não couber, devolve p (movimento zero é sempre aceite).
+func clampStep(p, v, limit sdkmath.LegacyDec) sdkmath.LegacyDec {
+	one := sdkmath.LegacyOneDec()
+	ulp := sdkmath.LegacySmallestDec()
+
+	var stepped sdkmath.LegacyDec
+	if v.GT(p) {
+		stepped = p.Mul(one.Add(limit))
+	} else {
+		stepped = p.Mul(one.Sub(limit))
+	}
+	for i := 0; i < 4 && stepped.Sub(p).Abs().Quo(p).GT(limit); i++ {
+		if v.GT(p) {
+			stepped = stepped.Sub(ulp)
+		} else {
+			stepped = stepped.Add(ulp)
+		}
+	}
+	if stepped.Sub(p).Abs().Quo(p).GT(limit) || !stepped.IsPositive() {
+		return p
+	}
+	return stepped
 }

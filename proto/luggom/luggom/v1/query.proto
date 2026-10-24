@@ -3,6 +3,7 @@ package luggom.luggom.v1;
 
 import "amino/amino.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "luggom/luggom/v1/params.proto";
@@ -14,6 +15,14 @@ service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/luggom/luggom/v1/params";
+  }
+
+  // OracleFixing returns the fixing of a given day (YYYY-MM-DD), resolved from
+  // the embedded history first and then from the store. This is the value a
+  // receipt dated the following day is priced with, and it is what the feeder
+  // reads to walk a wild move back towards the median.
+  rpc OracleFixing(QueryOracleFixingRequest) returns (QueryOracleFixingResponse) {
+    option (google.api.http).get = "/luggom/luggom/v1/oracle_fixing/{day}";
   }
 }
 
@@ -27,4 +36,46 @@ message QueryParamsResponse {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+}
+
+// QueryOracleFixingRequest asks for the fixing of one day.
+message QueryOracleFixingRequest {
+  // day is the fixing date, "YYYY-MM-DD" (UTC).
+  string day = 1;
+}
+
+// QueryOracleFixingResponse carries the fixing of that day. `found` is false
+// when neither the embedded history nor the store covers it — the amounts are
+// then zero.
+message QueryOracleFixingResponse {
+  string day = 1;
+  bool found = 2;
+  string chf_usd = 3 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string eur_usd = 4 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string gbp_usd = 5 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string brl_usd = 6 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string cad_usd = 7 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  // source diz de onde veio o valor: "history" (tabela compilada), "store"
+  // (escrito on-chain) ou "none". É o que permite auditar o registo on-chain.
+  string source = 8;
 }

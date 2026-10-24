@@ -99,8 +99,14 @@ func (p Params) Validate() error {
 	}
 	seenPayee := make(map[string]struct{}, len(p.NotaryPayees))
 	for i, payee := range p.NotaryPayees {
-		if _, err := sdk.AccAddressFromBech32(payee); err != nil {
+		addr, err := sdk.AccAddressFromBech32(payee)
+		if err != nil {
 			return fmt.Errorf("notary_payees[%d] is not a valid address: %w", i, err)
+		}
+		// Forma canónica: sem isto, variantes de maiúsculas passam o teste de
+		// duplicados e nunca casam com o destino de um pagamento.
+		if addr.String() != payee {
+			return fmt.Errorf("notary_payees[%d] is not in canonical form: got %q, want %q", i, payee, addr.String())
 		}
 		if _, dup := seenPayee[payee]; dup {
 			return fmt.Errorf("notary_payees[%d] is duplicated: %s", i, payee)
