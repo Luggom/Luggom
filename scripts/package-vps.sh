@@ -211,6 +211,8 @@ Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/opt/luggom
 Environment=HOME_DIR=/opt/luggom/home
+# Altura de halt para upgrades coordenados (TESTNET/UPGRADES.md). 0 = desligado.
+Environment=LUGGOM_HALT_HEIGHT=0
 ExecStart=/opt/luggom/scripts/run-local-testnet.sh start
 ExecStop=/opt/luggom/scripts/run-local-testnet.sh stop
 TimeoutStartSec=300
@@ -232,6 +234,10 @@ Environment=LUGGOM_EXTRACTOR_BIN=/opt/luggom/build/luggom-extract
 # v4: o chain-id entra no payload assinado (impede replay testnet → mainnet).
 # Tem de coincidir com o chain-id da chain e com o da API.
 Environment=LUGGOM_CHAIN_ID=luggom-test
+# Tecto do tempo que a atestação (só campos pseudonimizados, só em memória)
+# fica disponível para a API. O binário limita a 900 s, mesmo que este valor
+# seja maior.
+Environment=LUGGOM_ATTESTATION_TTL_SECS=900
 Environment=PORT=7047
 ExecStart=/opt/luggom/build/tlsn-verifier-server
 Restart=on-failure

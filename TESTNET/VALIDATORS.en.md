@@ -1,5 +1,7 @@
 # Validators — Luggom testnet (by invitation)
 
+> **Upgrades:** the chain is upgraded by a published **halt height**, not by an ad-hoc restart. Read `TESTNET/UPGRADES.en.md` before you bond — one missed height means downtime, and downtime means jail.
+
 > **Testnet.** No monetary value. The chain can be reset.
 > **By invitation:** join https://t.me/+XRWgwPwvz4hkOTJh and post your `luggom1…` address
 > and moniker. The operator funds **200 testnet LUG**. p2p `26656` is **open** on the seed

@@ -99,8 +99,12 @@ def settoml(lines, section, key, val):
             return
     lines.append("[%s]" % section); lines.append('%s = "%s"' % (key, val))
 
+# rpc/api/grpc escutam em 0.0.0.0 DE PROPÓSITO: é o fallback por IP documentado
+# em TESTNET/ENDPOINTS.md e o que o nginx usa. A fronteira de segurança é a
+# firewall (só 26656/26657/1317/8082 abertos), não o bind. A telemetria
+# (prometheus/pprof) fica em 127.0.0.1.
 edit(cfg, lambda L: (
-    settoml(L, "rpc", "laddr", "tcp://127.0.0.1:%s" % rpc),
+    settoml(L, "rpc", "laddr", "tcp://0.0.0.0:%s" % rpc),
     settoml(L, "p2p", "laddr", "tcp://0.0.0.0:%s" % p2p),
     settoml(L, "p2p", "persistent_peers", peers),
     settoml(L, "p2p", "addr_book_strict", "false"),
@@ -112,8 +116,8 @@ edit(app, lambda L: (
     # O desktop (carteira) fala com o nó por REST/LCD — sem isto ligado, a
     # carteira não tem como ler saldo nem transmitir nada (§13.150/A3).
     settoml(L, "api", "enable", "true"),
-    settoml(L, "api", "address", "tcp://127.0.0.1:%s" % api),
-    settoml(L, "grpc", "address", "127.0.0.1:%s" % grpc),
+    settoml(L, "api", "address", "tcp://0.0.0.0:%s" % api),
+    settoml(L, "grpc", "address", "0.0.0.0:%s" % grpc),
     L)[-1])
 print("  nó %s → rpc :%s · p2p :%s · api :%s · grpc :%s" % (i, rpc, p2p, api, grpc))
 PY
@@ -132,13 +136,20 @@ case "$ACTION" in
 
   start)
     mkdir -p "$PIDDIR"
+    # Upgrade por altura de halt (ver TESTNET/UPGRADES.md). 0/vazio = desligado.
+    # A unit do pacote passa isto por Environment= quando há um upgrade anunciado.
+    HALT_FLAG=""
+    if [[ -n "${LUGGOM_HALT_HEIGHT:-}" && "${LUGGOM_HALT_HEIGHT}" != "0" ]]; then
+      HALT_FLAG="--halt-height ${LUGGOM_HALT_HEIGHT}"
+      echo "⚠️  --halt-height ${LUGGOM_HALT_HEIGHT} em TODOS os nós (upgrade)"
+    fi
     echo "=== A configurar $N validador(es) ==="
     for i in "${!DIRS[@]}"; do configure "$i" "${DIRS[$i]}"; done
     echo "=== A arrancar $N nó(s) ==="
     for i in "${!DIRS[@]}"; do
       dir="${DIRS[$i]}"
       ensure_pv_state "$dir"
-      nohup "$BIN" start --home "$dir" --minimum-gas-prices 1uluggom \
+      nohup "$BIN" start --home "$dir" --minimum-gas-prices 1uluggom $HALT_FLAG \
         >"$dir/node.log" 2>&1 &
       echo $! > "$PIDDIR/${NAMES[$i]}.pid"
       echo "  ${NAMES[$i]} pid $(cat "$PIDDIR/${NAMES[$i]}.pid") → log $dir/node.log"

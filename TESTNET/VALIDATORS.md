@@ -1,5 +1,7 @@
 # Validadores — testnet Luggom (por convite)
 
+> **Upgrades:** a chain sobe por uma **altura de halt** publicada, não por um restart à vontade. Lê `TESTNET/UPGRADES.md` antes de bondares — perder uma altura é downtime, e downtime é jail.
+
 > **Testnet.** Sem valor monetário. A chain pode ser resetada.
 > **Por convite:** entra no grupo https://t.me/+XRWgwPwvz4hkOTJh e posta o teu endereço
 > `luggom1…` + moniker. O operador financia **200 LUG** de testnet. O p2p `26656` está
