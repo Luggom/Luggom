@@ -37,3 +37,9 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+# binários de build (nunca versionar)
+/luggomd
+/luggom-api
+/luggom-extract
+/luggom-oracle-feeder

@@ -188,6 +188,25 @@ func validateOraclePerUsdLeg(label string, d sdkmath.LegacyDec) error {
 const (
 	oracleDayLayout       = "2006-01-02"
 	maxOracleLookbackDays = 7
+
+	// Guarda contra uma escrita má — chave do updater comprometida ou bug do
+	// feeder. A mediana das fontes protege de UMA fonte errada; não protege de
+	// uma escrita errada que chega à chain. Como o dia é imutável e os recibos
+	// seguintes resolvem para ele, o dano de uma fixing errada dura a janela
+	// inteira (365 dias).
+	//
+	// O limite é por dia decorrido desde a fixing anterior (para tolerar um
+	// feeder que esteve parado) e tem um tecto. Uma fixing que salte mais do que
+	// isto é recusada: o dia fica vazio e a mineração recua para a anterior
+	// (fail-closed), em vez de cunhar ao preço errado.
+	maxFixingMovePerDay = "0.10" // 10% por dia
+	maxFixingMoveTotal  = "0.50" // tecto: 50%
+	maxFixingPrevSearch = 30     // dias para trás à procura da fixing anterior
+)
+
+var (
+	maxFixingMovePerDayDec = sdkmath.LegacyMustNewDecFromStr(maxFixingMovePerDay)
+	maxFixingMoveTotalDec  = sdkmath.LegacyMustNewDecFromStr(maxFixingMoveTotal)
 )
 
 // OracleDayKey devolve a chave canónica do dia UTC ("2026-10-22").
@@ -224,11 +243,13 @@ func (k Keeper) UsdOracleSnapshotForPaymentDay(ctx context.Context, paymentDate 
 // serve os dias posteriores a essa janela. Na primeira utilização de um dia da
 // tabela, o valor fica registado on-chain, para auditoria.
 func (k Keeper) oracleSnapshotForDay(ctx context.Context, day string) (types.UsdOracleSnapshot, bool, error) {
-	snap, covered, err := oracleHistoryForDay(day)
-	if err != nil {
-		return types.UsdOracleSnapshot{}, false, err
+	snap, found, err := k.oracleFixingForDay(ctx, day)
+	if err != nil || !found {
+		return snap, found, err
 	}
-	if covered {
+	if _, covered, err := oracleHistoryForDay(day); err != nil {
+		return types.UsdOracleSnapshot{}, false, err
+	} else if covered {
 		has, err := k.UsdOracleDaily.Has(ctx, day)
 		if err != nil {
 			return types.UsdOracleSnapshot{}, false, err
@@ -238,10 +259,21 @@ func (k Keeper) oracleSnapshotForDay(ctx context.Context, day string) (types.Usd
 				return types.UsdOracleSnapshot{}, false, err
 			}
 		}
+	}
+	return snap, true, nil
+}
+
+// oracleFixingForDay é a versão READ-ONLY da resolução: tabela primeiro, depois
+// o store. Não fixa nada — é usada pela guarda de movimento, que não deve
+// escrever estado.
+func (k Keeper) oracleFixingForDay(ctx context.Context, day string) (types.UsdOracleSnapshot, bool, error) {
+	if snap, ok, err := oracleHistoryForDay(day); err != nil {
+		return types.UsdOracleSnapshot{}, false, err
+	} else if ok {
 		return snap, true, nil
 	}
 
-	snap, err = k.UsdOracleDaily.Get(ctx, day)
+	snap, err := k.UsdOracleDaily.Get(ctx, day)
 	if err == nil {
 		return snap, true, nil
 	}
@@ -249,6 +281,84 @@ func (k Keeper) oracleSnapshotForDay(ctx context.Context, day string) (types.Usd
 		return types.UsdOracleSnapshot{}, false, err
 	}
 	return types.UsdOracleSnapshot{}, false, nil
+}
+
+// oracleFixingBefore devolve a fixing mais recente ANTES de `day`, e o dia dela.
+func (k Keeper) oracleFixingBefore(ctx context.Context, day string) (types.UsdOracleSnapshot, string, bool, error) {
+	d, err := time.Parse(oracleDayLayout, day)
+	if err != nil {
+		return types.UsdOracleSnapshot{}, "", false, fmt.Errorf("invalid oracle day %q: %w", day, err)
+	}
+	for i := 1; i <= maxFixingPrevSearch; i++ {
+		key := d.AddDate(0, 0, -i).Format(oracleDayLayout)
+		snap, ok, err := k.oracleFixingForDay(ctx, key)
+		if err != nil {
+			return types.UsdOracleSnapshot{}, "", false, err
+		}
+		if ok {
+			return snap, key, true, nil
+		}
+	}
+	return types.UsdOracleSnapshot{}, "", false, nil
+}
+
+// checkFixingMove recusa uma fixing que salte mais do que o limite em relação à
+// fixing anterior. Sem fixing anterior (primeira de sempre), não há comparação.
+func (k Keeper) checkFixingMove(ctx context.Context, day string, next types.UsdOracleSnapshot) error {
+	prev, prevDay, ok, err := k.oracleFixingBefore(ctx, day)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return nil
+	}
+
+	d, err := time.Parse(oracleDayLayout, day)
+	if err != nil {
+		return fmt.Errorf("invalid oracle day %q: %w", day, err)
+	}
+	p, err := time.Parse(oracleDayLayout, prevDay)
+	if err != nil {
+		return fmt.Errorf("invalid previous oracle day %q: %w", prevDay, err)
+	}
+	days := int64(d.Sub(p).Hours() / 24)
+	if days < 1 {
+		days = 1
+	}
+	limit := maxFixingMovePerDayDec.MulInt64(days)
+	if limit.GT(maxFixingMoveTotalDec) {
+		limit = maxFixingMoveTotalDec
+	}
+
+	legs := []struct {
+		name string
+		prev sdkmath.LegacyDec
+		next sdkmath.LegacyDec
+	}{
+		{"chf_usd", prev.ChfUsd, next.ChfUsd},
+		{"eur_usd", prev.EurUsd, next.EurUsd},
+		{"gbp_usd", prev.GbpUsd, next.GbpUsd},
+		{"brl_usd", prev.BrlUsd, next.BrlUsd},
+		{"cad_usd", prev.CadUsd, next.CadUsd},
+	}
+	for _, leg := range legs {
+		if leg.prev.IsNil() || !leg.prev.IsPositive() || leg.next.IsNil() {
+			continue
+		}
+		move := leg.next.Sub(leg.prev).Abs().Quo(leg.prev)
+		if move.GT(limit) {
+			return fmt.Errorf(
+				"%s would move %s%% from the fixing of %s (%s), limit is %s%% over %d day(s): refusing to write a fixing this far from the previous one",
+				leg.name,
+				move.MulInt64(100).TruncateInt().String(),
+				prevDay,
+				leg.prev.String(),
+				limit.MulInt64(100).TruncateInt().String(),
+				days,
+			)
+		}
+	}
+	return nil
 }
 
 // usdParityFromBasketRatesAt is called by the mining path with the snapshot of

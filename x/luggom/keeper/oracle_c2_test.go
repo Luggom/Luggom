@@ -47,9 +47,9 @@ func TestUpdateUsdOracleBasket_AuthAndMine(t *testing.T) {
 
 	_, err = ms.UpdateUsdOracleBasket(ctx10, &types.MsgUpdateUsdOracleBasket{
 		Signer:   oracleStr,
-		ChfUsd:   sdkmath.LegacyMustNewDecFromStr("1.2"),
-		EurUsd:   sdkmath.LegacyMustNewDecFromStr("1.2"),
-		GbpUsd:   sdkmath.LegacyMustNewDecFromStr("1.2"),
+		ChfUsd:   sdkmath.LegacyMustNewDecFromStr("1.12"),
+		EurUsd:   sdkmath.LegacyMustNewDecFromStr("1.20"),
+		GbpUsd:   sdkmath.LegacyMustNewDecFromStr("1.35"),
 		BrlUsd:   sdkmath.LegacyMustNewDecFromStr("5.0"),
 		CadUsd:   sdkmath.LegacyMustNewDecFromStr("1.37"),
 		RateDate: fixingDay,
@@ -78,7 +78,7 @@ func TestUpdateUsdOracleBasket_AuthAndMine(t *testing.T) {
 	dayKey := keeper.OracleDayKey(sdk.UnwrapSDKContext(ctx10).BlockTime().Unix())
 	daily, err := f.keeper.UsdOracleDaily.Get(ctx10, dayKey)
 	require.NoError(t, err)
-	require.True(t, daily.ChfUsd.Equal(sdkmath.LegacyMustNewDecFromStr("1.2")))
+	require.True(t, daily.ChfUsd.Equal(sdkmath.LegacyMustNewDecFromStr("1.12")))
 	require.True(t, daily.BrlUsd.IsPositive(), "BRL/USD tem de ir no snapshot diário")
 	require.True(t, daily.CadUsd.IsPositive(), "CAD/USD tem de ir no snapshot diário")
 

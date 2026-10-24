@@ -108,6 +108,14 @@ func (k Keeper) UpdateUsdOracleBasket(ctx context.Context, msg *types.MsgUpdateU
 		BlockHeight: sdkCtx.BlockHeight(),
 		UpdatedAt:   sdkCtx.BlockTime().Unix(),
 	}
+
+	// 3. Guarda de movimento: uma fixing que salte demasiado em relação à
+	//    anterior é recusada. A mediana das fontes protege de uma fonte errada;
+	//    isto protege de uma ESCRITA errada (chave comprometida ou bug) que,
+	//    sendo imutável, envenenaria todos os recibos da janela seguinte.
+	if err := k.checkFixingMove(ctx, day, snap); err != nil {
+		return nil, err
+	}
 	// Último snapshot (leitura rápida/API). Deixou de ser lido pela mineração.
 	if err := k.UsdOracleSnapshot.Set(ctx, snap); err != nil {
 		return nil, err
