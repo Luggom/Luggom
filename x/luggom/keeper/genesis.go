@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"cosmossdk.io/collections"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -28,7 +29,7 @@ func (k Keeper) InitGenesis(ctx context.Context, genState types.GenesisState) er
 	// entra já elegível (stamp recuado pelo atraso). Sem isto, um genesis com
 	// notary_payees deixava a reserva do notariado impossível de gastar.
 	if len(genState.Params.NotaryPayees) > 0 {
-		stamp := sdk.UnwrapSDKContext(ctx).BlockTime().Unix() - notaryPayeeDelaySeconds
+		stamp := sdk.UnwrapSDKContext(ctx).BlockTime().Unix() - int64(notaryPayeeDelayFloor/time.Second)
 		for _, payee := range genState.Params.NotaryPayees {
 			if err := k.NotaryPayeeAddedAt.Set(ctx, payee, stamp); err != nil {
 				return err

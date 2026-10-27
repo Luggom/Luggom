@@ -45,6 +45,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
 
 	"luggom/docs"
+	"luggom/x/luggom/govtally"
 	luggommodulekeeper "luggom/x/luggom/keeper"
 )
 
@@ -186,6 +187,12 @@ func New(
 
 	// build app
 	app.App = appBuilder.Build(db, traceStore, baseAppOptions...)
+
+	// §17 — o atraso dos payees do notariado deriva dos períodos do x/gov. A
+	// ligação é feita aqui, e não no depinject, porque há um ciclo: o gov recebe
+	// o tally do luggom e o luggom precisaria do gov. O setter escreve no
+	// ponteiro partilhado, por isso as cópias do keeper (msgServer) vêem-no.
+	app.LuggomKeeper.SetGovKeeper(govtally.NewGovPeriods(app.GovKeeper))
 
 	// Flat 0.005 LUG on native transfers (after default ante); see TOKENOMICS_MVP15.md §3.
 	// FASE 5.3: strict filter first (rejects tokenomics-changing MsgUpdateParams),

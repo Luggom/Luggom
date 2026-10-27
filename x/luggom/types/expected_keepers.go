@@ -2,6 +2,7 @@ package types
 
 import (
 	"context"
+	"time"
 
 	"cosmossdk.io/core/address"
 	sdkmath "cosmossdk.io/math"
@@ -51,4 +52,11 @@ type SlashingKeeper interface {
 type ParamSubspace interface {
 	Get(context.Context, []byte, interface{})
 	Set(context.Context, []byte, interface{})
+}
+
+// GovKeeper expõe o que o atraso dos payees do notariado precisa: os dois
+// períodos do x/gov. Lido no momento do gasto, não no arranque — se a governança
+// mudar os períodos, o atraso acompanha.
+type GovKeeper interface {
+	GovPeriods(ctx context.Context) (maxDeposit, voting time.Duration, err error)
 }

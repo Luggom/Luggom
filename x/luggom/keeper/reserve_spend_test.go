@@ -278,3 +278,83 @@ func TestUpdateParams_NotaryPayeeNeedsDelay(t *testing.T) {
 	require.NoError(t, err)
 	require.Error(t, spend(ctx8), "re-adicionar tem de reiniciar o atraso")
 }
+
+// O atraso deriva do x/gov: max_deposit_period + voting_period + 1 dia, com piso
+// de 7 dias. Na testnet (2d+2d+1d=5d) manda o piso; com períodos maiores o
+// atraso acompanha — é isso que fecha o buraco de "cronometrar a proposta para
+// terminar quando o payee fica elegível".
+func TestSpendFromReserve_DelayFollowsGovPeriods(t *testing.T) {
+	f := initMineFixture(t)
+	ms := keeper.NewMsgServerImpl(f.keeper)
+
+	dest, _ := makeAddr(t, f.addressCodec, 0x52)
+	auth := govAuthority(t, f)
+
+	params := devParamsForTest()
+	params.NotaryPayees = []string{dest}
+	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+
+	// 7 dias de depósito + 10 de votação + 1 ⇒ 18 dias.
+	f.gov.deposit = 7 * 24 * time.Hour
+	f.gov.voting = 10 * 24 * time.Hour
+
+	f.bank.spendableByAddr = map[string]sdk.Coins{
+		authtypes.NewModuleAddress(types.NotaryReserveModuleName).String(): sdk.NewCoins(
+			sdk.NewCoin("uluggom", sdkmath.NewInt(1_000).MulRaw(1_000_000_000_000_000_000))),
+	}
+	now := sdk.UnwrapSDKContext(f.ctx).BlockTime().Unix()
+	spend := func() error {
+		_, err := ms.SpendFromReserve(f.ctx, &types.MsgSpendFromReserve{
+			Authority:   auth,
+			Reserve:     types.ReserveNotary,
+			Destination: dest,
+			Amount:      sdkmath.NewInt(10).MulRaw(1_000_000_000_000_000_000),
+		})
+		return err
+	}
+
+	// 12 dias: passou o piso de 7 mas não os 18 ⇒ recusado.
+	require.NoError(t, f.keeper.NotaryPayeeAddedAt.Set(f.ctx, dest, now-12*24*3600))
+	err := spend()
+	require.Error(t, err, "12 dias não chegam para 7+10+1")
+	require.Contains(t, err.Error(), "eligible in")
+
+	// 19 dias: elegível.
+	require.NoError(t, f.keeper.NotaryPayeeAddedAt.Set(f.ctx, dest, now-19*24*3600))
+	require.NoError(t, spend())
+}
+
+// Piso de 7 dias: com períodos do gov a zero (ou nil), o atraso não desaparece.
+func TestSpendFromReserve_DelayFloor(t *testing.T) {
+	f := initMineFixture(t)
+	ms := keeper.NewMsgServerImpl(f.keeper)
+
+	dest, _ := makeAddr(t, f.addressCodec, 0x53)
+	auth := govAuthority(t, f)
+
+	params := devParamsForTest()
+	params.NotaryPayees = []string{dest}
+	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+
+	f.gov.deposit, f.gov.voting = 0, 0
+	f.bank.spendableByAddr = map[string]sdk.Coins{
+		authtypes.NewModuleAddress(types.NotaryReserveModuleName).String(): sdk.NewCoins(
+			sdk.NewCoin("uluggom", sdkmath.NewInt(1_000).MulRaw(1_000_000_000_000_000_000))),
+	}
+	now := sdk.UnwrapSDKContext(f.ctx).BlockTime().Unix()
+	spend := func() error {
+		_, err := ms.SpendFromReserve(f.ctx, &types.MsgSpendFromReserve{
+			Authority:   auth,
+			Reserve:     types.ReserveNotary,
+			Destination: dest,
+			Amount:      sdkmath.NewInt(10).MulRaw(1_000_000_000_000_000_000),
+		})
+		return err
+	}
+
+	require.NoError(t, f.keeper.NotaryPayeeAddedAt.Set(f.ctx, dest, now-6*24*3600))
+	require.Error(t, spend(), "6 dias não chegam ao piso de 7")
+
+	require.NoError(t, f.keeper.NotaryPayeeAddedAt.Set(f.ctx, dest, now-8*24*3600))
+	require.NoError(t, spend())
+}

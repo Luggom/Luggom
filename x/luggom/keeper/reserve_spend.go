@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"cosmossdk.io/collections"
 	sdkmath "cosmossdk.io/math"
@@ -18,8 +19,8 @@ const (
 	// proposta podia adicionar o endereço (MsgUpdateParams) e pagá-lo
 	// (MsgSpendFromReserve) na mesma execução: o x/gov corre as mensagens por
 	// ordem. Com o atraso, "a governança muda quem, não para onde" é verdade.
-	notaryPayeeDelayDays    = 7
-	notaryPayeeDelaySeconds = int64(notaryPayeeDelayDays) * 24 * 60 * 60
+	// Piso do atraso. O valor efectivo é derivado do x/gov em notaryPayeeDelay.
+	notaryPayeeDelayFloor = 7 * 24 * time.Hour
 
 	// Tecto por janela: no máximo 25% do saldo da reserva em cada 7 dias.
 	// Contém uma sequência de propostas que, sem ele, esvaziaria a reserva.
@@ -93,8 +94,13 @@ func (k msgServer) SpendFromReserve(ctx context.Context, msg *types.MsgSpendFrom
 			}
 			return nil, err
 		}
-		if now < addedAt+notaryPayeeDelaySeconds {
-			daysLeft := (addedAt + notaryPayeeDelaySeconds - now + 86_399) / 86_400
+		delay, err := k.notaryPayeeDelay(ctx)
+		if err != nil {
+			return nil, err
+		}
+		delaySecs := int64(delay / time.Second)
+		if now < addedAt+delaySecs {
+			daysLeft := (addedAt + delaySecs - now + 86_399) / 86_400
 			return nil, fmt.Errorf(
 				"destination %s is eligible in %d day(s): the notary budget pays who is eligible, not when it moves",
 				canonical, daysLeft)
@@ -176,4 +182,25 @@ func (k msgServer) SpendFromReserve(ctx context.Context, msg *types.MsgSpendFrom
 	))
 
 	return &types.MsgSpendFromReserveResponse{}, nil
+}
+
+// notaryPayeeDelay devolve o atraso mínimo entre entrar na lista e poder receber.
+//
+// Deriva do x/gov, não de um múltiplo: uma remoção só começa a votar quando
+// atinge o `min_deposit`, e o x/gov executa a proposta aprovada no EndBlock em
+// que a votação termina — a execução não acrescenta tempo. O pior caso é
+// `max_deposit_period + voting_period + 1 dia` (para alguém notar o add e
+// submeter). A via expedita pode ser mais rápida, mas dimensiona-se pela normal:
+// uma expedita que falhe o limiar passa a normal e demora um `voting_period`
+// inteiro. Piso de 7 dias.
+func (k Keeper) notaryPayeeDelay(ctx context.Context) (time.Duration, error) {
+	deposit, voting, err := k.govPeriods(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("cannot read gov periods: %w", err)
+	}
+	delay := deposit + voting + 24*time.Hour
+	if delay < notaryPayeeDelayFloor {
+		delay = notaryPayeeDelayFloor
+	}
+	return delay, nil
 }

@@ -128,3 +128,73 @@ func TestUpdateUsdOracleBasket_MoveLimitScalesWithGap(t *testing.T) {
 	_, err = ms.UpdateUsdOracleBasket(f.ctx, mk("6.30"))
 	require.NoError(t, err)
 }
+
+// A âncora permanente (§17). A procura por dia tem uma janela de 30 dias; sem o
+// item, uma fixing escrita há mais do que isso deixava a escrita seguinte SEM
+// LIMITE nenhum. O caso de +60% em 40 dias é o que distingue as duas versões.
+func TestUpdateUsdOracleBasket_AnchorSurvivesLongGap(t *testing.T) {
+	dec := func(s string) sdkmath.LegacyDec { return sdkmath.LegacyMustNewDecFromStr(s) }
+
+	prepare := func(t *testing.T) (*mineFixture, types.MsgServer, string, string) {
+		t.Helper()
+		f := initMineFixture(t)
+		ms := keeper.NewMsgServerImpl(f.keeper)
+		updater, _ := makeAddr(t, f.addressCodec, 0x99)
+		params := devParamsForTest()
+		params.UsdOracleUpdaterAddress = updater
+		require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+
+		now := sdk.UnwrapSDKContext(f.ctx).BlockTime().UTC()
+		_, err := ms.UpdateUsdOracleBasket(f.ctx, &types.MsgUpdateUsdOracleBasket{
+			Signer:   updater,
+			ChfUsd:   dec("1.10"),
+			EurUsd:   dec("1.18"),
+			GbpUsd:   dec("1.37"),
+			BrlUsd:   dec("5.0"),
+			CadUsd:   dec("1.37"),
+			RateDate: now.Format("2006-01-02"),
+		})
+		require.NoError(t, err)
+		return f, ms, updater, now.Format("2006-01-02")
+	}
+
+	// A) +60% em 40 dias: acima do tecto de 50% ⇒ recusado. Na versão antiga a
+	// procura até 30 dias não encontrava nada e isto passava sem limite.
+	f, ms, updater, firstDay := prepare(t)
+	anchor, err := f.keeper.LastFixingDay.Get(f.ctx)
+	require.NoError(t, err)
+	require.Equal(t, firstDay, anchor, "a âncora tem de ficar escrita")
+
+	later := sdk.UnwrapSDKContext(f.ctx).BlockTime().UTC().AddDate(0, 0, 40)
+	ctx40 := sdk.WrapSDKContext(sdk.UnwrapSDKContext(f.ctx).WithBlockTime(later))
+	_, err = ms.UpdateUsdOracleBasket(ctx40, &types.MsgUpdateUsdOracleBasket{
+		Signer:   updater,
+		ChfUsd:   dec("1.10"),
+		EurUsd:   dec("1.18"),
+		GbpUsd:   dec("1.37"),
+		BrlUsd:   dec("8.0"), // +60%
+		CadUsd:   dec("1.37"),
+		RateDate: later.Format("2006-01-02"),
+	})
+	require.Error(t, err, "+60%% após um gap longo tem de ser recusado pelo tecto de 50%%")
+	require.Contains(t, err.Error(), "brl_usd")
+
+	// B) +40% em 40 dias: dentro do tecto ⇒ aceite.
+	f2, ms2, updater2, _ := prepare(t)
+	later2 := sdk.UnwrapSDKContext(f2.ctx).BlockTime().UTC().AddDate(0, 0, 40)
+	ctx402 := sdk.WrapSDKContext(sdk.UnwrapSDKContext(f2.ctx).WithBlockTime(later2))
+	_, err = ms2.UpdateUsdOracleBasket(ctx402, &types.MsgUpdateUsdOracleBasket{
+		Signer:   updater2,
+		ChfUsd:   dec("1.10"),
+		EurUsd:   dec("1.18"),
+		GbpUsd:   dec("1.37"),
+		BrlUsd:   dec("7.0"), // +40%
+		CadUsd:   dec("1.37"),
+		RateDate: later2.Format("2006-01-02"),
+	})
+	require.NoError(t, err, "+40%% após um gap longo tem de passar")
+
+	day, err := f2.keeper.LastFixingDay.Get(ctx402)
+	require.NoError(t, err)
+	require.Equal(t, later2.Format("2006-01-02"), day, "a âncora avança a cada escrita")
+}

@@ -23,11 +23,19 @@ type Keeper struct {
 	bankKeeper     types.BankKeeper
 	stakingKeeper  types.StakingKeeper
 	slashingKeeper types.SlashingKeeper
+	// govKeeper é um PONTEIRO para a interface de propósito: o msgServer é
+	// construído por CÓPIA do Keeper (NewMsgServerImpl recebe um valor) e o app
+	// só consegue ligar o x/gov depois de ambos existirem — há um ciclo no
+	// depinject (gov → tally de luggom → keeper de luggom → gov). Sem o
+	// ponteiro, a cópia do msgServer nunca veria o SetGovKeeper.
+	govKeeper *types.GovKeeper
 
 	Schema                  collections.Schema
 	Params                  collections.Item[types.Params]
 	UsdOracleSnapshot       collections.Item[types.UsdOracleSnapshot]
 	UsdOracleDaily          collections.Map[string, types.UsdOracleSnapshot]
+	LastFixingDay           collections.Item[string]
+	LastFixingSnapshot      collections.Item[types.UsdOracleSnapshot]
 	NotaryPayeeAddedAt      collections.Map[string, int64]
 	NotarySpendWindowFrom   collections.Item[int64]
 	NotarySpendWindowSpent  collections.Item[string]
@@ -86,10 +94,13 @@ func NewKeeper(
 		bankKeeper:     bankKeeper,
 		stakingKeeper:  stakingKeeper,
 		slashingKeeper: slashingKeeper,
+		govKeeper:      new(types.GovKeeper),
 
 		Params:                  collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
 		UsdOracleSnapshot:       collections.NewItem(sb, types.UsdOracleSnapshotKey, "usd_oracle_snapshot", codec.CollValue[types.UsdOracleSnapshot](cdc)),
 		UsdOracleDaily:          collections.NewMap(sb, types.UsdOracleDailyPrefix, "usd_oracle_daily", collections.StringKey, codec.CollValue[types.UsdOracleSnapshot](cdc)),
+		LastFixingDay:           collections.NewItem(sb, types.LastFixingDayKey, "oracle_last_fixing_day", collections.StringValue),
+		LastFixingSnapshot:      collections.NewItem(sb, types.LastFixingSnapshotKey, "oracle_last_fixing_snapshot", codec.CollValue[types.UsdOracleSnapshot](cdc)),
 		NotaryPayeeAddedAt:      collections.NewMap(sb, types.NotaryPayeeAddedAtPrefix, "notary_payee_added_at", collections.StringKey, collections.Int64Value),
 		NotarySpendWindowFrom:   collections.NewItem(sb, types.NotarySpendWindowFromKey, "notary_spend_window_from", collections.Int64Value),
 		NotarySpendWindowSpent:  collections.NewItem(sb, types.NotarySpendWindowSpentKey, "notary_spend_window_spent", collections.StringValue),
@@ -215,4 +226,21 @@ func (k Keeper) chainStartTime(ctx sdk.Context) time.Time {
 	now := ctx.BlockTime().Unix()
 	_ = k.ChainStartTime.Set(ctx, uint64(now))
 	return time.Unix(now, 0).UTC()
+}
+
+// SetGovKeeper liga o x/gov ao keeper. Chamado uma vez pelo app, depois de
+// construir ambos (ver o comentário do campo govKeeper).
+func (k Keeper) SetGovKeeper(g types.GovKeeper) {
+	if k.govKeeper == nil {
+		return
+	}
+	*k.govKeeper = g
+}
+
+// govPeriods lê os dois períodos do x/gov, falhando alto se não estiver ligado.
+func (k Keeper) govPeriods(ctx context.Context) (time.Duration, time.Duration, error) {
+	if k.govKeeper == nil || *k.govKeeper == nil {
+		return 0, 0, fmt.Errorf("x/gov keeper is not wired: cannot derive the notary payee delay")
+	}
+	return (*k.govKeeper).GovPeriods(ctx)
 }

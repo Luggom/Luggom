@@ -102,11 +102,30 @@ func (m *trackingBankKeeper) GetSupply(_ context.Context, _ string) sdk.Coin {
 	return m.supply
 }
 
+// mockGovKeeper devolve períodos do x/gov configuráveis. Default: 2d/2d como a
+// testnet — a soma (2+2+1=5d) fica abaixo do piso de 7 dias, que é o que manda.
+type mockGovKeeper struct {
+	deposit time.Duration
+	voting  time.Duration
+	err     error
+}
+
+func (m *mockGovKeeper) GovPeriods(context.Context) (time.Duration, time.Duration, error) {
+	if m == nil {
+		return 0, 0, nil
+	}
+	if m.err != nil {
+		return 0, 0, m.err
+	}
+	return m.deposit, m.voting, nil
+}
+
 type mineFixture struct {
 	ctx          context.Context
 	keeper       keeper.Keeper
 	addressCodec address.Codec
 	bank         *trackingBankKeeper
+	gov          *mockGovKeeper
 }
 
 // testNotaryKeyHex — chave DEV do "notário" dos testes (32 bytes de 0x22).
@@ -154,7 +173,7 @@ func taxPaymentMsgForTest(t *testing.T, f *mineFixture, miner, unique string, lu
 	sum := sha256.Sum256([]byte("proof-" + unique))
 	msg := &types.MsgMineTaxPayment{
 		MinerAddress:    miner,
-		PaymentAmount:        sdkmath.LegacyNewDec(lug).Mul(sdkmath.LegacyMustNewDecFromStr("3.65")),
+		PaymentAmount:   sdkmath.LegacyNewDec(lug).Mul(sdkmath.LegacyMustNewDecFromStr("3.65")),
 		TaxEntity:       "irs",
 		CurrencyCode:    "USD",
 		ProofCommitment: hex.EncodeToString(sum[:]),
@@ -180,7 +199,7 @@ func signAttestationForTest(t *testing.T, msg *types.MsgMineTaxPayment) {
 		ChainID:         testChainID,
 		ProofCommitment: msg.ProofCommitment,
 		PaymentID:       msg.PaymentId,
-		PaymentAmount:        msg.PaymentAmount.String(),
+		PaymentAmount:   msg.PaymentAmount.String(),
 		TaxEntity:       msg.TaxEntity,
 		CurrencyCode:    msg.CurrencyCode,
 		PaymentDate:     msg.PaymentDate,
@@ -213,6 +232,7 @@ func initMineFixture(t *testing.T) *mineFixture {
 
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
 	bank := &trackingBankKeeper{}
+	govKeeper := &mockGovKeeper{deposit: 48 * time.Hour, voting: 48 * time.Hour}
 
 	k := keeper.NewKeeper(
 		storeService,
@@ -223,6 +243,7 @@ func initMineFixture(t *testing.T) *mineFixture {
 		&mockStakingKeeper{},
 		&mockSlashingKeeper{},
 	)
+	k.SetGovKeeper(govKeeper)
 
 	// §13.146 (review multi-agente): a fixture configura um founder_address — a
 	// mineração passou a ser FAIL-CLOSED sem ele (antes cunhava os 5% para dentro
@@ -263,6 +284,7 @@ func initMineFixture(t *testing.T) *mineFixture {
 		keeper:       k,
 		addressCodec: addressCodec,
 		bank:         bank,
+		gov:          govKeeper,
 	}
 }
 

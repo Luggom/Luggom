@@ -124,6 +124,15 @@ func (k Keeper) UpdateUsdOracleBasket(ctx context.Context, msg *types.MsgUpdateU
 	if err := k.UsdOracleDaily.Set(ctx, day, snap); err != nil {
 		return nil, err
 	}
+	// Âncora permanente da guarda de movimento (§17): a procura por dia tem um
+	// limite de 30 dias; este item não, e é o que mantém o limite activo depois
+	// de um intervalo longo (onde o tecto de 50% é já o valor certo).
+	if err := k.LastFixingDay.Set(ctx, day); err != nil {
+		return nil, err
+	}
+	if err := k.LastFixingSnapshot.Set(ctx, snap); err != nil {
+		return nil, err
+	}
 
 	sdkCtx.EventManager().EmitEvent(sdk.NewEvent(
 		"luggom_usd_oracle_update",

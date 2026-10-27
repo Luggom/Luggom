@@ -105,6 +105,11 @@ var NotaryPayeeAddedAtPrefix = collections.NewPrefix("notary_payee_at")
 // NotarySpendWindow* limitam quanto da reserva do notariado sai por janela
 // (7 dias, 25% do saldo). Um tecto por período contém uma sequência de
 // propostas que, sem ele, esvaziaria a reserva em poucos blocos.
+// Última fixing ESCRITA (dia + snapshot). É a âncora permanente da guarda de
+// movimento: sem ela, a procura para trás podia não encontrar nada (gap > 30
+// dias) e a primeira escrita ficava sem limite nenhum.
+var LastFixingDayKey = collections.NewPrefix("oracle_last_day")
+var LastFixingSnapshotKey = collections.NewPrefix("oracle_last_snap")
 var NotarySpendWindowFromKey = collections.NewPrefix("notary_spend_from")
 var NotarySpendWindowSpentKey = collections.NewPrefix("notary_spend_spent")
 

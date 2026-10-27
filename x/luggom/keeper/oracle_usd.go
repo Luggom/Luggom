@@ -302,15 +302,44 @@ func (k Keeper) oracleFixingBefore(ctx context.Context, day string) (types.UsdOr
 	return types.UsdOracleSnapshot{}, "", false, nil
 }
 
+// lastWrittenFixing devolve a última fixing ESCRITA (dia + valores). É a âncora
+// da guarda de movimento — ao contrário de oracleFixingBefore, não tem janela.
+func (k Keeper) lastWrittenFixing(ctx context.Context) (types.UsdOracleSnapshot, string, bool, error) {
+	day, err := k.LastFixingDay.Get(ctx)
+	if err != nil {
+		if errors.Is(err, collections.ErrNotFound) {
+			return types.UsdOracleSnapshot{}, "", false, nil
+		}
+		return types.UsdOracleSnapshot{}, "", false, err
+	}
+	snap, err := k.LastFixingSnapshot.Get(ctx)
+	if err != nil {
+		if errors.Is(err, collections.ErrNotFound) {
+			return types.UsdOracleSnapshot{}, "", false,
+				fmt.Errorf("last fixing day is %s but the snapshot is missing: state is inconsistent", day)
+		}
+		return types.UsdOracleSnapshot{}, "", false, err
+	}
+	return snap, day, true, nil
+}
+
 // checkFixingMove recusa uma fixing que salte mais do que o limite em relação à
 // fixing anterior. Sem fixing anterior (primeira de sempre), não há comparação.
 func (k Keeper) checkFixingMove(ctx context.Context, day string, next types.UsdOracleSnapshot) error {
-	prev, prevDay, ok, err := k.oracleFixingBefore(ctx, day)
+	prev, prevDay, ok, err := k.lastWrittenFixing(ctx)
 	if err != nil {
 		return err
 	}
 	if !ok {
-		return nil
+		// Primeira escrita depois do upgrade: o item ainda não existe. Recua-se
+		// para a procura por dia (tabela → store), sem migração.
+		prev, prevDay, ok, err = k.oracleFixingBefore(ctx, day)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return nil
+		}
 	}
 
 	d, err := time.Parse(oracleDayLayout, day)
