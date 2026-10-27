@@ -128,3 +128,34 @@ Se ficares offline, perdes blocos e podes ser jailed (slashing de testnet).
 - Testnet: sem valor; a chain pode ser resetada sem aviso.
 - O operador pode remover/jailed validadores em caso de abuso ou má configuração.
 - Dúvidas e convites: grupo https://t.me/+XRWgwPwvz4hkOTJh (inglês).
+
+## Construir a partir do código
+
+A rede corre o código na tag **`testnet-2026-10-27`** (commit `298b619`).
+Constrói com Go **1.23.8**, a versão do `go.mod`:
+
+```sh
+git clone --branch testnet-2026-10-27 --depth 1 https://github.com/Luggom/Luggom
+cd Luggom
+go version        # tem de ser go1.23.8 (ou um toolchain que respeite o go.mod)
+make install      # go install, com as ldflags de versão/commit
+luggomd version --long --output json
+```
+
+O JSON tem de mostrar `"version":"testnet-2026-10-27"` e `"commit":"298b619"`.
+Se mostrar, o teu binário foi construído exactamente do código que a rede corre.
+
+O `make install` passa também `-checklinkname=0` (exigido pelo Go 1.23 com o
+sonic). Para construir à mão, reproduz as mesmas flags:
+
+```sh
+go build -ldflags "-checklinkname=0 \
+  -X github.com/cosmos/cosmos-sdk/version.Name=luggom \
+  -X github.com/cosmos/cosmos-sdk/version.AppName=luggomd \
+  -X github.com/cosmos/cosmos-sdk/version.Version=testnet-2026-10-27 \
+  -X github.com/cosmos/cosmos-sdk/version.Commit=298b619" -o luggomd ./cmd/luggomd
+```
+
+O fork do Cosmos SDK vive em `deps/cosmos-sdk`, ligado por um `replace` no
+`go.mod`; está fixado pela tag, portanto não há mais nada a descarregar nem
+código por commitar.

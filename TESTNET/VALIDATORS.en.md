@@ -127,3 +127,34 @@ blocks and can be jailed (testnet slashing).
 - Testnet: no value; the chain can be reset without notice.
 - The operator may remove/jail validators for abuse or misconfiguration.
 - Questions and invitations: https://t.me/+XRWgwPwvz4hkOTJh (English).
+
+## Building from source
+
+The network runs the source at tag **`testnet-2026-10-27`** (commit `298b619`).
+Build with Go **1.23.8**, the version in `go.mod`:
+
+```sh
+git clone --branch testnet-2026-10-27 --depth 1 https://github.com/Luggom/Luggom
+cd Luggom
+go version        # must be go1.23.8 (or a toolchain that honours go.mod)
+make install      # go install, with the version/commit ldflags
+luggomd version --long --output json
+```
+
+The JSON must report `"version":"testnet-2026-10-27"` and `"commit":"298b619"`.
+If it does, your binary was built from exactly the source the network runs.
+
+`make install` also passes `-checklinkname=0` (required by Go 1.23 with sonic).
+If you prefer to build by hand, reproduce the same ldflags:
+
+```sh
+go build -ldflags "-checklinkname=0 \
+  -X github.com/cosmos/cosmos-sdk/version.Name=luggom \
+  -X github.com/cosmos/cosmos-sdk/version.AppName=luggomd \
+  -X github.com/cosmos/cosmos-sdk/version.Version=testnet-2026-10-27 \
+  -X github.com/cosmos/cosmos-sdk/version.Commit=298b619" -o luggomd ./cmd/luggomd
+```
+
+The Cosmos SDK fork lives in `deps/cosmos-sdk` and is wired by a `replace` in
+`go.mod`; it is pinned by the tag, so there is nothing else to fetch and no
+uncommitted source involved.
