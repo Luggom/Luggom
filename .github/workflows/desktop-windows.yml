@@ -1,0 +1,76 @@
+name: desktop-windows
+
+# Build do minerador/carteira para Windows (MSI + NSIS).
+#
+# Porquê CI: o código é Rust + Tauri. Compilar nativamente no Windows é o único
+# caminho fiável (cross-compile de Linux não é suportado pelo Tauri), e correr
+# isto num runner evita o vaivém de dual-boot. A validação de mineração real
+# (sessão bancária, extensão, CA) continua a ter de ser feita numa máquina Windows.
+#
+# O primeiro objectivo deste workflow é responder a uma pergunta: o prover
+# (luggom-wallet, que puxa tlsn-mobile) compila em MSVC? Se não, o erro aparece
+# no passo "Prover compiles on MSVC?" e não num instalador quebrado.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "desktop/**"
+      - "apk_luggom/native/tlsn-mobile/**"
+      - ".github/workflows/desktop-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 75
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: desktop
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/ui/package-lock.json
+
+      - name: UI deps
+        run: npm --prefix desktop/ui ci
+
+      # Primeiro sinal: o prover compila em MSVC? (é o crate que toca no TLSNotary)
+      - name: Prover compiles on MSVC
+        working-directory: desktop
+        env:
+          CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+        run: cargo build --release -p luggom-wallet
+
+      # O CLI resolve o projecto a partir do CWD (src-tauri), que é o que torna
+      # os caminhos relativos do tauri.conf.json válidos ("../ui").
+      - name: Build installers (MSI + NSIS)
+        working-directory: desktop/src-tauri
+        env:
+          CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+        run: npm --prefix ../ui exec -- tauri build --config tauri.windows.conf.json --verbose
+
+      - name: Upload installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: luggom-windows
+          if-no-files-found: error
+          path: |
+            desktop/target/release/bundle/msi/*.msi
+            desktop/target/release/bundle/nsis/*.exe
+            desktop/src-tauri/target/release/bundle/msi/*.msi
+            desktop/src-tauri/target/release/bundle/nsis/*.exe
