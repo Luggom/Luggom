@@ -87,7 +87,17 @@ func (m *mockStakingKeeper) Jail(_ context.Context, consAddr sdk.ConsAddress) er
 
 // mockSlashingKeeper implements types.SlashingKeeper for tests (FASE 3).
 type mockSlashingKeeper struct {
-	infos []slashingtypes.ValidatorSigningInfo
+	infos  []slashingtypes.ValidatorSigningInfo
+	window int64
+}
+
+// SignedBlocksWindow devolve a janela configurada (10000 por omissão, como o
+// x/slashing real).
+func (m *mockSlashingKeeper) SignedBlocksWindow(context.Context) (int64, error) {
+	if m.window == 0 {
+		return 10000, nil
+	}
+	return m.window, nil
 }
 
 func (m *mockSlashingKeeper) GetValidatorSigningInfo(context.Context, sdk.ConsAddress) (slashingtypes.ValidatorSigningInfo, error) {

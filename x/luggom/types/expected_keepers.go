@@ -45,6 +45,9 @@ type StakingKeeper interface {
 type SlashingKeeper interface {
 	GetValidatorSigningInfo(context.Context, sdk.ConsAddress) (slashingtypes.ValidatorSigningInfo, error)
 	IterateValidatorSigningInfos(context.Context, func(sdk.ConsAddress, slashingtypes.ValidatorSigningInfo) (stop bool)) error
+	// SignedBlocksWindow é a janela do x/slashing (signed_blocks_window). É o
+	// limiar do timestamp slashing: só se julga quem falhou a janela inteira.
+	SignedBlocksWindow(context.Context) (int64, error)
 	// Methods imported from slashing should be defined here
 }
 

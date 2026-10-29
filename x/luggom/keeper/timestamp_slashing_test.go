@@ -75,6 +75,71 @@ func TestEnforceTimestampSlashing_SkipsSigningValidator(t *testing.T) {
 	require.Len(t, sk.jailedByCons, 0)
 }
 
+// TestEnforceTimestampSlashing_DoesNotJailAfterASingleMiss: um único bloco
+// falhado não é ausência. Era o bug de 2026-10-28 (§27): o primeiro bloco
+// falhado prendia o validador para sempre, porque o unjail era desfeito no bloco
+// seguinte.
+func TestEnforceTimestampSlashing_DoesNotJailAfterASingleMiss(t *testing.T) {
+	consBytes := []byte{0x44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	consAddr := sdk.ConsAddress(consBytes)
+
+	sk := &mockStakingKeeper{
+		validatorByCons: map[string]stakingtypes.Validator{
+			consAddr.String(): {
+				OperatorAddress: sdk.ValAddress(consBytes).String(),
+				Jailed:          false,
+				Status:          stakingtypes.Bonded,
+			},
+		},
+	}
+	slk := &mockSlashingKeeper{
+		infos: []slashingtypes.ValidatorSigningInfo{
+			{
+				Address:             consAddr.String(),
+				StartHeight:         1,
+				IndexOffset:         5,
+				MissedBlocksCounter: 1, // um blip
+			},
+		},
+	}
+	f := initFixtureWithMocks(t, sk, slk)
+
+	require.NoError(t, f.keeper.EnforceTimestampSlashing(f.ctx))
+	require.Len(t, sk.jailedByCons, 0)
+}
+
+// TestEnforceTimestampSlashing_SkipsUnbondingValidator: um validador fora do
+// conjunto activo não pode assinar; julgá-lo prende-o num ciclo infinito
+// (unjail -> jailed no bloco seguinte).
+func TestEnforceTimestampSlashing_SkipsUnbondingValidator(t *testing.T) {
+	consBytes := []byte{0x55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	consAddr := sdk.ConsAddress(consBytes)
+
+	sk := &mockStakingKeeper{
+		validatorByCons: map[string]stakingtypes.Validator{
+			consAddr.String(): {
+				OperatorAddress: sdk.ValAddress(consBytes).String(),
+				Jailed:          false,
+				Status:          stakingtypes.Unbonding,
+			},
+		},
+	}
+	slk := &mockSlashingKeeper{
+		infos: []slashingtypes.ValidatorSigningInfo{
+			{
+				Address:             consAddr.String(),
+				StartHeight:         1,
+				IndexOffset:         10000,
+				MissedBlocksCounter: 10000,
+			},
+		},
+	}
+	f := initFixtureWithMocks(t, sk, slk)
+
+	require.NoError(t, f.keeper.EnforceTimestampSlashing(f.ctx))
+	require.Len(t, sk.jailedByCons, 0)
+}
+
 // TestEnforceTimestampSlashing_SkipsAlreadyJailed: a validator already jailed is skipped.
 func TestEnforceTimestampSlashing_SkipsAlreadyJailed(t *testing.T) {
 	consBytes := []byte{0x33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}

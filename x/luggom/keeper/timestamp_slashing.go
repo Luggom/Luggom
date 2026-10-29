@@ -8,19 +8,15 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 )
 
-const (
-	// defaultSlashNoSignSeconds is the default wall-clock threshold for jailing a
-	// validator that has not signed any block (FASE 3, §13.25). 15 days.
-	defaultSlashNoSignSeconds = uint64(15 * 24 * 60 * 60)
-)
-
-// EnforceTimestampSlashing jails validators whose last signed block is older than
-// the wall-clock limit (validator_slash_no_sign_seconds). It runs in the luggom
-// BeginBlock as a complement to the height-based x/slashing: when a validator stops
-// signing, the native window only advances while blocks are produced; this check
-// uses the signing info so that prolonged absence (e.g. a validator that keeps
-// failing while the rest of the network keeps producing blocks) is removed from
-// the active set deterministically.
+// EnforceTimestampSlashing é uma rede secundária conservadora por cima do
+// x/slashing nativo: jaila o validador que falhou a janela INTEIRA
+// (`signed_blocks_window`), ou seja que não assinou nada durante a janela.
+//
+// Só julga validadores **BONDED**. Um validador unbonding/unbonded não faz parte
+// do conjunto activo e por isso nunca assina: julgar pelo contador nesse estado é
+// um ciclo infinito, porque o `MsgUnjail` do SDK não repõe o contador e o bloco
+// seguinte volta a julgar. Foi o que aconteceu a 2026-10-28 (§27): o primeiro
+// bloco falhado prendia o validador para sempre.
 //
 // Only jails (no token slash): jailing removes the validator from the active set
 // and is reversible via MsgUnjail. Never confiscates (consistent with §13.38).
@@ -31,15 +27,19 @@ const (
 func (k Keeper) EnforceTimestampSlashing(ctx context.Context) error {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	_, err := k.Params.Get(ctx)
-	if err != nil {
+	if _, err := k.Params.Get(ctx); err != nil {
 		return fmt.Errorf("failed to get params: %w", err)
 	}
-	// The param (validator_slash_no_sign_seconds) is a conservative floor; the
-	// effective trigger is the missed-blocks heuristic below, so the value is
-	// read (validated in genesis) but not used arithmetically.
-	// §13.170 Grupo A — `validator_slash_no_sign_seconds` era MORTO (o fork usa
-	// constantes próprias); o campo foi apagado.
+
+	// O limiar é a janela do x/slashing: só se julga quem falhou a janela
+	// inteira (nunca assinou), não quem falhou um bloco.
+	window, err := k.slashingKeeper.SignedBlocksWindow(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get signed_blocks_window: %w", err)
+	}
+	if window <= 0 {
+		return nil
+	}
 
 	now := sdkCtx.BlockTime()
 
@@ -57,16 +57,13 @@ func (k Keeper) EnforceTimestampSlashing(ctx context.Context) error {
 		if validator.IsJailed() {
 			return false
 		}
-
-		// The signing info does not expose a wall-clock "last signed" timestamp,
-		// only the height-based counters. The native x/slashing (window 13.9h,
-		// min 70%, §13.62) already jails after ~4h10min of accumulated misses;
-		// this layer is a conservative secondary net for validators that keep
-		// missing over a very long period. We approximate "has been missing
-		// continuously" by the validator's missed-blocks counter being at or
-		// above the whole window (i.e. it has not signed for longer than the
-		// wall-clock threshold allows).
-		if info.MissedBlocksCounter == 0 {
+		// Só quem está no conjunto activo pode assinar; julgar os restantes é o
+		// ciclo infinito descrito acima.
+		if !validator.IsBonded() {
+			return false
+		}
+		// Falhou a janela inteira? Um bloco falhado não é ausência.
+		if info.MissedBlocksCounter < window {
 			return false
 		}
 
