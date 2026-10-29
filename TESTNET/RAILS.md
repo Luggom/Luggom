@@ -34,6 +34,21 @@
 3. Escreve o extractor + teste.
 4. O banco acende para todos os clientes daquele banco.
 
+## Critérios de aceitação (2026-10-29)
+
+Um rail só acende se cumprir os três — detalhe no `DEVELOPER_GUIDE.md`:
+
+1. **Específico do pagador, não só autenticado.** A página tem de **listar os
+   pagamentos feitos a partir desse login**. Teste com uma **segunda conta**: se
+   ela vê a parcela como paga, ou abre o recibo pelo URL, não qualifica. A pesquisa
+   pública de parcelas está sempre fora.
+2. **Id canónico com escopo no emissor**, quando o id é do portal: normalizado por
+   rail (tirar separadores, sem zeros à esquerda) e com a segunda chave
+   `(parcel | tax_year | installment)`. 1 cota = 1 mineração.
+3. **Liquidado e com seasoning.** ACH ≥ 60 dias após a liquidação (o consumidor
+   pode devolvê-lo como não autorizado durante 60 dias); cartão: definir a janela
+   de chargeback por processador antes de aceitar o rail.
+
 ## EUA / Canadá — notas
 
 - **EUA:** EIN quando o recibo traz; caso contrário, resolução por nome (county/state), só se
@@ -52,6 +67,9 @@
 - [ ] banco / domínio / país / moeda
 - [ ] entidade fiscal (slug)
 - [ ] extractor proposto
+- [ ] página **específica do pagador** (teste da segunda conta passou)
+- [ ] id normalizado por rail (+ segunda chave parcel/ano/cota)
+- [ ] estado **liquidado e com seasoning** (ACH ≥ 60 dias)
 - [ ] issue aberta (sem PII)
 
 Dúvidas: grupo https://t.me/+XRWgwPwvz4hkOTJh (inglês).

@@ -58,9 +58,12 @@ Isto é o que **quem minerou de verdade** entrega. Sem isto, ninguém escreve c�
    cookie jar (inclusive `httpOnly`).
 2. **Responder as 6 perguntas**:
    1. nickname do **beneficiário** (o ente tributário);
-   2. o endpoint é **reflectivo**? (reproduz a consulta sem efeito colateral);
-   3. o estado atestado é **"pago"**?;
-   4. qual o **`payment_id` canónico** (único por pagamento)?
+   2. a página **lista os pagamentos feitos a partir desse login**? (autenticada e
+      ligada ao pagador — ver "Critérios de aceitação" abaixo);
+   3. o estado atestado é **liquidado e com seasoning**? (não basta "pago" nem
+      "submetido");
+   4. qual o **`payment_id` canónico** (único por pagamento) — e como se
+      **normaliza**, se o id for só único dentro do portal?
    5. o **valor pago** está **rotulado**? (formato exato);
    6. a **data** (com hora) está rotulada?
 3. **Sanitizar o recibo** — mascarar PII (ex.: `**.392.130/0001-**`).
@@ -83,6 +86,41 @@ id escolhível. É o mesmo erro da chave PIX (§13.133).
 
 > **US/CA estão desligados de propósito** até existir este campo por rail. O código
 > já está pronto a recebê-lo; falta a **evidência real**.
+
+### Critérios de aceitação de um rail (2026-10-29)
+
+Concordados na revisão externa. Um rail **não sai** se falhar um destes:
+
+**1. Específico do pagador — autenticado não chega.** Em vários condados qualquer
+utilizador registado adiciona qualquer parcela à conta e vê se está paga. A regra
+é: **a página lista os pagamentos feitos a partir desse login**. Teste de
+aceitação, com uma **segunda conta**: se ela consegue (a) adicionar a parcela e
+vê-la paga, ou (b) abrir o recibo da primeira conta **pelo URL**, a página não
+qualifica. A pesquisa pública de parcelas (ex.: Hennepin) está sempre fora.
+
+**2. `payment_id` com escopo e normalização** — só para rails cujo id é do portal.
+O número de recibo de um condado só é único **dentro daquele portal**, por isso:
+- id canónico = `sha256(tax_entity_slug || "|" || id_normalizado)`;
+- `id_normalizado` = **canonicalização documentada do rail** (tirar separadores,
+  sem zeros à esquerda). Se o condado reformatar o número, ou mudar de fornecedor
+  que renumera pagamentos antigos, o mesmo pagamento não pode voltar com hash novo;
+- **segunda chave de unicidade:** `sha256(tax_entity | parcel | tax_year |
+  installment)`, para um pagamento não minerar duas vezes com ids diferentes.
+  **Parciais:** 1 cota = 1 chave — três cotas são três minerações; a mesma cota
+  duas vezes é recusada;
+- **BR fica como está** (`sha256(E2E)`): o ISPB torna o E2E globalmente único.
+  Mudar a pré-imagem em todos os rails daria a cada recibo já minerado um hash
+  novo, que passaria a `UsedPaymentIDs`.
+
+**3. Liquidado e com seasoning.** "Pago"/"compensado" não é final:
+- **ACH/e-cheque (EUA):** o consumidor pode devolver o débito como **não
+  autorizado até 60 dias** depois de compensar, e o condado reverte o pagamento.
+  Exigir **≥ 60 dias** desde a liquidação antes de minerar;
+- **cartão:** o mesmo problema com **chargeback** — definir a janela por
+  processador antes de aceitar o rail.
+
+A janela de 365 dias é o que torna isto suportável: o utilizador espera e mina
+depois.
 
 ### Como se identifica o recebedor (BR → US/CA)
 

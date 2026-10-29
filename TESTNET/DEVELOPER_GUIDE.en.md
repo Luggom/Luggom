@@ -58,9 +58,12 @@ This is what **the person who actually mined** delivers. Without it, no code.
    + the cookie jar (including `httpOnly`).
 2. **Answer the 6 questions**:
    1. the **beneficiary** nickname (the tax entity);
-   2. is the endpoint **reflective**? (replays the query without side effects);
-   3. is the attested state **"paid"**?;
-   4. what is the **canonical `payment_id`** (unique per payment)?
+   2. does the page **list the payments made from that login**? (authenticated and
+      bound to the payer — see "Acceptance criteria" below);
+   3. is the attested state **settled and seasoned**? ("paid" or "submitted" is
+      not enough);
+   4. what is the **canonical `payment_id`** (unique per payment) — and how is it
+      **normalised**, if the id is only unique inside the portal?
    5. is the **amount paid** **labelled**? (exact format);
    6. is the **date** (with time) labelled?
 3. **Sanitise the receipt** — mask PII (e.g. `**.392.130/0001-**`).
@@ -83,6 +86,40 @@ replay, or give a selectable id. Same mistake as a PIX key (§13.133).
 
 > **US/CA are off on purpose** until this field exists per rail. The code is ready
 > to receive it; what is missing is the **real evidence**.
+
+### Rail acceptance criteria (2026-10-29)
+
+Agreed in the external review. A rail does **not** ship if it fails any of these:
+
+**1. Payer-specific — authenticated is not enough.** On several county portals any
+registered user can add any parcel to their account and see whether it is paid.
+The rule is: **the page lists the payments made from that login**. Acceptance test,
+with a **second account**: if it can (a) add the parcel and see it paid, or (b)
+open the first account's receipt **by URL**, the page does not qualify. The public
+parcel search (e.g. Hennepin) is always out.
+
+**2. `payment_id` scoped and normalised** — only for rails whose id comes from the
+portal. A county receipt number is only unique **inside that portal**, so:
+- canonical id = `sha256(tax_entity_slug || "|" || normalised_id)`;
+- `normalised_id` = the rail's **documented canonicalisation** (strip separators,
+  no leading zeros). If the county reformats the number, or moves to a vendor that
+  renumbers old payments, the same payment must not come back with a new hash;
+- **second uniqueness key:** `sha256(tax_entity | parcel | tax_year |
+  installment)`, so one payment cannot mine twice under different ids.
+  **Partials:** 1 installment = 1 key — three quotas are three minings; the same
+  quota twice is rejected;
+- **BR stays as is** (`sha256(E2E)`): the ISPB makes the E2E globally unique.
+  Changing the preimage for every rail would give each already-mined receipt a new
+  hash that passes `UsedPaymentIDs`.
+
+**3. Settled and seasoned.** "Paid"/"cleared" is not final:
+- **ACH/e-check (US):** the consumer can return the debit as **unauthorised up to
+  60 days** after it settles, and the county reverses the payment. Require
+  **≥ 60 days** since settlement before mining;
+- **card:** the same problem with **chargebacks** — pin the window per processor
+  before accepting the rail.
+
+The 365-day window is what makes this affordable: the user waits and mines later.
 
 ### How the recipient is identified (BR → US/CA)
 

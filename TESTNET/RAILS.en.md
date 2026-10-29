@@ -34,6 +34,21 @@
 3. Writes the extractor + test.
 4. The bank lights up for every customer of that bank.
 
+## Acceptance criteria (2026-10-29)
+
+A rail only lights up if it passes all three — details in `DEVELOPER_GUIDE.en.md`:
+
+1. **Payer-specific, not just authenticated.** The page must **list the payments
+   made from that login**. Test with a **second account**: if it can see the parcel
+   as paid, or open the receipt by URL, the page does not qualify. The public
+   parcel search is always out.
+2. **Canonical id scoped to the issuer**, when the id comes from the portal:
+   normalised per rail (strip separators, no leading zeros) and with a second key
+   `(parcel | tax_year | installment)`. 1 installment = 1 mining.
+3. **Settled and seasoned.** ACH ≥ 60 days after settlement (the consumer can
+   reverse it as unauthorised for 60 days); card: pin the chargeback window per
+   processor before accepting the rail.
+
 ## US / Canada — notes
 
 - **US:** EIN when the receipt carries it; otherwise resolve by name (county/state), only if
@@ -51,6 +66,9 @@
 - [ ] bank / domain / country / currency
 - [ ] tax entity (slug)
 - [ ] proposed extractor
+- [ ] **payer-specific** page (second-account test passed)
+- [ ] id normalised per rail (+ second key parcel/year/installment)
+- [ ] state **settled and seasoned** (ACH ≥ 60 days)
 - [ ] issue opened (no PII)
 
 Questions: https://t.me/+XRWgwPwvz4hkOTJh (English).
