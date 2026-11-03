@@ -275,3 +275,102 @@ python3 coletor-browser/verify_rail.py --banco <id>
 | Sandbox (`localhost:9000`) | — | ✅ | ✅ | ✅ | ✅ |
 | **US/CA** (chase, rbc, …) | ✅ on-chain | — | — | — | ❌ falta campo canónico |
 
+## 10. US / Canada rails — pilot rules (2026-11-01)
+
+> **Nota:** esta secção fica **em inglês de propósito** — o público são os devs dos EUA/Canadá
+> que vão abrir estas rails.
+>
+> **Status:** US and CA are **deliberately disabled** until a real rail exists with a canonical
+> field. The code is ready (`KnownProviders`, `DefaultBankProviders`, `taxnature`, `taxproof`);
+> the **evidence** is missing. This section is what a US/CA pilot must deliver.
+
+### 10.1 Which artifact to attest
+
+**Start with the two easiest rails:** IRS Direct Pay/EFTPS (labeled confirmation number) and a
+county property tax portal that prints the **recipient's EIN**. Canada CRA (`BN + RT0001`) is the
+closest to Brazil and the strongest of the three.
+
+| Use | Do not use |
+|---|---|
+| The **tax portal's receipt / confirmation page** (county, state, IRS Direct Pay/EFTPS, CRA) | The bank's card statement (`PURCHASE`) |
+| The **processor's receipt page** (Paymentus, Point & Pay, …) when the county hosts checkout there | A screenshot |
+| A **labeled field** holding the receipt/confirmation number | A number taken from the page prose |
+
+- The bank statement proves a card purchase, not a tax payment. It is corroboration, never the source.
+- If checkout runs on a processor domain, that domain goes in `KnownProviders`
+  (`api/reclaimverify/providers.go`); the **tax entity is still the county/state**, not the processor.
+
+### 10.2 Seasoning — the payment must already be old
+
+| Method | Min age | Max age | Useful window |
+|---|---|---|---|
+| **Card** | **120 days** | 365 days | 245 days |
+| **ACH / e-check** | **60 days** | 365 days | 305 days |
+| **PIX (BR, reference)** | **0** | 365 days | 365 days |
+
+**Why:** a card chargeback — or an unauthorized-debit return on ACH — can reverse the payment
+after it settles. LUG is non-confiscable, so the protocol cannot claw back a mint; it waits
+until the standard dispute window has expired. 120 days is the card-scheme dispute window;
+some reason codes run longer, so treat it as a buffer, not a guarantee. The 365-day cap is
+`TaxPaymentMaxAgeDaysFrozen`; after that the receipt expires.
+
+**Recruitment consequence:** the first US cohort must bring receipts that are **already
+seasoned** (e.g. last cycle's property tax). Someone who paid this week cannot mine for four months.
+
+### 10.3 `payment_id` — unique per payment, not per account
+
+- `id_canonical = sha256(tax_entity_slug || "|" || id_normalized)`, where `id_normalized` is
+  the rail's **documented** canonicalization (strip separators, no leading zeros).
+- **Second uniqueness key:** `sha256(tax_entity | parcel | tax_year | installment)` — one
+  installment is one key; the same installment twice is rejected. This stops one payment from
+  mining twice under two different receipt numbers.
+- **EIN / BN / APN / RT are account identifiers** and repeat across payments — they are **not**
+  a payment id. Using one blocks the second payment as a replay (the PIX-key mistake, §13.133).
+- **One canonical id per rail.** If the bank and the portal show different numbers, only the
+  portal's is accepted; accepting both is a double-mint.
+
+### 10.4 Amount
+
+- The attested amount is the **tax**, excluding the **convenience fee** (card processors charge
+  ~2.5–3%, or a flat fee). Both must be itemized on the receipt; if they are not, the rail is not ready.
+- The date must be labeled, with time. Reject receipts with more than one candidate date.
+
+### 10.5 Recipient identity
+
+1. **EIN / BN when the portal shows it — always prefer this.** US federal (IRS) and county
+   property tax carry the recipient's EIN; Canada CRA carries `BN + RT0001` (like Brazil: the
+   receipt carries the tax authority's identifier).
+2. **Name resolution only as a fallback** (many US counties print no EIN): the name comes from
+   the **recipient field**, never the prose; it must be unambiguous ("Orange County" without a
+   state does not resolve); cross-state collisions are blocked; utilities/special districts are
+   rejected; tax-specific evidence is required (property tax / parcel / APN / tax year / IRS).
+
+### 10.6 Payer-specific — authenticated is not enough
+
+Many counties let any registered user add any parcel and see it as paid. The rule is: **the page
+lists the payments made from that login**. Acceptance test with a **second account**: if it can
+(a) add the parcel and see it paid, or (b) open the first account's receipt by URL, the page does
+not qualify. Public parcel lookup is always out. This matters more on card rails, where anyone can
+pay someone else's tax.
+
+### 10.7 Card-specific
+
+- Chargeback window: **120 days** (10.2).
+- The attested amount excludes the convenience fee (10.4).
+- Prefer a rail that also offers **ACH/e-check** — free or cheaper for the user, no chargeback,
+  and it mines at 60 days instead of 120. Recommend it to miners where available; still support
+  card, because that is what people actually use.
+
+### 10.8 Acceptance (in addition to Step 2)
+
+- Probe passes: `python3 coletor-browser/verify_rail.py --banco <id>` → **PASS**.
+- Evidence package per **Step 0**: sanitized receipt + proposed extractor (field → value), per `RAILS.md`.
+- `payment_id` canonical + second uniqueness key computed.
+- Amount = tax (no fee); single labeled date.
+- Seasoning enforced by method (10.2); max 365 days.
+- One end-to-end mining on **testnet**, `code 0`, provider id whitelisted.
+- **PII never committed** — sanitized fixture only.
+
+> On testnet the LUG has no market value and the pool is closed. The secondary market opens
+> later, when IBC and `pool_active` are live. The basket is the emission cost, not a price promise.
+
