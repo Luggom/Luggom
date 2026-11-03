@@ -55,22 +55,46 @@ pub struct MineResultReply {
 /// (`mine_load_capture`), pela janela do banco (`bank_status`) e pela mineração.
 /// Fail-closed: sem token, sem cookies ou sem comprovante, é erro.
 pub(crate) fn capture_reply(raw: &str) -> Result<CaptureReply, CommandError> {
-    let _ = Capture::parse(raw).map_err(capture_error)?;
-    let call = Capture::receipt_call(raw).map_err(capture_error)?;
+    // Cada rail tem o seu formato de captura. O discriminador é o PEDIDO do
+    // comprovante (não os headers): a API nova do BB também traz
+    // `Authorization`/`Client-Id`, por isso `Capture::parse` sozinho confundia-a
+    // com a Viacredi.
+    if let Ok(call) = Capture::receipt_call(raw) {
+        if Capture::parse(raw).is_ok() {
+            return Ok(CaptureReply {
+                trn: call.trn,
+                seq_flow: call.seq_flow,
+                receipt: serde_json::to_string(&call.data).unwrap_or_default(),
+            });
+        }
+    }
+
+    let call = luggom_wallet::bb::Capture::receipt_call(raw).map_err(capture_error)?;
     Ok(CaptureReply {
-        trn: call.trn,
-        seq_flow: call.seq_flow,
-        receipt: serde_json::to_string(&call.data).unwrap_or_default(),
+        trn: 0,
+        seq_flow: None,
+        receipt: call.url,
     })
+}
+
+/// Ordem de apresentação na lista de bancos: Brasil, EUA, Canadá, resto.
+fn country_rank(country: &str) -> u8 {
+    match country {
+        "BR" => 0,
+        "US" => 1,
+        "CA" => 2,
+        _ => 3,
+    }
 }
 
 /// Bancos aceites (whitelist on-chain, servida pela API).
 #[tauri::command]
 pub async fn mine_providers(api_url: String) -> Result<Vec<ProviderReply>, CommandError> {
     let client = MineClient::new(api_url)?;
-    Ok(client
-        .providers()
-        .await?
+    let mut providers = client.providers().await?;
+    // Estável: dentro de cada país mantém-se a ordem que a API devolveu.
+    providers.sort_by_key(|p| country_rank(&p.country));
+    Ok(providers
         .into_iter()
         .map(|p| ProviderReply { id: p.id, name: p.name })
         .collect())
@@ -130,8 +154,21 @@ pub async fn mine_run(
         ));
     };
 
-    let capture = Capture::parse(&raw).map_err(capture_error)?;
-    let call = Capture::receipt_call(&raw).map_err(capture_error)?;
+    // O pedido a provar depende do banco: cada rail tem o seu formato de captura.
+    // O Brasil do BB não assina o pedido — o comprovante é uma JSP autenticada
+    // só por cookies, por isso o pedido sai da própria captura.
+    let source = match provider_id.as_str() {
+        "banco_do_brasil" => {
+            let capture = luggom_wallet::bb::Capture::parse(&raw).map_err(capture_error)?;
+            let call = luggom_wallet::bb::Capture::receipt_call(&raw).map_err(capture_error)?;
+            ProveSource::BancoDoBrasil { capture, call }
+        }
+        _ => {
+            let capture = Capture::parse(&raw).map_err(capture_error)?;
+            let call = Capture::receipt_call(&raw).map_err(capture_error)?;
+            ProveSource::Viacredi { capture, call }
+        }
+    };
 
     let (mnemonic, address) = state
         .mnemonic_copy()
@@ -147,7 +184,7 @@ pub async fn mine_run(
     let prover_address = address.clone();
     let decision = tauri::async_runtime::spawn_blocking(move || {
         prover::prove(
-            ProveSource::Viacredi { capture, call },
+            source,
             prover_address,
             notary_url,
             move |preview| {

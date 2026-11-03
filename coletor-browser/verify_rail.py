@@ -88,9 +88,29 @@ def origin_of(cap, q):
         "actualizada (background.js acrescenta `pageUrl`)." % want)
 
 
+def page_origin(cap):
+    page = cap.get("pageUrl") or ""
+    return "/".join(page.split("/")[:3]) if page.startswith("http") else ""
+
+
+def same_origin(cap, q):
+    """O pedido pertence à origem da página? (relativo = sim)
+
+    Sem isto a sonda podia escolher um pedido de TERCEIROS (beacons de
+    telemetria, trackers) e "provar" o rail contra o servidor errado — um PASS
+    falso (aconteceu: apanhou um beacon do AppDynamics e deu 200).
+    """
+    url = q.get("url") or ""
+    if not url.startswith("http"):
+        return True
+    origin = page_origin(cap)
+    return bool(origin) and url.startswith(origin + "/")
+
+
 def pick_request(cap):
-    """O pedido a repetir: o último que casa uma pista; senão o último POST."""
-    reqs = cap.get("reqs") or []
+    """O pedido a repetir: o último SAME-ORIGIN que casa uma pista; senão o
+    último POST same-origin."""
+    reqs = [q for q in (cap.get("reqs") or []) if same_origin(cap, q)]
     for pista in PISTAS:
         matches = [q for q in reqs if pista in (q.get("url") or "")]
         if matches:
@@ -98,7 +118,7 @@ def pick_request(cap):
     posts = [q for q in reqs if (q.get("method") or "").upper() == "POST"]
     if posts:
         return posts[-1]
-    raise SystemExit("a captura não tem nenhum POST para repetir")
+    raise SystemExit("a captura não tem nenhum POST same-origin para repetir")
 
 
 def build_url(origin, q):
@@ -204,6 +224,15 @@ def main():
         print("  %-10s -> %d  corpo=%d  %s" % (imp, r.status_code, len(r.content or b""), loc))
 
         if r.status_code in (200, 400):
+            # O BB devolve **200** com `<sessaofinalizada/>` quando a sessão já
+            # caiu: o cliente PASSOU, mas não há conteúdo — não é um PASS útil.
+            # (Apanhado a 2026-10-28: uma captura de ~7 min dava 200 e parecia
+            # PASS, mas o corpo era só o marcador de sessão finalizada.)
+            if b"sessaofinalizada" in (r.content or b"").lower():
+                print("\n=> SESSÃO FINALIZADA (%s): 200 mas corpo `<sessaofinalizada>`." % imp)
+                print("   O cliente PASSOU o WAF, mas a captura é velha/sessão morta.")
+                print("   Recaptura com a sessão viva antes de concluir.")
+                return 3
             print("\n=> PASS: o rail responde a um cliente independente (%s)." % imp)
             print("   Adapter pode ser construído.")
             return 0

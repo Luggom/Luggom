@@ -11,6 +11,7 @@
 
 mod address;
 pub mod amount;
+pub mod bb;
 pub mod chain;
 pub mod cosmos;
 pub mod mine;

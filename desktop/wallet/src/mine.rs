@@ -69,6 +69,9 @@ pub struct ProviderInfo {
     pub id: String,
     #[serde(default)]
     pub name: String,
+    /// País do banco (`BR`/`US`/`CA`) — usado só para a ordem de apresentação.
+    #[serde(default)]
+    pub country: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -396,7 +399,7 @@ mod tests {
 
         let unsigned = serde_json::json!({
             "code": 0,
-            "payment_id": "E9999999",
+            "payment_id": "E8263945",
             "payment_amount": "1291.49",
             "tax_entity": "br:iptu_sao_paulo",
             "unsigned": {
@@ -433,7 +436,7 @@ mod tests {
         assert_eq!(first["tlsn_proof"]["session_id"], bundle_for("x").session_id);
 
         let second: serde_json::Value = serde_json::from_str(&bodies[1]).unwrap();
-        assert_eq!(second["payment_id"], "E9999999");
+        assert_eq!(second["payment_id"], "E8263945");
         let tx_raw = B64.decode(second["tx_bytes"].as_str().unwrap()).unwrap();
         assert_eq!(tx_raw[0], 0x0a, "TxRaw começa com body_bytes (campo 1)");
         assert!(tx_raw.contains(&0x1a), "TxRaw tem campo 3 (assinaturas)");

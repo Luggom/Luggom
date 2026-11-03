@@ -106,19 +106,19 @@ func TestFormatos_SaoExtraidosPeloExtratorReal(t *testing.T) {
 		{
 			rota: "/servcorews/processJSON", host: "contaonline.viacredi.coop.br", provider: "viacredi",
 			amount: "1291.49", entity: "br:iptu_sao_paulo",
-			txID: "E99999991202601010000VC1YWGD3E47", payerTaxID: "",
+			txID: "E82639451202607152106LZ1QCIXXYE6", payerTaxID: "",
 		},
 		{
 			rota: "/sinbc-pix/nb/extrato/comprovantePixExtratoSucesso", host: "internetbanking.caixa.gov.br", provider: "caixa",
 			amount: "1291.49", entity: "br:iptu_sao_paulo",
-			txID: "E99999991202601010000VC1YWGD3E47", payerTaxID: "",
+			txID: "E82639451202601291931VC1YWGD3E47", payerTaxID: "",
 		},
 		{
 			// O formato BB é uma REFERÊNCIA nossa (não há recibo real): exercita o
 			// pagador EMPRESA (CNPJ) — o caso que alimenta o portão 1206.
 			rota: "/bb/nb/comprovantes/consultar", host: "www.bb.com.br", provider: "banco_do_brasil",
 			amount: "1291.49", entity: "br:iptu_sao_paulo",
-			txID: "E99999991202601010000VC1YWGD3E47", payerTaxID: "12345678000190",
+			txID: "E82639451202601291931VC1YWGD3E47", payerTaxID: "12345678000190",
 		},
 	}
 

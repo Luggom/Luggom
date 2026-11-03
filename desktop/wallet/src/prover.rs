@@ -178,6 +178,12 @@ pub enum ProveSource {
         capture: crate::viacredi::Capture,
         call: crate::viacredi::ReceiptCall,
     },
+    /// Banco do Brasil: o comprovante é uma JSP autenticada só por cookies, por
+    /// isso o pedido é montado a partir da captura (sem assinatura de tempo).
+    BancoDoBrasil {
+        capture: crate::bb::Capture,
+        call: crate::bb::ReceiptCall,
+    },
 }
 
 impl ProveSource {
@@ -186,6 +192,14 @@ impl ProveSource {
             ProveSource::Ready(request) => request.host_and_port(),
             ProveSource::Viacredi { .. } => {
                 Ok(("contaonline.viacredi.coop.br".to_string(), 443))
+            }
+            ProveSource::BancoDoBrasil { call, .. } => {
+                let parsed = url::Url::parse(&call.url)
+                    .map_err(|e| WalletError::Network(format!("URL do comprovante inválida: {e}")))?;
+                let host = parsed
+                    .host_str()
+                    .ok_or_else(|| WalletError::Network("URL do comprovante sem host".into()))?;
+                Ok((host.to_string(), parsed.port_or_known_default().unwrap_or(443)))
             }
         }
     }
@@ -242,6 +256,7 @@ async fn prove_async(
     let sdk_request = match source {
         ProveSource::Ready(request) => request.into_sdk(),
         ProveSource::Viacredi { capture, call } => capture.build(&call).await?.into_sdk(),
+        ProveSource::BancoDoBrasil { capture, call } => capture.build(&call)?.into_sdk(),
     };
 
     // 4. Ligar ao servidor do banco e enviar o pedido dentro do MPC-TLS.
