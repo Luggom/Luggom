@@ -23,10 +23,12 @@ const LISTEN_ADDR: &str = "127.0.0.1:8099";
 const MAX_CAPTURE_BYTES: usize = 8 * 1024 * 1024;
 
 /// Página de entrada por banco. Fail-closed: sem entrada conhecida não se abre nada.
-const BANK_LOGIN: &[(&str, &str)] = &[(
-    "viacredi",
-    "https://contaonline.viacredi.coop.br/ib/auth",
-)];
+const BANK_LOGIN: &[(&str, &str)] = &[
+    ("viacredi", "https://contaonline.viacredi.coop.br/ib/auth"),
+    // BB entra pelo Internet Banking (PF). Domínio já aberto na extensão
+    // (`*.bb.com.br`); a rota do comprovante só se confirma com captura real.
+    ("banco_do_brasil", "https://www.bb.com.br/"),
+];
 
 fn login_url(provider_id: &str) -> Result<&'static str, CommandError> {
     BANK_LOGIN

@@ -53,7 +53,7 @@ const htmlReceipt = `<html><body><h1>Comprovante de Pagamento</h1>
 // ailosReceipt reproduz o formato do Ailos/Viacredi: JSON com OUTPUT_DATA.WS_RESULT.
 // O valor TOTAL vem antes da multa/juros (é o que evita ler "multa":"R$ 0,00"), a
 // data traz hora, e o id do pagamento é o E2E do PIX em `idTransacao`.
-const ailosReceipt = `{"data":{"OUTPUT_DATA":{"WS_RESULT":{"recebedorInstituicao":"BCO SAND COOP","recebedorNome":"SECRETARIA MUNICIPAL DA FAZENDA","data":"15/07/2026 18:07:44","multa":"R$ 0,00","valorOriginalPix":"R$ 1.291,49","protocolo":"2306.4030.1801.0F07.1A41.1A29.50","descontos":"R$ 0,00","valorTotal":"R$ 1.291,49","numeroDocumento":"867596174","juros":"R$ 0,00","valor":"R$ 1.291,49","valorTaxa":"R$ 0,00","idTransacao":"E99999991202601010000VC1YWGD3E47","recebedorDocumento":"**.392.130/0001-**"}},"RESPONSE_CODE":0}}`
+const ailosReceipt = `{"data":{"OUTPUT_DATA":{"WS_RESULT":{"recebedorInstituicao":"BCO SAND COOP","recebedorNome":"SECRETARIA MUNICIPAL DA FAZENDA","data":"15/07/2026 18:07:44","multa":"R$ 0,00","valorOriginalPix":"R$ 1.291,49","protocolo":"2306.4030.1801.0F07.1A41.1A29.50","descontos":"R$ 0,00","valorTotal":"R$ 1.291,49","numeroDocumento":"867596174","juros":"R$ 0,00","valor":"R$ 1.291,49","valorTaxa":"R$ 0,00","idTransacao":"E82639451202607152106LZ1QCIXXYE6","recebedorDocumento":"**.392.130/0001-**"}},"RESPONSE_CODE":0}}`
 
 // caixaExtrato reproduz a forma do extrato da Caixa (lista de lançamentos).
 const caixaExtrato = `{"extrato":[{"data":"15/07/2026","descricao":"ARRECADACAO IPTU","valor":"-1.291,49","saldo":"3.708,51"}]}`
@@ -62,12 +62,12 @@ const caixaExtrato = `{"extrato":[{"data":"15/07/2026","descricao":"ARRECADACAO 
 // canónico no campo `id` (o E2E do PIX), estado em `situacaoTransacao`, e o ente
 // em `usuarioRecebedor.cnpj` (aqui mascarado → br:iptu_sao_paulo). O pagador é
 // pessoa física (`cpf`), logo o portão 1206 não dispara.
-const caixaPixReceipt = `{"detalheExtrato":{"E99999991202601010000VC1YWGD3E47":{"id":"E99999991202601010000VC1YWGD3E47","valor":"1.291,49","situacaoTransacao":"CONCLUIDA","data":"17/09/2026 10:11:12","autenticacao":"3F2A9C11DD550E88","descricao":"ARRECADACAO IPTU","usuarioPagador":{"cnpj":"","cpf":"00000000000","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
+const caixaPixReceipt = `{"detalheExtrato":{"E82639451202601291931VC1YWGD3E47":{"id":"E82639451202601291931VC1YWGD3E47","valor":"1.291,49","situacaoTransacao":"CONCLUIDA","data":"17/09/2026 10:11:12","autenticacao":"3F2A9C11DD550E88","descricao":"ARRECADACAO IPTU","usuarioPagador":{"cnpj":"","cpf":"00000000000","conta":{"agencia":null,"chave":"699dfe8a-4649-415f-8fe1-b91460d0fb87"}},"usuarioRecebedor":{"cnpj":"**.392.130/0001-**","cpf":"","conta":{"agencia":null,"chave":"22222222-3333-4444-5555-666666666666"}}}}}`
 
 // bbReceipt é o formato BB **DE REFERÊNCIA** — não é um layout real (não há
 // recibo do BB): é a forma que o SPEC do adapter pede a um portal (valor pago
 // rotulado, data, beneficiário com o ID do ente, pagador com ID, natureza).
-const bbReceipt = `{"comprovante":{"idTransacao":"E99999991202601010000VC1YWGD3E47","data":"15/07/2026 18:07:44","valorPago":"1.291,49","beneficiario":{"nome":"SECRETARIA MUNICIPAL DA FAZENDA","documento":"**.392.130/0001-**"},"pagador":{"nome":"ACME COMERCIO LTDA","documento":"12.345.678/0001-90"},"tipoServico":"ARRECADACAO IPTU","situacao":"PAGO"}}`
+const bbReceipt = `{"comprovante":{"idTransacao":"E82639451202601291931VC1YWGD3E47","data":"15/07/2026 18:07:44","valorPago":"1.291,49","beneficiario":{"nome":"SECRETARIA MUNICIPAL DA FAZENDA","documento":"**.392.130/0001-**"},"pagador":{"nome":"ACME COMERCIO LTDA","documento":"12.345.678/0001-90"},"tipoServico":"ARRECADACAO IPTU","situacao":"PAGO"}}`
 
 type formato struct {
 	rota        string
