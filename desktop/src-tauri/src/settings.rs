@@ -9,8 +9,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::paths::data_dir;
 
-/// Nó REST por omissão: o validador fundador da chain local.
-pub const DEFAULT_NODE_URL: &str = "http://127.0.0.1:1317";
+/// Nó REST público da testnet. É o default de uma instalação nova.
+pub const DEFAULT_NODE_URL: &str = "https://lcd.luggom.com";
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Settings {
@@ -31,10 +31,16 @@ pub fn load() -> Settings {
 }
 
 pub fn node_url() -> String {
-    load()
-        .node_url
-        .filter(|url| !url.trim().is_empty())
-        .unwrap_or_else(|| DEFAULT_NODE_URL.to_string())
+    let configured = load().node_url.unwrap_or_default();
+    let trimmed = configured.trim();
+
+    // Instalações antigas (e o default de desenvolvimento) guardaram
+    // 127.0.0.1. Trata-se como "não configurado" para o install público.
+    if trimmed.is_empty() || trimmed == "http://127.0.0.1:1317" {
+        return DEFAULT_NODE_URL.to_string();
+    }
+
+    trimmed.to_string()
 }
 
 pub fn save_node_url(url: &str) -> std::io::Result<()> {

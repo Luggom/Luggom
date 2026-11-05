@@ -103,11 +103,14 @@
               <summary data-i18n="mine.advanced"></summary>
               <div class="field">
                 <label for="mine-api" data-i18n="mine.api"></label>
-                <input id="mine-api" type="text" spellcheck="false" placeholder="http://127.0.0.1:8082" />
+                <input id="mine-api" type="text" spellcheck="false" placeholder="https://api.luggom.com" />
               </div>
               <div class="field">
                 <label for="mine-notary" data-i18n="mine.notary"></label>
-                <input id="mine-notary" type="text" spellcheck="false" placeholder="http://127.0.0.1:7047" />
+                <input id="mine-notary" type="text" spellcheck="false" placeholder="https://notary.luggom.com" />
+              </div>
+              <div class="field">
+                <button type="button" id="mine-use-fallback" data-i18n="mine.use_fallback"></button>
               </div>
               <div class="field">
                 <label for="mine-capture" data-i18n="mine.capture"></label>
@@ -153,9 +156,12 @@
             <div class="field">
               <label for="node-url" data-i18n="chain.node"></label>
               <div class="row">
-                <input id="node-url" type="text" spellcheck="false" placeholder="http://127.0.0.1:1317" />
+                <input id="node-url" type="text" spellcheck="false" placeholder="https://lcd.luggom.com" />
                 <button type="button" id="node-save" data-i18n="chain.save"></button>
               </div>
+            </div>
+            <div class="field">
+              <button type="button" id="node-use-fallback" data-i18n="chain.use_fallback"></button>
             </div>
             <p id="chain-state" class="hint"></p>
           </section>

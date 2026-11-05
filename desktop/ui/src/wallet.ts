@@ -43,6 +43,8 @@ const el = <T extends HTMLElement>(id: string): T => {
   return node as T;
 };
 
+const FALLBACK_NODE = "http://62.146.183.122:1317";
+
 const errorBox = el<HTMLParagraphElement>("wallet-error");
 const walletView = el<HTMLDivElement>("wallet-view");
 
@@ -75,7 +77,7 @@ function renderNode(): void {
           chain: info.chain_id ?? "?",
           height: info.height ?? "?",
         })
-      : t("chain.disconnected");
+      : `${t("chain.disconnected")}${info.error ? ` — ${info.error}` : ""}`;
 }
 
 async function loadChain(): Promise<void> {
@@ -177,6 +179,15 @@ async function loadHistory(): Promise<void> {
 el<HTMLButtonElement>("node-save").addEventListener("click", async () => {
   const url = el<HTMLInputElement>("node-url").value.trim();
   await call<null>("chain_set_node_url", { url });
+  await loadChain();
+  if (address) {
+    await loadBalance();
+    await loadHistory();
+  }
+});
+
+el<HTMLButtonElement>("node-use-fallback").addEventListener("click", async () => {
+  await call<null>("chain_set_node_url", { url: FALLBACK_NODE });
   await loadChain();
   if (address) {
     await loadBalance();

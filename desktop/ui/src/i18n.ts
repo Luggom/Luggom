@@ -82,6 +82,7 @@ const PT = {
   "mine.advanced": "Avançado (API e notário)",
   "mine.api": "API",
   "mine.notary": "Notário",
+  "mine.use_fallback": "Usar endereço alternativo (IP)",
   "mine.bank.open": "Abrir o banco no Firefox",
   "mine.bank.forget": "Esquecer captura",
   "mine.bank.hint":
@@ -115,6 +116,7 @@ const PT = {
   "chain.hint": "O nó a que a carteira se liga (REST/LCD).",
   "chain.node": "Nó",
   "chain.save": "Ligar",
+  "chain.use_fallback": "Usar endereço alternativo (IP)",
   "chain.connected": "Ligado a {chain} · altura {height}",
   "chain.disconnected": "Sem ligação ao nó.",
 
@@ -227,6 +229,7 @@ const EN: Record<Key, string> = {
   "mine.advanced": "Advanced (API and notary)",
   "mine.api": "API",
   "mine.notary": "Notary",
+  "mine.use_fallback": "Use fallback address (IP)",
   "mine.bank.open": "Open the bank in Firefox",
   "mine.bank.forget": "Forget capture",
   "mine.bank.hint":
@@ -260,6 +263,7 @@ const EN: Record<Key, string> = {
   "chain.hint": "The node the wallet connects to (REST/LCD).",
   "chain.node": "Node",
   "chain.save": "Connect",
+  "chain.use_fallback": "Use fallback address (IP)",
   "chain.connected": "Connected to {chain} · height {height}",
   "chain.disconnected": "No connection to the node.",
 

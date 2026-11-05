@@ -106,7 +106,21 @@ pub fn bank_forget(state: State<'_, AppState>) -> Result<(), CommandError> {
 /// Em sistemas onde o Firefox é um **snap** (Ubuntu), o confinamento do snap
 /// **não** deixa usar `~/.luggom/...` — o perfil tem de viver dentro de
 /// `~/snap/firefox/common/`. Deteta-se o snap e escolhe-se o caminho certo.
-fn profile_dir() -> Result<std::path::PathBuf, CommandError> {
+#[cfg(target_os = "windows")]
+fn profile_dir_windows() -> Result<std::path::PathBuf, CommandError> {
+    // No Windows o perfil do app vive em %APPDATA%\luggom\firefox-profile —
+    // caminho gravável pelo utilizador, independente do Firefox pessoal dele.
+    let base = std::env::var("APPDATA").map_err(|_| CommandError::internal("sem APPDATA"))?;
+    let profile = std::path::Path::new(&base)
+        .join("luggom")
+        .join("firefox-profile");
+    std::fs::create_dir_all(profile.join("extensions"))
+        .map_err(|e| CommandError::internal(format!("não consegui criar o perfil: {e}")))?;
+    Ok(profile)
+}
+
+#[cfg(not(target_os = "windows"))]
+fn profile_dir_unix() -> Result<std::path::PathBuf, CommandError> {
     let home = std::env::var("HOME").map_err(|_| CommandError::internal("sem HOME"))?;
     let snap = std::path::Path::new("/snap/bin/firefox").exists()
         || std::path::Path::new("/snap/firefox/current").exists();
@@ -122,6 +136,13 @@ fn profile_dir() -> Result<std::path::PathBuf, CommandError> {
     std::fs::create_dir_all(profile.join("extensions"))
         .map_err(|e| CommandError::internal(format!("não consegui criar o perfil: {e}")))?;
     Ok(profile)
+}
+
+fn profile_dir() -> Result<std::path::PathBuf, CommandError> {
+    #[cfg(target_os = "windows")]
+    return profile_dir_windows();
+    #[cfg(not(target_os = "windows"))]
+    return profile_dir_unix();
 }
 
 /// Instala a extensão coletora no perfil, se houver um `.xpi` para instalar.
@@ -141,7 +162,9 @@ fn install_extension(profile: &std::path::Path, extra_dirs: &[std::path::PathBuf
     for dir in extra_dirs {
         candidates.push(dir.join(EXTENSION_FILE));
     }
-    // 2) Override manual (útil em desenvolvimento).
+    // 2) Override manual (útil em desenvolvimento). No Windows não existe HOME
+    //    como no Unix — os recursos do instalador cobrem o caminho normal.
+    #[cfg(not(target_os = "windows"))]
     if let Ok(home) = std::env::var("HOME") {
         candidates.push(std::path::Path::new(&home).join(".luggom").join(EXTENSION_FILE));
     }
@@ -185,10 +208,51 @@ fn open_firefox(profile: Option<&std::path::Path>, url: &str) -> Result<(), Comm
         .map_err(|e| CommandError::internal(format!("não consegui abrir o browser: {e}")))
 }
 
-#[cfg(not(target_os = "linux"))]
+/// Abre o Firefox no Windows. Procura o executável nos três sítios canónicos:
+/// instalação de sistema (x64 e x86) e instalação por-utilizador (sem admin).
+/// Sem nenhum → erro claro, em vez de um "comando não encontrado" silencioso.
+#[cfg(target_os = "windows")]
+fn open_firefox(profile: Option<&std::path::Path>, url: &str) -> Result<(), CommandError> {
+    use std::os::windows::process::CommandExt;
+    // DETACHED_PROCESS: o Firefox não herda consola do app (que não tem janela
+    // de consola em release) e não morre quando o instalador/app fecha.
+    const DETACHED_PROCESS: u32 = 0x0000_0008;
+
+    let mut candidates: Vec<std::path::PathBuf> = vec![
+        std::path::PathBuf::from("C:\\Program Files\\Mozilla Firefox\\firefox.exe"),
+        std::path::PathBuf::from("C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe"),
+    ];
+    if let Ok(local) = std::env::var("LOCALAPPDATA") {
+        candidates.push(std::path::Path::new(&local).join("Mozilla Firefox\\firefox.exe"));
+    }
+
+    for browser in candidates {
+        if !browser.exists() {
+            continue;
+        }
+        let mut command = std::process::Command::new(&browser);
+        if let Some(profile) = profile {
+            // Perfil do app — isolado do Firefox pessoal do utilizador.
+            command
+                .arg("-profile")
+                .arg(profile)
+                .arg("-no-remote");
+        }
+        command.creation_flags(DETACHED_PROCESS);
+        if command.arg(url).spawn().is_ok() {
+            return Ok(());
+        }
+    }
+    Err(CommandError::new(
+        "browser_not_found",
+        "Firefox não encontrado — instale-o em C:\\Program Files\\Mozilla Firefox e tente de novo",
+    ))
+}
+
+#[cfg(not(any(target_os = "linux", target_os = "windows")))]
 fn open_firefox(_profile: Option<&std::path::Path>, _url: &str) -> Result<(), CommandError> {
     Err(CommandError::internal(
-        "abrir o browser ainda só está implementado no Linux",
+        "abrir o browser ainda só está implementado no Linux e no Windows",
     ))
 }
 
@@ -299,6 +363,17 @@ fn respond(stream: &mut TcpStream, status: &str, body: &str) {
     let _ = stream.flush();
 }
 
+/// Caminho do trace de diagnóstico: /tmp no Unix, %TEMP% no Windows.
+#[cfg(target_os = "windows")]
+fn trace_path() -> std::path::PathBuf {
+    std::env::temp_dir().join("luggom-bank-trace.txt")
+}
+
+#[cfg(not(target_os = "windows"))]
+fn trace_path() -> std::path::PathBuf {
+    std::path::PathBuf::from("/tmp/luggom-bank-trace.txt")
+}
+
 /// Diagnóstico: resumo do que o banco pediu e do que recebeu — **só** método,
 /// URL (sem query) e estado, nunca cookies nem corpos.
 fn write_trace(doc: &serde_json::Value) {
@@ -331,7 +406,7 @@ fn write_trace(doc: &serde_json::Value) {
             let _ = writeln!(out, "{status} ({bytes} B) {}", clean(url));
         }
     }
-    let _ = std::fs::write("/tmp/luggom-bank-trace.txt", out);
+    let _ = std::fs::write(trace_path(), out);
 }
 
 #[cfg(test)]

@@ -27,8 +27,10 @@ type MineResult = {
   cancelled: boolean;
 };
 
-const DEFAULT_API = "http://127.0.0.1:8082";
-const DEFAULT_NOTARY = "http://127.0.0.1:7047";
+const DEFAULT_API = "https://api.luggom.com";
+const DEFAULT_NOTARY = "https://notary.luggom.com";
+const FALLBACK_API = "http://62.146.183.122:8082";
+const FALLBACK_NOTARY = "http://62.146.183.122:7047";
 
 // Não são segredos: guardar no WebView chega e sobrevive a reinícios.
 const API_KEY = "luggom.mine.api_url";
@@ -99,8 +101,9 @@ async function loadProviders(): Promise<void> {
   let providers: Provider[] = [];
   try {
     providers = await invoke<Provider[]>("mine_providers", { apiUrl: api() });
-  } catch {
+  } catch (err) {
     placeholder(t("mine.providers.failed"));
+    setError(errorBox, err);
     return;
   }
 
@@ -401,8 +404,18 @@ export function initMineView(): void {
   const apiInput = el<HTMLInputElement>("mine-api");
   const notaryInput = el<HTMLInputElement>("mine-notary");
 
-  apiInput.value = localStorage.getItem(API_KEY) ?? DEFAULT_API;
-  notaryInput.value = localStorage.getItem(NOTARY_KEY) ?? DEFAULT_NOTARY;
+  const savedApi = localStorage.getItem(API_KEY);
+  const savedNotary = localStorage.getItem(NOTARY_KEY);
+
+  // Instalações antigas guardaram 127.0.0.1. Trata-se como "não configurado".
+  apiInput.value =
+    !savedApi || savedApi.trim() === "" || savedApi.trim() === "http://127.0.0.1:8082"
+      ? DEFAULT_API
+      : savedApi;
+  notaryInput.value =
+    !savedNotary || savedNotary.trim() === "" || savedNotary.trim() === "http://127.0.0.1:7047"
+      ? DEFAULT_NOTARY
+      : savedNotary;
 
   apiInput.addEventListener("change", () => {
     localStorage.setItem(API_KEY, api());
@@ -410,6 +423,14 @@ export function initMineView(): void {
   });
   notaryInput.addEventListener("change", () => {
     localStorage.setItem(NOTARY_KEY, notary());
+  });
+
+  el<HTMLButtonElement>("mine-use-fallback").addEventListener("click", () => {
+    apiInput.value = FALLBACK_API;
+    notaryInput.value = FALLBACK_NOTARY;
+    localStorage.setItem(API_KEY, FALLBACK_API);
+    localStorage.setItem(NOTARY_KEY, FALLBACK_NOTARY);
+    void loadProviders();
   });
 
   void loadProviders();
