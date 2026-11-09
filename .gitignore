@@ -43,3 +43,7 @@ __pycache__/
 /luggom-api
 /luggom-extract
 /luggom-oracle-feeder
+
+# Sites — mantidos locais; o deploy é separado do repositório.
+site/
+site-app/
