@@ -16,9 +16,9 @@
 
 ## Status
 
-**PT** — Hoje há **um banco** comprovado de ponta a ponta — o **Viacredi**, no Brasil.
+**PT** — Hoje há **dois bancos** comprovados de ponta a ponta — **Viacredi** e **Banco do Brasil** (tx `F2D532…`, altura 144732, `code 0`), no Brasil.
 
-**EN** — Today there is **one bank** proven end to end — **Viacredi**, in Brazil.
+**EN** — Today there are **two banks** proven end to end — **Viacredi** and **Banco do Brasil** (tx `F2D532…`, height 144732, `code 0`), in Brazil.
 
 ## Repo structure · Estrutura do repo
 

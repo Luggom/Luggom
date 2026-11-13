@@ -271,7 +271,7 @@ python3 coletor-browser/verify_rail.py --banco <id>
 |---|---|---|---|---|---|
 | **Viacredi/Ailos** | ✅ | ✅ | ✅ | ✅ | ✅ **minerado `code 0`** |
 | **Caixa** | ✅ | ✅ | ✅ | ❌ **FAIL (anti-bot)** | ❌ |
-| **BB** | ✅ | 🟡 sandbox | 🟡 | pendente | ❌ |
+| **Banco do Brasil** | ✅ | ✅ | ✅ | ✅ | ✅ **minerado `code 0`** (tx `F2D532…`, altura 144732) |
 | Sandbox (`localhost:9000`) | — | ✅ | ✅ | ✅ | ✅ |
 | **US/CA** (chase, rbc, …) | ✅ on-chain | — | — | — | ❌ falta campo canónico |
 

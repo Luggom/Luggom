@@ -70,7 +70,7 @@ espera do **campo canónico por rail**, e isso é **dado real**, não código.
 
 - **Código:** FASE 8 essencialmente fechada (hard test local Blocos 1–4; A-8 e
   T-GOV-1 fechados). Reset da chain feito (2026-10-07).
-- **Minerável E2E:** Viacredi (`code 0`). Caixa: rail **FAIL** (anti-bot). BB:
-  pendente de sessão. US/CA: falta campo canónico.
+- **Minerável E2E:** Viacredi (`code 0`) e **Banco do Brasil** (`code 0`, tx `F2D532…`,
+  altura 144732). Caixa: rail **FAIL** (anti-bot). US/CA: falta campo canónico.
 - **Falta para abrir:** o checklist da §2.
 

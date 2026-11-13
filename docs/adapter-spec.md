@@ -4,8 +4,8 @@
 > para se tornar **minerável**. Vive no repositório e no **tarball**, como `api/` e
 > `scripts/`. Publicar deliberadamente, como o `TESTNET/`.
 >
-> **Versão:** 2026-09-18 · **Estado:** derivado do que está **provado** (Viacredi/Ailos,
-> mineração real `code 0`) e das **duas lições que custaram sessões** na Caixa
+> **Versão:** 2026-11-13 · **Estado:** derivado do que está **provado** (Viacredi/Ailos e
+> Banco do Brasil, mineração real `code 0`) e das **duas lições que custaram sessões** na Caixa
 > (§13.127 e §13.137-B). Inclui o **§4-B**: o que falta para os rails **US/CA** —
 > o **id canónico do pagamento** —, que é o que a coorte da testnet tem de trazer.
 
@@ -234,13 +234,13 @@ receber o campo**; o que falta é a evidência.
 
 ---
 
-## 9. Estado por banco (2026-09-18)
+## 9. Estado por banco (2026-11-13)
 
 | Banco | Whitelist | Request builder | Plugin | Testes | Rail | E2E real |
 |---|---|---|---|---|---|---|
 | **Viacredi/Ailos** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ **minerado `code 0`** |
 | **Caixa** | ✅ | ✅ | ✅ | ✅ | ❌ **FAIL (§13.137-B)** | ❌ |
-| **BB** | ✅ | 🟡 contra o sandbox | 🟡 | 🟡 | **pendente de sessão** | ❌ |
+| **Banco do Brasil** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ **minerado `code 0`** (tx `F2D532…`, altura 144732) |
 | Sandbox (`localhost:9000`) | — | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 *Os bancos dos EUA/Canadá (chase, rbc, …) estão na whitelist **on-chain** mas **não são mineráveis**: falta o **id canónico do pagamento** e a validação com recibo real (§13.131 e **§4-B**). Não usar esta tabela como cobertura — ver o §4-B para o que a coorte tem de trazer.*
