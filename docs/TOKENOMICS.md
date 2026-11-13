@@ -26,6 +26,9 @@
   compilado com `-ldflags`).
 - **Sem cliff.** O único cliff é o do Fundador (24 meses).
 - O endereço é fail-closed: sem `BusinessCoreAddress`, a mineração falha.
+- **Sem tecto nem regra especial de voto.** Na DAO, 1 LUG = 1 voto para a LBC
+  como para qualquer conta. A Luggom Labs compromete-se publicamente a não
+  procurar o controlo da rede — é política declarada, não regra de código.
 
 ## OTC LOCKED
 
@@ -67,6 +70,11 @@
   **empréstimo/seed** ou **self-bond**, não doação.
 - Receita do validador: **3% de cada cunhagem** (via `fee_collector` →
   `x/distribution`, por stake) + **0,005 LUG por tx** + **comissão de delegação**.
+- **Operadores relacionados:** a Luggom Labs começa com **3 validadores** e o
+  fundador com **1** (4 relacionados, a divulgar). Compromisso: 3+1 enquanto o
+  conjunto é pequeno; a partir de **40 validadores**, a Labs nunca passa de
+  **10% do conjunto**. O único limite on-chain é **1% por validador**, ativo a
+  partir de 50 bonded; não existe limite por entidade.
 
 ## Governança
 
@@ -74,10 +82,12 @@
 - **A partir dos 10M:** DAO, **1 LUG em staking = 1 voto**, sem multiplicador 33/67.
   LUG fora do staking não vota; delegar dá voto ao validador e o delegador pode
   votar directamente.
-- **Quórum 20% · threshold 50% · veto 33%**; **expedited 66,7%**.
-- **`min_deposit` 1.000 LUG + 10% inicial**; votação **5 dias**; depósito **3 dias**.
-- **Teto da LBC: 20%** do voto direto; delegações da LBC subtraídas dos validadores;
-  sem voto direto, o stake da LBC não conta.
+- **Quórum 20% · threshold 50% · veto 33%**; **expedited 66,7%** — parâmetros de
+  genesis, alteráveis por proposta DAO (não são constantes de código).
+- **`min_deposit` 1.000 LUG + 10% inicial**; votação **5 dias**; depósito **3 dias** —
+  também parâmetros de genesis.
+- **Sem tecto de voto para a LBC** (ver a secção LBC): é um participante, não uma
+  classe de voto.
 - Tesouraria: tecto **25% em 30 dias**. Notariado: payees publicados, atraso de
   **7 dias**, tecto de **25% do saldo por 7 dias**.
 - `x/group` 3-de-5 gera o endereço da LBC.
@@ -87,8 +97,9 @@
 - Teto: **7B LUG no ano 0, −5% ao ano**, janela móvel de 365 dias; máximo vitalício
   teórico ~140B LUG.
 - Cesta: `(EUR/USD + GBP/USD + CHF/USD) / 3 × 3`, **+10% ao ano** composto;
-  fatores ×1,00 / ×1,61 / ×2,59. **Não existe preço fixo em USD**: o valor em dólar
-  é a fixing do oráculo do dia.
+  fatores ×1,00 / ×1,61 / ×2,59. A **fórmula** é compilada; os valores do dia vêm
+  do oráculo (`usd_oracle_updater_address`). **Não existe preço fixo em USD**: o
+  valor em dólar é a fixing do oráculo do dia.
 - Guardrails: piso anti-crash **0,75×**; guarda de movimento **10%/dia e 50%**;
   pausa sem fixing em **7 dias**.
 - **Sem venda pública/pré-venda.** `MsgBuyPreSale` está desabilitado.

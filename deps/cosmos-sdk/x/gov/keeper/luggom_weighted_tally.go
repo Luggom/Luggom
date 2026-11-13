@@ -13,15 +13,18 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
-// LuggomCalculateVoteResultsAndVotingPower aplica pesos LLC / fundador / validadores (basis points)
-// ao poder de voto delegado, seguindo a estrutura de defaultCalculateVoteResultsAndVotingPower.
+// LuggomCalculateVoteResultsAndVotingPower aplica pesos de fundador / validadores
+// (basis points) ao poder de voto delegado, seguindo a estrutura de
+// defaultCalculateVoteResultsAndVotingPower.
+//
+// Não há peso nem tecto para a LBC: na DAO, 1 LUG = 1 voto para qualquer conta.
 func LuggomCalculateVoteResultsAndVotingPower(
 	ctx context.Context,
 	k Keeper,
 	proposal v1.Proposal,
 	validators map[string]v1.ValidatorGovInfo,
-	wl, wf, wv math.LegacyDec,
-	fundadorBech32, llcValoperBech32 string,
+	wf, wv math.LegacyDec,
+	fundadorBech32 string,
 ) (totalVotingPower math.LegacyDec, results map[v1.VoteOption]math.LegacyDec, err error) {
 	totalVotingPower = math.LegacyZeroDec()
 
@@ -32,7 +35,6 @@ func LuggomCalculateVoteResultsAndVotingPower(
 	results[v1.OptionNoWithVeto] = math.LegacyZeroDec()
 
 	fundadorBech32 = trimBech32(fundadorBech32)
-	llcValoperBech32 = trimBech32(llcValoperBech32)
 
 	var founderValStr string
 	if fundadorBech32 != "" {
@@ -57,7 +59,7 @@ func LuggomCalculateVoteResultsAndVotingPower(
 			validators[valAddrStr] = val
 		}
 
-		bucket := voterBucketDelegator(vote.Voter, fundadorBech32, llcValoperBech32, wl, wf, wv)
+		bucket := voterBucketDelegator(vote.Voter, fundadorBech32, wf, wv)
 
 		err = k.SDKIterateDelegations(ctx, voter, func(index int64, delegation stakingtypes.DelegationI) (stop bool) {
 			valAddrStr := delegation.GetValidatorAddr()
@@ -104,7 +106,7 @@ func LuggomCalculateVoteResultsAndVotingPower(
 		sharesAfterDeductions := val.DelegatorShares.Sub(val.DelegatorDeductions)
 		votingPower := sharesAfterDeductions.MulInt(val.BondedTokens).Quo(val.DelegatorShares)
 
-		bucket := validatorSelfBucket(valAddrStr, founderValStr, llcValoperBech32, wl, wf, wv)
+		bucket := validatorSelfBucket(valAddrStr, founderValStr, wf, wv)
 		votingPower = votingPower.Mul(bucket)
 
 		for _, option := range val.Vote {
@@ -118,29 +120,17 @@ func LuggomCalculateVoteResultsAndVotingPower(
 	return totalVotingPower, results, nil
 }
 
-func voterBucketDelegator(voterBech32, fundadorBech32, llcValoper string, wl, wf, wv math.LegacyDec) math.LegacyDec {
+func voterBucketDelegator(voterBech32, fundadorBech32 string, wf, wv math.LegacyDec) math.LegacyDec {
 	voterBech32 = trimBech32(voterBech32)
-	if llcValoper != "" && voterBech32 == llcValoper {
-		return wl
-	}
 	if fundadorBech32 != "" && voterBech32 == fundadorBech32 {
-		if llcValoper == "" && wl.IsPositive() {
-			return wl.Add(wf)
-		}
 		return wf
 	}
 	return wv
 }
 
-func validatorSelfBucket(valAddrStr, founderValStr, llcValoper string, wl, wf, wv math.LegacyDec) math.LegacyDec {
+func validatorSelfBucket(valAddrStr, founderValStr string, wf, wv math.LegacyDec) math.LegacyDec {
 	valAddrStr = strings.TrimSpace(valAddrStr)
-	if llcValoper != "" && valAddrStr == llcValoper {
-		return wl
-	}
 	if founderValStr != "" && valAddrStr == founderValStr {
-		if llcValoper == "" && wl.IsPositive() {
-			return wl.Add(wf)
-		}
 		return wf
 	}
 	return wv

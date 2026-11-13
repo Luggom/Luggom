@@ -12,8 +12,8 @@ import (
 )
 
 // A governança vira por SUPPLY, não pela pool: Fase 1 (<10M) é do Fundador;
-// Fase 2 (≥10M) é 1 LUG = 1 voto (pesos 1.0 em todas as classes). O tecto de
-// 20% da LBC é aplicado dentro do tally, não por pesos de classe.
+// Fase 2 (≥10M) é 1 LUG = 1 voto (pesos 1.0 em todas as classes). A LBC não
+// tem tecto nem regra especial de voto: é um participante como qualquer outro.
 func TestGovWeights_PhaseBySupply(t *testing.T) {
 	f := initMineFixture(t)
 
@@ -36,15 +36,25 @@ func TestGovWeights_PhaseBySupply(t *testing.T) {
 	require.True(t, ok)
 	f.bank.supply = sdk.NewCoin("uluggom", thr10M)
 
-	// A pool NÃO muda a fase: fechada ou aberta, os pesos são 1.0.
+	// A pool NÃO muda a fase: fechada ou aberta, os pesos são 1.0. O peso
+	// legado da LBC também não muda nada: na DAO não há classe nem tecto.
+	legacyWeights := []struct{ llc, founder, validators uint32 }{
+		{0, 10_000, 0},
+		{2_000, 8_000, 0},
+	}
 	for _, poolActive := range []bool{false, true} {
-		p.PoolActive = poolActive
-		require.NoError(t, f.keeper.Params.Set(f.ctx, p))
+		for _, lw := range legacyWeights {
+			p.PoolActive = poolActive
+			p.GovLlcVoteWeightBps = lw.llc
+			p.GovFounderVoteWeightBps = lw.founder
+			p.GovValidatorsVoteWeightBps = lw.validators
+			require.NoError(t, f.keeper.Params.Set(f.ctx, p))
 
-		wl, wf, wv = govtally.ResolveWeightsForTest(f.ctx, f.keeper, p)
-		require.Equal(t, uint32(10_000), wl)
-		require.Equal(t, uint32(10_000), wf)
-		require.Equal(t, uint32(10_000), wv)
+			wl, wf, wv = govtally.ResolveWeightsForTest(f.ctx, f.keeper, p)
+			require.Equal(t, uint32(10_000), wl, "DAO: peso 1.0 para todos")
+			require.Equal(t, uint32(10_000), wf, "DAO: peso 1.0 para todos")
+			require.Equal(t, uint32(10_000), wv, "DAO: peso 1.0 para todos")
+		}
 	}
 }
 

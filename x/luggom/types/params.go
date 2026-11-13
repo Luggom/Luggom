@@ -28,7 +28,9 @@ func NewParams() Params {
 		OtcBtcDenom:               "btc",
 		// Tally da governança (por decidir com a comunidade — §13.170 §4).
 		GovValidatorMinForWeightShift: 100,
-		GovLlcVoteWeightBps:           0,
+		// Legado: a LBC não tem classe de voto desde 13/11/2026. Mantido para
+		// compatibilidade de proto/genesis; o tally ignora-o.
+		GovLlcVoteWeightBps: 0,
 		// Pré-pool o Fundador decide sozinho (decisão do Fundador, 2026-09-18).
 		GovFounderVoteWeightBps:    10_000,
 		GovValidatorsVoteWeightBps: 0,

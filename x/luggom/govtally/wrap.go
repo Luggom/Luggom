@@ -25,29 +25,23 @@ func NewWeightedTallyFn(lk *keeper.Keeper) govkeeper.CalculateVoteResultsAndVoti
 		if err != nil {
 			return math.LegacyZeroDec(), nil, err
 		}
-		wl, wf, wv := resolveWeights(sdkCtx, *lk, p)
-		wlD := math.LegacyNewDecFromInt(math.NewIntFromUint64(uint64(wl))).QuoInt64(10_000)
+		_, wf, wv := resolveWeights(sdkCtx, *lk, p)
 		wfD := math.LegacyNewDecFromInt(math.NewIntFromUint64(uint64(wf))).QuoInt64(10_000)
 		wvD := math.LegacyNewDecFromInt(math.NewIntFromUint64(uint64(wv))).QuoInt64(10_000)
 
-		// Fase 2: a LBC entra no tally pelo endereço compilado, com o tecto de
-		// 20% aplicado dentro do tally. Na Fase 1 fica vazia (só o Fundador vota).
-		llcAddr := ""
-		if lk.DAOActive(ctx) {
-			llcAddr = types.BusinessCoreAddress
-		}
-
+		// Fase 2: 1 LUG = 1 voto para todos. A LBC não tem tecto nem regra
+		// especial de voto: é um participante como qualquer outro. Na Fase 1
+		// só o Fundador tem peso (wf=10000, wv=0).
 		return govkeeper.LuggomCalculateVoteResultsAndVotingPower(
 			ctx, k, proposal, validators,
-			wlD, wfD, wvD,
+			wfD, wvD,
 			p.FounderAddress,
-			llcAddr,
 		)
 	}
 }
 
-// A Fase 2 usa 1 LUG = 1 voto (pesos 1.0 no tally). O tecto de 20% da LBC é
-// aplicado dentro do tally do x/gov, não por pesos de classe.
+// A Fase 2 usa 1 LUG = 1 voto (pesos 1.0 no tally). A LBC não tem regra
+// especial; só a Fase 1 usa pesos por classe (Fundador 100%).
 func resolveWeights(ctx context.Context, k keeper.Keeper, p types.Params) (wl, wf, wv uint32) {
 	if k.DAOActive(ctx) {
 		return 10_000, 10_000, 10_000
