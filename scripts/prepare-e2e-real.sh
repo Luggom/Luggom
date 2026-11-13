@@ -45,7 +45,7 @@ BOND_200_LUG="200${LUG}"          # 200 LUG
 # (§13.87): sem isenção, 20M carteiras exigiriam 100.000 LUG, não 0,000204.
 # A reserva fica na MESMA conta (decisão D2): a API envia o pó com a chave GGOM,
 # e uma conta de módulo não serve porque não tem chave privada.
-TOTAL_GENESIS_LUG="4000000204000000000000"  # 4.000,000204 LUG em uluggom
+TOTAL_GENESIS_LUG="${TOTAL_GENESIS_LUG:-4000000204000000000000}"  # default 4.000,000204 LUG
 
 # §13.139 (D3) — conta do FEEDER do oráculo. A chain só aceita a tx do oráculo
 # vinda da authority OU do endereço em `usd_oracle_updater_address` (oracle_update.go);
@@ -99,6 +99,20 @@ lp["gov_founder_vote_weight_bps"] = 10000
 lp["gov_validators_vote_weight_bps"] = 0
 lp["gov_llc_vote_weight_bps"] = 0
 lp["gov_validator_min_for_weight_shift"] = 0
+
+# Parâmetros canónicos do x/gov (decisão 13/11): 20/50/33, expedited 66,7%,
+# min_deposit 1.000 LUG + 10% inicial, votação 5d, depósito 3d.
+gov = g["app_state"]["gov"]["params"]
+gov["quorum"] = "0.200000000000000000"
+gov["threshold"] = "0.500000000000000000"
+gov["veto_threshold"] = "0.330000000000000000"
+gov["expedited_threshold"] = "0.667000000000000000"
+gov["min_deposit"] = [{"denom": "uluggom", "amount": "1000000000000000000000"}]
+gov["expedited_min_deposit"] = [{"denom": "uluggom", "amount": "2000000000000000000000"}]
+gov["max_deposit_period"] = "259200s"
+gov["voting_period"] = "432000s"
+gov["expedited_voting_period"] = "86400s"
+gov["min_initial_deposit_ratio"] = "0.100000000000000000"
 
 with open(path, "w") as f:
     json.dump(g, f, indent=2)
