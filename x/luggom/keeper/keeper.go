@@ -67,6 +67,9 @@ type Keeper struct {
 	// §13.171 — cliff do Fundador: inicio do relogio + total retido.
 	FounderVestingStart collections.Item[uint64]
 	FounderVestingHeld  collections.Item[sdkmath.Int]
+	// Cliff da Luggom Business Core: inicio do relogio (1º mint da Fase 2) + retido.
+	BusinessCoreVestingStart collections.Item[uint64]
+	BusinessCoreVestingHeld  collections.Item[sdkmath.Int]
 	// §13.170 Grupo D — âncora do epoch anual (bloco 0), derivada e não governável.
 	ChainStartTime collections.Item[uint64]
 }
@@ -131,7 +134,10 @@ func NewKeeper(
 		// §13.171 — cliff do Fundador
 		FounderVestingStart: collections.NewItem(sb, types.FounderVestingStartKey, "founder_vesting_start", collections.Uint64Value),
 		FounderVestingHeld:  collections.NewItem(sb, types.FounderVestingHeldKey, "founder_vesting_held", sdk.IntValue),
-		ChainStartTime:      collections.NewItem(sb, types.ChainStartTimeKey, "chain_start_time", collections.Uint64Value),
+		// Cliff da Luggom Business Core
+		BusinessCoreVestingStart: collections.NewItem(sb, types.BusinessCoreVestingStartKey, "business_core_vesting_start", collections.Uint64Value),
+		BusinessCoreVestingHeld:  collections.NewItem(sb, types.BusinessCoreVestingHeldKey, "business_core_vesting_held", sdk.IntValue),
+		ChainStartTime:           collections.NewItem(sb, types.ChainStartTimeKey, "chain_start_time", collections.Uint64Value),
 	}
 
 	schema, err := sb.Build()
@@ -186,16 +192,23 @@ var preSaleThreshold = func() sdkmath.Int {
 }()
 
 // preSaleActive reports whether the pre-sale phase is still running
-// (total supply < 10M LUG, §13.132). Enquanto for verdade corre a Fase 1:
-// minerador 30% + pre-sale 35% + POOL 10% + staking 7,5% + ATOM 7,5% + fundador
-// 5% + validadores 3% + gov 2%.
+// (total supply < 10M LUG, §13.132). O nome e legado: a venda esta desligada.
+// Enquanto for verdade corre a Fase 1: minerador 30% + LBC 5% + OTC 30% +
+// POOL 10% + staking 7,5% + ATOM 7,5% + fundador 5% + validadores 3% + gov 2%.
 //
-// Depois dos 10M a pre-sale encerra (a fatia vai a 0), a POOL encerra, e o
-// staking/ATOM sobem para 30% cada até a pool/IBC abrir — é a **Transição**.
-// A Fase 2 definitiva (OTC 40%) só começa com a pool aberta (params.pool_active).
+// Depois dos 10M comeca a Fase 2: OTC 35% + LBC 5% + staking 10% + ATOM 10% +
+// gov 1,5% + notariado 0,5%. A pool e um interruptor separado (params.pool_active)
+// e nao muda a fase.
 func (k Keeper) preSaleActive(ctx context.Context) bool {
 	supply := k.GetTotalSupply(ctx, "uluggom")
 	return supply.Amount.LT(preSaleThreshold)
+}
+
+// Phase2Active reports whether the chain is in Phase 2 (supply ≥ 10M). The pool
+// is a separate switch (params.pool_active) and does not affect the phase.
+func (k Keeper) Phase2Active(ctx context.Context) bool {
+	supply := k.GetTotalSupply(ctx, "uluggom")
+	return !supply.Amount.LT(preSaleThreshold)
 }
 
 // PoolOpen reports whether the pool is open — now a GOVERNABLE flag (params.pool_active),

@@ -84,10 +84,11 @@ var (
 		{Account: luggommoduletypes.PreSaleModuleName},
 		{Account: luggommoduletypes.AtomReservoirModuleName},
 		{Account: luggommoduletypes.StakingReservoirModuleName},
-		{Account: luggommoduletypes.GovReserveModuleName},     // Tesouraria (§13.153/§13.154). Só gasta por voto
-		{Account: luggommoduletypes.NotaryReserveModuleName},  // 0,5% do notariado — conta separada, NÃO votável
-		{Account: luggommoduletypes.OtcVaultModuleName},       // OTC LOCKED — cofre da Fase 2 (§13.117)
-		{Account: luggommoduletypes.FounderVestingModuleName}, // 5% do Fundador retido ate ao cliff de 24 m (§13.171)
+		{Account: luggommoduletypes.GovReserveModuleName},          // Tesouraria (§13.153/§13.154). Só gasta por voto
+		{Account: luggommoduletypes.NotaryReserveModuleName},       // 0,5% do notariado — conta separada, NÃO votável
+		{Account: luggommoduletypes.OtcVaultModuleName},            // OTC LOCKED — cofre da Fase 2 (§13.117)
+		{Account: luggommoduletypes.FounderVestingModuleName},      // 5% do Fundador retido ate ao cliff de 24 m (§13.171)
+		{Account: luggommoduletypes.BusinessCoreVestingModuleName}, // 5% da Business Core retido ate ao cliff de 24 m
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 

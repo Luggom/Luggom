@@ -157,6 +157,10 @@ func (am AppModule) BeginBlock(ctx context.Context) error {
 	if err := am.keeper.RunFounderVesting(ctx); err != nil {
 		return err
 	}
+	// Cliff da Luggom Business Core: 24 meses desde o 1º mint da Fase 2.
+	if err := am.keeper.RunBusinessCoreVesting(ctx); err != nil {
+		return err
+	}
 	return nil
 }
 

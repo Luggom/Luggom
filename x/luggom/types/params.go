@@ -116,6 +116,39 @@ func (p Params) Validate() error {
 	if len(p.PoolAssets) == 0 {
 		return errors.New("pool_assets cannot be empty")
 	}
+	if len(p.PoolAssets) > 128 {
+		return fmt.Errorf("pool_assets cannot have more than 128 entries, got %d", len(p.PoolAssets))
+	}
+	seenAsset := make(map[string]struct{}, len(p.PoolAssets))
+	for i, denom := range p.PoolAssets {
+		if denom == "" {
+			return fmt.Errorf("pool_assets[%d] cannot be empty", i)
+		}
+		if strings.TrimSpace(denom) != denom {
+			return fmt.Errorf("pool_assets[%d] has leading or trailing whitespace: %q", i, denom)
+		}
+		if denom == "uluggom" {
+			return errors.New("pool_assets cannot include the base denom uluggom")
+		}
+		if err := sdk.ValidateDenom(denom); err != nil {
+			return fmt.Errorf("pool_assets[%d] is not a valid denom: %w", i, err)
+		}
+		if strings.HasPrefix(denom, "ibc/") {
+			hash := strings.TrimPrefix(denom, "ibc/")
+			if len(hash) != 64 {
+				return fmt.Errorf("pool_assets[%d] has a malformed IBC voucher (want ibc/<64 hex>): %s", i, denom)
+			}
+			for _, c := range hash {
+				if !((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
+					return fmt.Errorf("pool_assets[%d] has a malformed IBC voucher hash: %s", i, denom)
+				}
+			}
+		}
+		if _, dup := seenAsset[denom]; dup {
+			return fmt.Errorf("pool_assets[%d] is duplicated: %s", i, denom)
+		}
+		seenAsset[denom] = struct{}{}
+	}
 
 	return nil
 }

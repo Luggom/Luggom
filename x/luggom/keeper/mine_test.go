@@ -255,6 +255,12 @@ func initMineFixture(t *testing.T) *mineFixture {
 	fixtureParams.ApiVerifierAddress = testNotaryAddress
 	require.NoError(t, k.Params.Set(ctx, fixtureParams))
 
+	// A Luggom Business Core é um endereço COMPILADO (`types.BusinessCoreAddress`).
+	// Na fixture, usa-se um endereço de teste determinístico.
+	businessCoreStr, err := addressCodec.BytesToString(bytes.Repeat([]byte{0x78}, 20))
+	require.NoError(t, err)
+	types.BusinessCoreAddress = businessCoreStr
+
 	// §13.171 — por omissao a fixture corre DEPOIS do cliff (o Fundador recebe
 	// directo, como antes desta feature); os testes do vesting sobrepoem isto.
 	require.NoError(t, k.FounderVestingStart.Set(ctx, uint64(1)))
@@ -312,53 +318,53 @@ func TestMineSplit_ThreePhases(t *testing.T) {
 	// (dotação única). A Gov Reserve mantém 2% na Fase 2 mas PARTIDA: 1,5% de
 	// tesouraria + 0,5% de reserva do notariado (conta separada).
 	tests := []struct {
-		name       string
-		mined10M   bool // supply ≥10M (fim da Fase 1)
-		poolActive bool // pool/IBC abertos (Fase 2)
-		minerBps   int64
-		preSaleBps int64
-		otcBps     int64
-		stakingBps int64
-		atomBps    int64
-		govBps     int64
-		notaryBps  int64
-		poolBps    int64
+		name            string
+		mined10M        bool // supply ≥10M (fim da Fase 1)
+		poolActive      bool // pool/IBC abertos (Fase 2)
+		minerBps        int64
+		businessCoreBps int64
+		otcBps          int64
+		stakingBps      int64
+		atomBps         int64
+		govBps          int64
+		notaryBps       int64
+		poolBps         int64
 	}{
 		{
-			name:       "fase 1 (<10M): miner 30 / pre-sale 35 / staking 7,5 / ATOM 7,5 / gov 2 / POOL 10",
-			minerBps:   3000,
-			preSaleBps: 3500,
-			otcBps:     0,
-			stakingBps: 750,
-			atomBps:    750,
-			govBps:     200,
-			notaryBps:  0,
-			poolBps:    1000,
+			name:            "fase 1 (<10M): miner 30 / LBC 5 / OTC 30 / staking 7,5 / ATOM 7,5 / gov 2 / POOL 10",
+			minerBps:        3000,
+			businessCoreBps: 500,
+			otcBps:          3000,
+			stakingBps:      750,
+			atomBps:         750,
+			govBps:          200,
+			notaryBps:       0,
+			poolBps:         1000,
 		},
 		{
-			name:       "transição (≥10M, pool fechada): miner 30 / staking 30 / ATOM 30 / gov 2",
-			mined10M:   true,
-			minerBps:   3000,
-			preSaleBps: 0,
-			otcBps:     0,
-			stakingBps: 3000,
-			atomBps:    3000,
-			govBps:     200,
-			notaryBps:  0,
-			poolBps:    0,
+			name:            "fase 2 (≥10M, pool fechada): miner 30 / LBC 5 / OTC 35 / staking 10 / ATOM 10 / gov 1,5 / notariado 0,5",
+			mined10M:        true,
+			minerBps:        3000,
+			businessCoreBps: 500,
+			otcBps:          3500,
+			stakingBps:      1000,
+			atomBps:         1000,
+			govBps:          150,
+			notaryBps:       50,
+			poolBps:         0,
 		},
 		{
-			name:       "fase 2 (pool aberta): miner 30 / OTC 40 / staking 10 / ATOM 10 / tesouraria 1,5 / notariado 0,5 (§13.154)",
-			mined10M:   true,
-			poolActive: true,
-			minerBps:   3000,
-			preSaleBps: 0,
-			otcBps:     4000,
-			stakingBps: 1000,
-			atomBps:    1000,
-			govBps:     150,
-			notaryBps:  50,
-			poolBps:    0,
+			name:            "fase 2 (pool aberta): mesmo split — a pool não muda a fase",
+			mined10M:        true,
+			poolActive:      true,
+			minerBps:        3000,
+			businessCoreBps: 500,
+			otcBps:          3500,
+			stakingBps:      1000,
+			atomBps:         1000,
+			govBps:          150,
+			notaryBps:       50,
+			poolBps:         0,
 		},
 	}
 
@@ -405,7 +411,7 @@ func TestMineSplit_ThreePhases(t *testing.T) {
 			// paridade do oráculo é LegacyDec — não se fixa um total com casas.
 			expectedTotal := minted
 
-			expectedPreSale := expectedTotal.MulRaw(tc.preSaleBps).QuoRaw(10_000)
+			expectedBusinessCore := expectedTotal.MulRaw(tc.businessCoreBps).QuoRaw(10_000)
 			expectedOtc := expectedTotal.MulRaw(tc.otcBps).QuoRaw(10_000)
 			expectedFounder := expectedTotal.MulRaw(founderBps).QuoRaw(10_000)
 			expectedValidatorFixed := expectedTotal.MulRaw(validatorBps).QuoRaw(10_000)
@@ -418,7 +424,7 @@ func TestMineSplit_ThreePhases(t *testing.T) {
 			// é o 30% truncado, é o total MENOS as outras fatias.
 			expectedMiner := expectedTotal
 			for _, s := range []sdkmath.Int{
-				expectedPreSale, expectedOtc, expectedFounder, expectedValidatorFixed,
+				expectedBusinessCore, expectedOtc, expectedFounder, expectedValidatorFixed,
 				expectedGovReserve, expectedNotaryReserve, expectedDistr, expectedPool,
 				expectedAtomReservoir,
 			} {
@@ -434,7 +440,9 @@ func TestMineSplit_ThreePhases(t *testing.T) {
 			stakingReservoirAddr := authtypes.NewModuleAddress(types.StakingReservoirModuleName)
 			poolAddr := authtypes.NewModuleAddress(types.PoolTreasuryModuleName)
 			atomReservoirAddr := authtypes.NewModuleAddress(types.AtomReservoirModuleName)
-			preSaleAddr := authtypes.NewModuleAddress(types.PreSaleModuleName)
+			// Os 5% da LBC ficam retidos no module account de vesting: na Fase 1
+			// com o relógio congelado, na Fase 2 até ao cliff de 24 meses.
+			businessCoreAddr := authtypes.NewModuleAddress(types.BusinessCoreVestingModuleName)
 			otcVaultAddr := authtypes.NewModuleAddress(types.OtcVaultModuleName)
 
 			amtMiner := sentToAmount(f.bank, minerAddr)
@@ -443,7 +451,7 @@ func TestMineSplit_ThreePhases(t *testing.T) {
 			amtStakingReservoir := sentToAmount(f.bank, stakingReservoirAddr)
 			amtPool := sentToAmount(f.bank, poolAddr)
 			amtAtomReservoir := sentToAmount(f.bank, atomReservoirAddr)
-			amtPreSale := sentToAmount(f.bank, preSaleAddr)
+			amtBusinessCore := sentToAmount(f.bank, businessCoreAddr)
 			amtGovReserve := sentToAmount(f.bank, govReserveAddr)
 			amtNotaryReserve := sentToAmount(f.bank, notaryReserveAddr)
 			amtOtc := sentToAmount(f.bank, otcVaultAddr)
@@ -455,7 +463,7 @@ func TestMineSplit_ThreePhases(t *testing.T) {
 			require.Equal(t, expectedNotaryReserve.String(), amtNotaryReserve.String())
 			require.Equal(t, expectedPool.String(), amtPool.String())
 			require.Equal(t, expectedAtomReservoir.String(), amtAtomReservoir.String())
-			require.Equal(t, expectedPreSale.String(), amtPreSale.String())
+			require.Equal(t, expectedBusinessCore.String(), amtBusinessCore.String())
 			require.Equal(t, expectedOtc.String(), amtOtc.String())
 			require.Equal(t, expectedMiner.String(), amtMiner.String())
 
@@ -464,13 +472,13 @@ func TestMineSplit_ThreePhases(t *testing.T) {
 			require.Equal(t, expectedDistr.String(), resp.TaxStaking.String())
 			require.Equal(t, expectedPool.String(), resp.TaxValidator.String())
 
-			// O cofre acumula a fatia OTC (só a Fase 2 alimenta o cofre, sem tecto).
+			// O cofre acumula a fatia OTC (Fase 1 a 30%, Fase 2 a 35%, sem tecto).
 			vaultAfter, err := f.keeper.OtcVaultAccumulated(f.ctx)
 			require.NoError(t, err)
 			require.Equal(t, expectedOtc.String(), vaultAfter.String())
 
 			// Invariant: todos os tokens minerados são alocados.
-			sum := amtMiner.Add(amtPreSale).Add(amtOtc).Add(amtFounder).
+			sum := amtMiner.Add(amtBusinessCore).Add(amtOtc).Add(amtFounder).
 				Add(amtStakingReservoir).Add(amtDistr).Add(amtGovReserve).
 				Add(amtNotaryReserve).Add(amtPool).Add(amtAtomReservoir)
 			require.Equal(t, minted.String(), sum.String())

@@ -85,6 +85,10 @@ func (k msgServer) CancelEscrow(ctx context.Context, msg *types.MsgCancelEscrow)
 }
 
 // BLOCO D — pre-sale on-chain (§13.132 §4).
+//
+// ⛔ DESACTIVADO (2026-11-09): a pré-venda pública foi substituída pela rodada
+// de equity. O split já não financia `luggom_presale`; aceitar compras aqui
+// venderia LUG sem lastro. O keeper antigo fica para histórico/testes.
 func (k msgServer) BuyPreSale(ctx context.Context, msg *types.MsgBuyPreSale) (*types.MsgBuyPreSaleResponse, error) {
-	return k.Keeper.BuyPreSale(ctx, msg)
+	return nil, types.ErrPreSaleClosed.Wrap("MsgBuyPreSale is disabled — the pre-sale was replaced by the equity round")
 }

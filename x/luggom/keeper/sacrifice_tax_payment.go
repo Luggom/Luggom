@@ -209,7 +209,7 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 		return nil, fmt.Errorf("calculated LUG amount is zero (payment_amount too small)")
 	}
 
-	// 10b. Annual mining cap (MVP 2.0 §13.49/§13.52): 365d sliding window, 15B −5% a.a.
+	// 10b. Annual mining cap (MVP 2.0 §13.49/§13.52): 365d sliding window, 7B −5% a.a.
 	if err := k.recordMinedAmount(ctx, amountLUGInt); err != nil {
 		return nil, err
 	}

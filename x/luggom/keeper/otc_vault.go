@@ -13,34 +13,35 @@ import (
 	"luggom/x/luggom/types"
 )
 
-// MVP 2.0 mint split — 3 FASES, todas a 100% (§13.132, 2026-09-17).
-// SUBSTITUI as percentagens do §13.117 e do §13.128.
+// Mint split — 2 FASES, cada uma a 100%.
 //
-//	A Fase 2 é DEFINITIVA (pós pool/IBC) e imutável. Gatilho da Fase 1 → 2 é a
-//	abertura da pool/IBC por decisão do fundador (params.pool_active, ~12M
-//	minerados). Entre o fim da pre-sale (10M) e a abertura da pool há uma
-//	TRANSIÇÃO: o pre-sale e a POOL encerram e as fatias vão para os
-//	reservatórios (staking/ATOM a 30 cada) — nada fica órfão.
+//	A Fase 2 começa por SUPPLY (≥10M LUG minerados), não por params.pool_active.
+//	A pool é um interruptor separado: só abre a AMM e não muda o split.
 //
-//	TABELA VIGENTE (§13.132), em percentagem:
-//	  Componente           Fase 1   Transição   Fase 2
-//	  Minerador              30       30          30
-//	  Pre-sale               35        0           0
-//	  OTC LOCKED             —         0          42
-//	  Staking Reservoir     7,5       30          10
-//	  ATOM Reservoir        7,5       30          10
-//	  Fundador                5        5           5
-//	  Validadores             3        3           3
-//	  Gov Reserve             2        2           0
-//	  POOL                   10        0           0
-//	  Total                 100      100         100
+//	TABELA VIGENTE, em percentagem:
+//	  Componente           Fase 1   Fase 2
+//	  Minerador              30       30
+//	  Luggom Business Core    5        5
+//	  OTC LOCKED             30       35
+//	  Staking Reservoir     7,5       10
+//	  ATOM Reservoir        7,5       10
+//	  Fundador                5        5
+//	  Validadores             3        3
+//	  Gov Reserve             2      1,5 + 0,5 notariado
+//	  POOL                   10        —
+//	  Total                 100      100
 //
-//	§13.132: a POOL (10%) é DOTACAO ÚNICA de liquidez — um carve-out que corre
-//	só na Fase 1 (10% × 10M = 1M LUG) e encerra na Transição; NÃO é fatia
-//	contínua. Na Fase 2 a Gov Reserve MANTÉM-SE a 2% (§13.153), dividida em
-//	0,5% para o notariado + 1,5% de tesouraria (§13.154); o OTC desce a 40%.
+//	A POOL (10%) é DOTACAO ÚNICA de liquidez — um carve-out que corre só na
+//	Fase 1 (10% × 10M = 1M LUG) e encerra na Fase 2. A Gov Reserve mantém-se a
+//	2%, dividida em 0,5% para o notariado + 1,5% de tesouraria.
 //
-//	O OTC LOCKED é contínuo e SEM TECTO: 40% de toda a mineração, enquanto
+//	A Luggom Business Core recebe 5% em cada fase. Na Fase 1 os 5% são retidos
+//	em `luggom_business_core_vesting` com o relógio do cliff CONGELADO; o cliff
+//	de 24 meses começa a contar no primeiro mint da Fase 2. Ao fim do cliff é
+//	libertado TODO o acumulado (Fase 1 + Fase 2) e, daí em diante, o crédito é
+//	directo para a carteira 3/5.
+//
+//	O OTC LOCKED é contínuo e SEM TECTO: 30% na Fase 1 e 35% na Fase 2, enquanto
 //	existir mineração. O cofre só vende LUG por BTC (nunca PAXG), em lotes
 //	mínimos de 100k LUG, sempre ao preço da cesta daquele dia e ano. O BTC
 //	recebido é LASTRO PERMANENTE — nunca sai, nunca é queimado, nunca é trocado
@@ -50,7 +51,6 @@ import (
 //	de oferta.
 //
 // §13.64: a fatia ATOM vai SEMPRE para o Atom Reservoir (luggom_atom_reservoir).
-// GovReserve está REACTIVADA (2026-09-10): 2% para parcerias futuras (Open Finance etc.).
 const (
 	bpsDenom = 10_000
 
@@ -78,11 +78,12 @@ const (
 	bpsPoolTransition = 0
 	bpsPoolPhase2     = 0
 
-	// Fase 1 — pré-pool com pre-sale activa (<10M minerados).
-	bpsMinerPhase1   = 3_000 // 30%   → minerador
-	bpsPreSalePhase1 = 3_500 // 35%   → conta de pre-sale (3,5M LUG × $0,10 = $350k)
-	bpsStakingPhase1 = 750   // 7,5%  → Staking Reservoir
-	bpsAtomPhase1    = 750   // 7,5%  → Atom Reservoir
+	// Fase 1 — pré-pool (<10M minerados).
+	bpsMinerPhase1        = 3_000 // 30%   → minerador
+	bpsBusinessCorePhase1 = 500   // 5%    → Luggom Business Core (retido; relógio congelado)
+	bpsOtcPhase1          = 3_000 // 30%   → cofre OTC LOCKED
+	bpsStakingPhase1      = 750   // 7,5%  → Staking Reservoir
+	bpsAtomPhase1         = 750   // 7,5%  → Atom Reservoir
 
 	// Transição — pré-pool, pre-sale e POOL encerradas (≥10M, pool ainda fechada):
 	// as fatias do pre-sale e da POOL vão para os reservatórios (30% cada).
@@ -95,10 +96,11 @@ const (
 	// voltam à Gov Reserve — 1,5 tesouraria + 0,5 notariado. Fundamento da fatia
 	// grande do OTC: a fatia do minerador é float FORÇADO a vender; o cofre nunca
 	// é forçado (só sai COMPRADO à cesta, em lotes de 100k).
-	bpsMinerPhase2   = 3_000 // 30% → minerador
-	bpsOtcPhase2     = 4_000 // 40% → cofre OTC LOCKED (era 42; §13.154 devolveu 2% à Gov)
-	bpsStakingPhase2 = 1_000 // 10% → Staking Reservoir
-	bpsAtomPhase2    = 1_000 // 10% → Atom Reservoir
+	bpsMinerPhase2        = 3_000 // 30% → minerador
+	bpsBusinessCorePhase2 = 500   // 5%  → Luggom Business Core (retido ate ao cliff de 24 m)
+	bpsOtcPhase2          = 3_500 // 35% → cofre OTC LOCKED (era 40; 5% vao para a Business Core)
+	bpsStakingPhase2      = 1_000 // 10% → Staking Reservoir
+	bpsAtomPhase2         = 1_000 // 10% → Atom Reservoir
 
 	// bpsAtomBonusCap é o teto flat pago aos locks qualificados ATOM (§13.85, pós-pool).
 	bpsAtomBonusCap = 700
@@ -108,7 +110,7 @@ const (
 type miningSplit struct {
 	Phase         types.OtcPhase
 	Miner         sdkmath.Int
-	PreSale       sdkmath.Int
+	BusinessCore  sdkmath.Int
 	OtcVault      sdkmath.Int
 	Staking       sdkmath.Int
 	Atom          sdkmath.Int
@@ -122,7 +124,7 @@ type miningSplit struct {
 // Total soma todas as fatias do split.
 func (s miningSplit) Total() sdkmath.Int {
 	return s.Miner.
-		Add(s.PreSale).
+		Add(s.BusinessCore).
 		Add(s.OtcVault).
 		Add(s.Staking).
 		Add(s.Atom).
@@ -136,21 +138,21 @@ func (s miningSplit) Total() sdkmath.Int {
 // splitBps devolve os bps variáveis por fase (miner, pre-sale, OTC, staking,
 // ATOM, gov, notariado, POOL). Gov, notariado e POOL são por fase desde o
 // §13.132/§13.154.
-func splitBps(phase types.OtcPhase) (miner, preSale, otc, staking, atom, gov, notary, pool int64) {
+func splitBps(phase types.OtcPhase) (miner, businessCore, otc, staking, atom, gov, notary, pool int64) {
 	switch phase {
 	case types.OtcPhase1:
-		return bpsMinerPhase1, bpsPreSalePhase1, 0, bpsStakingPhase1, bpsAtomPhase1, bpsGovPhase1, 0, bpsPoolPhase1
+		return bpsMinerPhase1, bpsBusinessCorePhase1, bpsOtcPhase1, bpsStakingPhase1, bpsAtomPhase1, bpsGovPhase1, 0, bpsPoolPhase1
 	case types.OtcPhaseTransition:
 		return bpsMinerTransition, 0, 0, bpsStakingTransition, bpsAtomTransition, bpsGovTransition, 0, bpsPoolTransition
 	default: // Fase 2 (definitiva)
-		return bpsMinerPhase2, 0, bpsOtcPhase2, bpsStakingPhase2, bpsAtomPhase2, bpsGovPhase2, bpsNotaryPhase2, bpsPoolPhase2
+		return bpsMinerPhase2, bpsBusinessCorePhase2, bpsOtcPhase2, bpsStakingPhase2, bpsAtomPhase2, bpsGovPhase2, bpsNotaryPhase2, bpsPoolPhase2
 	}
 }
 
 // computeMiningSplit calcula a alocação de `amount` na fase indicada. A poeira
 // (resto da divisão inteira) vai para o minerador, pelo que Total() == amount.
 func computeMiningSplit(amount sdkmath.Int, phase types.OtcPhase) miningSplit {
-	minerBps, preSaleBps, otcBps, stakingBps, atomBps, govBps, notaryBps, poolBps := splitBps(phase)
+	minerBps, businessCoreBps, otcBps, stakingBps, atomBps, govBps, notaryBps, poolBps := splitBps(phase)
 
 	calc := func(bps int64) sdkmath.Int {
 		if bps <= 0 {
@@ -162,7 +164,7 @@ func computeMiningSplit(amount sdkmath.Int, phase types.OtcPhase) miningSplit {
 	s := miningSplit{
 		Phase:         phase,
 		Miner:         calc(minerBps),
-		PreSale:       calc(preSaleBps),
+		BusinessCore:  calc(businessCoreBps),
 		OtcVault:      calc(otcBps),
 		Staking:       calc(stakingBps),
 		Atom:          calc(atomBps),
@@ -176,17 +178,15 @@ func computeMiningSplit(amount sdkmath.Int, phase types.OtcPhase) miningSplit {
 	return s
 }
 
-// miningPhase resolve o regime vigente (§13.117):
+// miningPhase resolve o regime vigente por SUPPLY:
 //
-//	pre-sale activa (<10M minerados)     → Fase 1
-//	pre-sale encerrada e pool fechada    → Transição
-//	pool/IBC abertos                     → Fase 2 (definitiva)
+//	supply < 10M minerados  → Fase 1
+//	supply ≥ 10M minerados  → Fase 2 (definitiva)
+//
+// A pool é um interruptor separado (params.pool_active) e não muda a fase.
 func (k Keeper) miningPhase(ctx context.Context) (types.OtcPhase, error) {
 	if k.preSaleActive(ctx) {
 		return types.OtcPhase1, nil
-	}
-	if !k.PoolOpen(ctx) {
-		return types.OtcPhaseTransition, nil
 	}
 	return types.OtcPhase2, nil
 }
@@ -212,7 +212,7 @@ func (k Keeper) OtcVaultAccumulated(ctx context.Context) (sdkmath.Int, error) {
 }
 
 // addToOtcVault regista o LUG enviado para o cofre. Não há marco nem tecto:
-// enquanto existir mineração a Fase 2 alimenta o cofre com 40% (§13.132).
+// enquanto existir mineração o cofre recebe 30% (Fase 1) e 35% (Fase 2).
 func (k Keeper) addToOtcVault(ctx context.Context, amount sdkmath.Int) error {
 	if amount.IsNil() || !amount.IsPositive() {
 		return nil
@@ -248,17 +248,43 @@ func (k Keeper) distributeMiningSplit(ctx context.Context, params types.Params, 
 		return fmt.Errorf("failed to send coins to miner: %w", err)
 	}
 
-	// Pre-sale (só Fase 1). FAIL-CLOSED: o pre-sale on-chain (§13.132 §4) vende a
-	// partir desta conta — se o envio falhasse em silêncio, a venda ficaria sem
-	// lastro. Ao contrário das outras fatias, esta não pode ser engolida.
-	if split.PreSale.IsPositive() {
-		coinsPreSale := sdk.NewCoins(sdk.NewCoin("uluggom", split.PreSale))
-		// §13.172 — creditar o MÓDULO com ModuleToModule (e não o endereço com
-		// ModuleToAccount): o segundo cria uma BaseAccount no endereço do módulo e
-		// o `GetModuleAccount` seguinte (AccountToModule/ModuleToModule) faz
-		// PANIC ("account is not a module account"). Bug apanhado no T-CHAIN-10.
-		if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, types.PreSaleModuleName, coinsPreSale); err != nil {
-			return fmt.Errorf("failed to fund pre-sale account: %w", err)
+	// Luggom Business Core (5% em ambas as fases). Fase 1: retido em
+	// `luggom_business_core_vesting` com o relógio CONGELADO. Fase 2: o relógio
+	// do cliff de 24 meses começa no PRIMEIRO mint da Fase 2; até passar, a fatia
+	// fica retida. Ao fim do cliff sai tudo (Fase 1 + Fase 2); depois, directo.
+	if split.BusinessCore.IsPositive() {
+		coinsBusinessCore := sdk.NewCoins(sdk.NewCoin("uluggom", split.BusinessCore))
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+		retain := false
+		switch split.Phase {
+		case types.OtcPhase1:
+			retain = true
+		case types.OtcPhase2:
+			if _, err := k.businessCoreVestingStart(sdkCtx); err != nil {
+				return fmt.Errorf("business core vesting: %w", err)
+			}
+			retain = !k.businessCoreCliffPassed(sdkCtx)
+		}
+
+		if retain {
+			if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, types.BusinessCoreVestingModuleName, coinsBusinessCore); err != nil {
+				return fmt.Errorf("failed to retain business core slice: %w", err)
+			}
+			if err := k.addBusinessCoreVestingHeld(sdkCtx, split.BusinessCore); err != nil {
+				return err
+			}
+		} else {
+			if types.BusinessCoreAddress == "" {
+				return fmt.Errorf("business core address is not configured: refusing to mint the business core slice (%s would be stranded in the module)", split.BusinessCore)
+			}
+			businessCoreAddr, err := k.addressCodec.StringToBytes(types.BusinessCoreAddress)
+			if err != nil {
+				return fmt.Errorf("business core address invalid: %w", err)
+			}
+			if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, businessCoreAddr, coinsBusinessCore); err != nil {
+				return fmt.Errorf("failed to fund business core: %w", err)
+			}
 		}
 	}
 
@@ -353,7 +379,7 @@ func (k Keeper) distributeMiningSplit(ctx context.Context, params types.Params, 
 		}
 	}
 
-	// OTC LOCKED (Fase 2, 40% contínuo — §13.132) — fail-closed.
+	// OTC LOCKED (30% na Fase 1, 35% na Fase 2 — contínuo) — fail-closed.
 	if split.OtcVault.IsPositive() {
 		coinsOtc := sdk.NewCoins(sdk.NewCoin("uluggom", split.OtcVault))
 		if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, types.OtcVaultModuleName, coinsOtc); err != nil {
@@ -371,7 +397,7 @@ func (k Keeper) distributeMiningSplit(ctx context.Context, params types.Params, 
 func miningSplitAttributes(split miningSplit) []sdk.Attribute {
 	return []sdk.Attribute{
 		sdk.NewAttribute("amount_mined", split.Miner.String()),
-		sdk.NewAttribute("tax_presale", split.PreSale.String()),
+		sdk.NewAttribute("tax_business_core", split.BusinessCore.String()),
 		sdk.NewAttribute("tax_otc_vault", split.OtcVault.String()),
 		sdk.NewAttribute("tax_founder", split.Founder.String()),
 		sdk.NewAttribute("tax_validators", split.Validator.String()),
@@ -384,7 +410,7 @@ func miningSplitAttributes(split miningSplit) []sdk.Attribute {
 	}
 }
 
-// SellOtcVaultBatch valida uma venda do cofre (lote mínimo 10k LUG, só BTC) e
+// SellOtcVaultBatch valida uma venda do cofre (lote mínimo 100k LUG, só BTC) e
 // fail-closa: o BTC só entra via IBC (§13.117), pelo que a liquidação fica
 // desligada até o rail do IBC abrir. O preço é a cesta. O BTC recebido é lastro
 // permanente — nunca sai, nem se troca por LUG.

@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"cosmossdk.io/core/address"
@@ -226,6 +227,45 @@ func TestPool_AddRemoveLiquidity(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, lugAmt, out.LugOut)
 	require.Equal(t, assetAmt, out.AssetOut)
+}
+
+func TestPool_AssetWhitelistIsReadFromParams(t *testing.T) {
+	f := initPoolFixture(t)
+	customDenom := "ibc/" + strings.Repeat("A", 64)
+
+	params := types.DefaultParams()
+	params.PoolActive = true
+	params.PoolAssets = append(params.PoolAssets, customDenom)
+	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+
+	dep, depAddr := f.addr(t, 1)
+	lugAmt := lug(t, "10000000000000000000")
+	assetAmt := lug(t, "5000000000000000000")
+	f.bank.fund(depAddr, sdk.NewCoins(
+		sdk.NewCoin("uluggom", lugAmt),
+		sdk.NewCoin(customDenom, assetAmt),
+	))
+
+	resp, err := f.keeper.AddLiquidity(f.ctx, &types.MsgAddLiquidity{
+		Depositor:   dep,
+		Asset:       customDenom,
+		AmountLug:   lugAmt,
+		AmountAsset: assetAmt,
+	})
+	require.NoError(t, err)
+	require.True(t, resp.LpShares.IsPositive())
+
+	// Removing the asset from the whitelist must make the pool reject it.
+	params.PoolAssets = types.DefaultPoolAssets()
+	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
+	_, err = f.keeper.Swap(f.ctx, &types.MsgSwap{
+		Trader:   dep,
+		Asset:    customDenom,
+		BuyLug:   false,
+		AmountIn: sdkmath.NewInt(1),
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "invalid pool asset")
 }
 
 func TestPool_SwapBothDirections(t *testing.T) {
