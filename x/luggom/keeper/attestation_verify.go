@@ -53,7 +53,7 @@ func (k Keeper) VerifyApiAttestation(ctx context.Context, msg *types.MsgMineTaxP
 			ChainID:         sdk.UnwrapSDKContext(ctx).ChainID(),
 			ProofCommitment: msg.ProofCommitment,
 			PaymentID:       msg.PaymentId,
-			PaymentAmount:        msg.PaymentAmount.String(),
+			PaymentAmount:   msg.PaymentAmount.String(),
 			TaxEntity:       msg.TaxEntity,
 			CurrencyCode:    msg.CurrencyCode,
 			PaymentDate:     msg.PaymentDate,

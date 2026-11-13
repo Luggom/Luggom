@@ -26,7 +26,7 @@ func DefaultWhitelistCNPJs() []string {
 func IsCNPJWhitelisted(cnpj string, whitelist []string) bool {
 	// Normalize CNPJ (remove dots, slashes, dashes)
 	normalizedCNPJ := NormalizeCNPJ(cnpj)
-	
+
 	for _, wlCNPJ := range whitelist {
 		if NormalizeCNPJ(wlCNPJ) == normalizedCNPJ {
 			return true

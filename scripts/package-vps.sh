@@ -71,13 +71,6 @@ copy_val val-0 "$HOME_DIR/validators/val-0" "validators/val-0"
 copy_val val-1 "$HOME_DIR/validators/val-1" "validators/val-1"
 copy_val val-2 "$HOME_DIR/validators/val-2" "validators/val-2"
 
-# 6. Site (webpage) — nginx serve esta pasta
-if [[ -d "$ROOT/site" ]]; then
-  mkdir -p "$STAGE/$PKG/site"
-  cp -a "$ROOT/site/." "$STAGE/$PKG/site/"
-  echo "  site ✓"
-fi
-
 # 7. Instaladores desktop (se já tiverem sido buildados)
 mkdir -p "$STAGE/$PKG/downloads"
 found_installer=0

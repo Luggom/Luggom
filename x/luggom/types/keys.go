@@ -22,13 +22,15 @@ const (
 	PreSaleModuleName = "luggom_presale"
 
 	// AtomReservoirModuleName (Atom Reservoir — §13.64) ALWAYS receives the ATOM share
-	// (11% pre / 14% post). It accumulates and pays the flat caps to qualified holders (Phase 2);
-	// the excess stays as a cushion for low-mining months. It is LUG's savings account.
+	// (7,5% na Fase 1, 30% na Transição, 10% na Fase 2). It accumulates and pays the
+	// flat caps to qualified holders (Phase 2); the excess stays as a cushion for
+	// low-mining months. It is LUG's savings account.
 	AtomReservoirModuleName = "luggom_atom_reservoir"
 
 	// StakingReservoirModuleName (Staking Reservoir — §13.56/§13.64) receives the
-	// base staking share (11% constant). It feeds the monthly drip paid to LUG locks
-	// (savings account). Separate from native PoS (0.005 LUG/tx + 8% validators in x/distribution).
+	// staking share (7,5% na Fase 1, 30% na Transição, 10% na Fase 2). It feeds the
+	// monthly drip paid to LUG locks (savings account). Separate from native PoS
+	// (0.005 LUG/tx + 3% validators in x/distribution).
 	StakingReservoirModuleName = "luggom_staking_reservoir"
 
 	// GovReserveModuleName is the protocol Treasury. §13.132 reactivated it at 2%
@@ -114,7 +116,7 @@ var NotarySpendWindowFromKey = collections.NewPrefix("notary_spend_from")
 var NotarySpendWindowSpentKey = collections.NewPrefix("notary_spend_spent")
 
 // MiningCapDailyBucketsPrefix stores the daily mining buckets for the 365d sliding window
-// (annual maximum cap §13.49/§13.52: 15B year 0, −5% a.a.). Key: "mining_cap_" + YYYYMMDD.
+// (annual maximum cap §13.49/§13.52: 7B year 0, −5% a.a.). Key: "mining_cap_" + YYYYMMDD.
 var MiningCapDailyBucketsPrefix = collections.NewPrefix("mining_cap_")
 
 // SavingsLocksPrefix stores savings locks by ID (Reservoir — §13.64/§13.65).

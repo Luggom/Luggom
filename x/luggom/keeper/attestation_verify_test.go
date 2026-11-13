@@ -19,7 +19,7 @@ import (
 func attestationMsg(attestation string) *types.MsgMineTaxPayment {
 	return &types.MsgMineTaxPayment{
 		MinerAddress:    "luggom1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5n0k6",
-		PaymentAmount:        sdkmath.LegacyMustNewDecFromStr("240.50"),
+		PaymentAmount:   sdkmath.LegacyMustNewDecFromStr("240.50"),
 		TaxEntity:       "br:receita_federal",
 		CurrencyCode:    "BRL",
 		ProofCommitment: "commit-abc",
@@ -38,7 +38,7 @@ func signForMsg(t *testing.T, key *secp256k1.PrivateKey, msg *types.MsgMineTaxPa
 		ChainID:         testChainID,
 		ProofCommitment: msg.ProofCommitment,
 		PaymentID:       msg.PaymentId,
-		PaymentAmount:        msg.PaymentAmount.String(),
+		PaymentAmount:   msg.PaymentAmount.String(),
 		TaxEntity:       msg.TaxEntity,
 		CurrencyCode:    msg.CurrencyCode,
 		PaymentDate:     msg.PaymentDate,

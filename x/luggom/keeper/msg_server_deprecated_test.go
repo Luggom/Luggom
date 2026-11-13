@@ -24,22 +24,22 @@ func TestLegacyMineMsgsAreDisabled(t *testing.T) {
 	minerStr, _ := makeAddr(t, f.addressCodec, 0x61)
 
 	_, err := ms.Mine(f.ctx, &types.MsgMine{
-		MinerAddress:       minerStr,
-		BrlAmount:           sdkmath.LegacyMustNewDecFromStr("123456"), // ~10.000 LUG
-		DestinationCnpj:        "12345678000199",                          // §13.170: whitelist_tax_ids foi APAGADO
-		PixReceiptHash: "hash-inventado-pelo-atacante",
-		IptuIpvaException:    true,
+		MinerAddress:      minerStr,
+		BrlAmount:         sdkmath.LegacyMustNewDecFromStr("123456"), // ~10.000 LUG
+		DestinationCnpj:   "12345678000199",                          // §13.170: whitelist_tax_ids foi APAGADO
+		PixReceiptHash:    "hash-inventado-pelo-atacante",
+		IptuIpvaException: true,
 	})
 	require.ErrorIs(t, err, types.ErrMiningMsgDisabled, "MsgMine TEM de estar fechada (§13.146 A)")
 	require.Empty(t, f.bank.mints, "MsgMine não pode cunhar NADA")
 
 	_, err = ms.MineUSD(f.ctx, &types.MsgMineUSD{
-		MinerAddress: minerStr,
-		PaymentAmount:     sdkmath.LegacyMustNewDecFromStr("1000000"),
-		TaxEntity:    "irs",
-		DocumentHash: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-		SsnHash:      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-		ProofIrs:     "proof-inventado",
+		MinerAddress:  minerStr,
+		PaymentAmount: sdkmath.LegacyMustNewDecFromStr("1000000"),
+		TaxEntity:     "irs",
+		DocumentHash:  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		SsnHash:       "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+		ProofIrs:      "proof-inventado",
 	})
 	require.ErrorIs(t, err, types.ErrMiningMsgDisabled, "MsgMineUSD TEM de estar fechada (§13.146 A)")
 	require.Empty(t, f.bank.mints, "MsgMineUSD não pode cunhar NADA")

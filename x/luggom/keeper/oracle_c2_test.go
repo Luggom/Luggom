@@ -34,12 +34,12 @@ func TestUpdateUsdOracleBasket_AuthAndMine(t *testing.T) {
 	fixingDay := sdk.UnwrapSDKContext(ctx10).BlockTime().UTC().Format("2006-01-02")
 
 	_, err := ms.UpdateUsdOracleBasket(ctx10, &types.MsgUpdateUsdOracleBasket{
-		Signer: strangerStr,
-		ChfUsd: sdkmath.LegacyMustNewDecFromStr("1.2"),
-		EurUsd: sdkmath.LegacyMustNewDecFromStr("1.2"),
-		GbpUsd: sdkmath.LegacyMustNewDecFromStr("1.2"),
-		BrlUsd: sdkmath.LegacyMustNewDecFromStr("5.0"),
-		CadUsd: sdkmath.LegacyMustNewDecFromStr("1.37"),
+		Signer:   strangerStr,
+		ChfUsd:   sdkmath.LegacyMustNewDecFromStr("1.2"),
+		EurUsd:   sdkmath.LegacyMustNewDecFromStr("1.2"),
+		GbpUsd:   sdkmath.LegacyMustNewDecFromStr("1.2"),
+		BrlUsd:   sdkmath.LegacyMustNewDecFromStr("5.0"),
+		CadUsd:   sdkmath.LegacyMustNewDecFromStr("1.37"),
 		RateDate: fixingDay,
 	})
 	require.Error(t, err)

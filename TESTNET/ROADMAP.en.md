@@ -49,7 +49,7 @@ unblocking self-service**.
 | **Mine** | install the desktop app and prove a payment | `README.md` §3 |
 | **Add a bank** | deliver an evidence package (sanitised receipt + canonical field) | `DEVELOPER_GUIDE.md` |
 | **Test Windows/macOS** | keychain + installers (only Linux validated) | — |
-| **Teach mining (GoldHunters)** | onboarding people/companies | site/whitepaper |
+| **Teach mining (GoldHunters)** | onboarding people/companies | [whitepaper](https://luggom.com/whitepaper.html) |
 
 **The highest-leverage contribution right now:** the **evidence packages** for
 **US/CA** (and new BR banks) — the US/CA rails are off on purpose waiting for the
@@ -70,7 +70,7 @@ unblocking self-service**.
 
 - **Code:** FASE 8 essentially closed (local hard test Blocks 1–4; A-8 and T-GOV-1
   closed). Chain reset done (2026-10-07).
-- **Mineable E2E:** Viacredi (`code 0`). Caixa: rail **FAIL** (anti-bot). BB:
-  pending session. US/CA: missing canonical field.
+- **Mineable E2E:** Viacredi (`code 0`) and **Banco do Brasil** (`code 0`, tx `F2D532…`,
+  height 144732). Caixa: rail **FAIL** (anti-bot). US/CA: missing canonical field.
 - **Left to open:** the §2 checklist.
 

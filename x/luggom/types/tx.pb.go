@@ -277,11 +277,12 @@ func (m *MsgMine) GetIptuIpvaException() bool {
 type MsgMineResponse struct {
 	// amount_mined is the net amount of LUG$ tokens minted (after taxes).
 	AmountMined cosmossdk_io_math.Int `protobuf:"bytes,1,opt,name=amount_mined,json=amountMined,proto3,customtype=cosmossdk.io/math.Int" json:"amount_mined"`
-	// tax_root is the amount sent to the founder (2.5% of total mint).
+	// tax_root is the amount sent to the founder (5% of total mint).
 	TaxRoot cosmossdk_io_math.Int `protobuf:"bytes,2,opt,name=tax_root,json=taxRoot,proto3,customtype=cosmossdk.io/math.Int" json:"tax_root"`
-	// tax_staking: share to x/distribution (2.5% of minted LUG when pool_active; 10.5% when pre-POOL merges 2.5%+8%).
+	// tax_staking: share to the Staking Reservoir (7.5% in Phase 1, 30% in the Transition, 10% in Phase 2).
 	TaxStaking cosmossdk_io_math.Int `protobuf:"bytes,3,opt,name=tax_staking,json=taxStaking,proto3,customtype=cosmossdk.io/math.Int" json:"tax_staking"`
-	// tax_validator: share to POOL treasury when pool_active (8% of minted LUG); zero when pre-POOL.
+	// tax_validator: legacy name — carries the POOL treasury share (10% in Phase 1, zero afterwards).
+	// The 3% paid to validators goes to x/distribution via the fee collector, not through this field.
 	TaxValidator cosmossdk_io_math.Int `protobuf:"bytes,4,opt,name=tax_validator,json=taxValidator,proto3,customtype=cosmossdk.io/math.Int" json:"tax_validator"`
 }
 
@@ -1755,7 +1756,7 @@ func (m *MsgUnlockSavingsResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgUnlockSavingsResponse proto.InternalMessageInfo
 
 // MsgAddLiquidity deposits LUG + a pool asset into a pair, minting LP shares.
-// Only available after the pool opens (100M LUG mined, §13.55/§13.76).
+// Only available after the pool opens (params.pool_active, §13.114).
 type MsgAddLiquidity struct {
 	Depositor string `protobuf:"bytes,1,opt,name=depositor,proto3" json:"depositor,omitempty"`
 	// asset is the pool asset denom (btc/atom/usdt/usdc/xmr — §13.24).

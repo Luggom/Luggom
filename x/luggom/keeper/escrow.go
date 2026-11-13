@@ -96,6 +96,7 @@ func (k Keeper) CreateEscrow(ctx context.Context, msg *types.MsgCreateEscrow) (*
 //   - the asset goes to the seller;
 //   - the LUG goes to the buyer;
 //   - the trade is COMPLETED.
+//
 // No manual confirmation — neither party can back out after both deposited.
 func (k Keeper) AcceptEscrow(ctx context.Context, msg *types.MsgAcceptEscrow) (*types.MsgAcceptEscrowResponse, error) {
 	buyerAddr, err := sdk.AccAddressFromBech32(msg.Buyer)
@@ -163,9 +164,10 @@ func (k Keeper) AcceptEscrow(ctx context.Context, msg *types.MsgAcceptEscrow) (*
 }
 
 // CancelEscrow cancels a trade before completion:
-// - OPEN (no buyer): the seller gets the LUG back immediately.
-// - after timeout, either party cancels → both sides reversed
-//   (LUG to the seller, asset back to the buyer).
+//   - OPEN (no buyer): the seller gets the LUG back immediately.
+//   - after timeout, either party cancels → both sides reversed
+//     (LUG to the seller, asset back to the buyer).
+//
 // Note: a FUNDED (both deposited) trade is COMPLETED instantly — there is no
 // "funded but pending" state to cancel; the timeout only applies to OPEN offers.
 func (k Keeper) CancelEscrow(ctx context.Context, msg *types.MsgCancelEscrow) (*types.MsgCancelEscrowResponse, error) {

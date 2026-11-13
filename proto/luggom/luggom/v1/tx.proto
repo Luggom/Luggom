@@ -79,21 +79,22 @@ message MsgMineResponse {
     (gogoproto.nullable) = false
   ];
 
-  // tax_root is the amount sent to the founder (2.5% of total mint).
+  // tax_root is the amount sent to the founder (5% of total mint).
   string tax_root = 2 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
 
-  // tax_staking: share to x/distribution (2.5% of minted LUG when pool_active; 10.5% when pre-POOL merges 2.5%+8%).
+  // tax_staking: share to the Staking Reservoir (7.5% in Phase 1, 30% in the Transition, 10% in Phase 2).
   string tax_staking = 3 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
 
-  // tax_validator: share to POOL treasury when pool_active (8% of minted LUG); zero when pre-POOL.
+  // tax_validator: legacy name — carries the POOL treasury share (10% in Phase 1, zero afterwards).
+  // The 3% paid to validators goes to x/distribution via the fee collector, not through this field.
   string tax_validator = 4 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
@@ -490,7 +491,7 @@ message MsgUnlockSavingsResponse {
 // FASE 6A — Pool nativa (AMM, §13.76)
 
 // MsgAddLiquidity deposits LUG + a pool asset into a pair, minting LP shares.
-// Only available after the pool opens (100M LUG mined, §13.55/§13.76).
+// Only available after the pool opens (params.pool_active, §13.114).
 message MsgAddLiquidity {
   option (amino.name) = "luggom/x/luggom/MsgAddLiquidity";
   option (cosmos.msg.v1.signer) = "depositor";

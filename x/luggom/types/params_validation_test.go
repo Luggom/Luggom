@@ -1,6 +1,9 @@
 package types
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 // §13.170 A–E: os params de comissão/staleness/flags foram apagados ou
 // congelados em código (frozen.go). Este teste cobre o que RESTA.
@@ -25,6 +28,39 @@ func TestParamsValidate_GovBpsSum(t *testing.T) {
 	params.GovValidatorsVoteWeightBps = 1
 	if err := params.Validate(); err == nil {
 		t.Fatalf("expected validation error when gov BPS sum != 10000")
+	}
+}
+
+func TestParamsValidate_PoolAssets(t *testing.T) {
+	validIBC := "ibc/" + strings.Repeat("A", 64)
+
+	cases := []struct {
+		name    string
+		assets  []string
+		wantErr bool
+	}{
+		{"default", DefaultPoolAssets(), false},
+		{"empty", nil, true},
+		{"duplicate", []string{"btc", "btc"}, true},
+		{"base denom", []string{"uluggom"}, true},
+		{"invalid denom", []string{"a"}, true},
+		{"malformed ibc", []string{"ibc/abc"}, true},
+		{"valid ibc", []string{"btc", validIBC}, false},
+		{"whitespace", []string{" btc"}, true},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			params := DefaultParams()
+			params.PoolAssets = tc.assets
+			err := params.Validate()
+			if tc.wantErr && err == nil {
+				t.Fatalf("expected error, got nil")
+			}
+			if !tc.wantErr && err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+		})
 	}
 }
 

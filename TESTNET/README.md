@@ -171,7 +171,7 @@ Uma carteira acabada de criar não existe on-chain e não paga taxa. A API envia
 > finito (10 taxas). A política certa — reenviar após X falhas ou deixar preso —
 > é uma decisão aberta.
 
-O logo da carteira usa o mesmo "L" do site (ver `../site/assets/img/mark*.png` e
+O logo da carteira usa o mesmo "L" do site (ver `https://luggom.com/assets/img/mark*.png` e
 `wordmark.svg`).
 
 ---

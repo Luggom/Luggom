@@ -186,16 +186,24 @@ var preSaleThreshold = func() sdkmath.Int {
 }()
 
 // preSaleActive reports whether the pre-sale phase is still running
-// (total supply < 10M LUG, §13.132). Enquanto for verdade corre a Fase 1:
-// minerador 30% + pre-sale 35% + POOL 10% + staking 7,5% + ATOM 7,5% + fundador
-// 5% + validadores 3% + gov 2%.
+// (total supply < 10M LUG, §13.132). O nome e legado: a venda esta desligada.
+// Enquanto for verdade corre a Fase 1: minerador 30% + LBC 5% + OTC 30% +
+// POOL 10% + staking 7,5% + ATOM 7,5% + fundador 5% + validadores 3% + gov 2%.
 //
-// Depois dos 10M a pre-sale encerra (a fatia vai a 0), a POOL encerra, e o
-// staking/ATOM sobem para 30% cada até a pool/IBC abrir — é a **Transição**.
-// A Fase 2 definitiva (OTC 40%) só começa com a pool aberta (params.pool_active).
+// Depois dos 10M comeca a Fase 2: OTC 35% + LBC 5% + staking 10% + ATOM 10% +
+// gov 1,5% + notariado 0,5%. A pool e um interruptor separado (params.pool_active)
+// e nao muda a fase.
 func (k Keeper) preSaleActive(ctx context.Context) bool {
 	supply := k.GetTotalSupply(ctx, "uluggom")
 	return supply.Amount.LT(preSaleThreshold)
+}
+
+// DAOActive reports whether governance is open to the DAO (supply ≥ 10M).
+// Até lá a governança é founder-led; o split é único e não muda com o supply.
+// A pool é um interruptor separado (params.pool_active).
+func (k Keeper) DAOActive(ctx context.Context) bool {
+	supply := k.GetTotalSupply(ctx, "uluggom")
+	return !supply.Amount.LT(preSaleThreshold)
 }
 
 // PoolOpen reports whether the pool is open — now a GOVERNABLE flag (params.pool_active),

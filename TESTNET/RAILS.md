@@ -1,6 +1,6 @@
 # Adicionar um banco / rail — testnet
 
-> Hoje só o **Viacredi (Brasil)** está provado de ponta a ponta.
+> Hoje o **Viacredi** e o **Banco do Brasil** estão provados de ponta a ponta.
 > **EUA e Canadá** são os próximos mercados. Um rail só acende com **evidência**:
 > um recibo real **sanitizado** + o **campo canónico** do pagamento.
 

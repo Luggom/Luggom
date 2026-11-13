@@ -17,7 +17,7 @@ var (
 	ErrStalePayment               = errors.Register(ModuleName, 1205, "payment too old (exceeds max age)")
 	ErrGovernmentEntityCannotMine = errors.Register(ModuleName, 1206, "government entities cannot mine LUG (EIN/CNPJ-to-EIN/CNPJ transfer)")
 	ErrMissingTaxNature           = errors.Register(ModuleName, 1207, "tax nature hash missing or invalid (payment must be a real tax collection)")
-	ErrOtcLotBelowMinimum         = errors.Register(ModuleName, 1208, "OTC vault sale lot is below the 10k LUG minimum")
+	ErrOtcLotBelowMinimum         = errors.Register(ModuleName, 1208, "OTC vault sale lot is below the 100k LUG minimum")
 	ErrOtcAssetNotAllowed         = errors.Register(ModuleName, 1209, "OTC vault only sells for BTC")
 	ErrOtcIbcNotOpen              = errors.Register(ModuleName, 1210, "OTC vault settlement requires IBC (BTC enters only via IBC)")
 	// BLOCO D — pre-sale on-chain (§13.132 §4)

@@ -171,7 +171,7 @@ func TestLugMovementFee_MiningIsNotCharged(t *testing.T) {
 	miner := mustAddr(0x33)
 	msg := &luggomtypes.MsgMineTaxPayment{
 		MinerAddress:    miner.String(),
-		PaymentAmount:        sdkmath.LegacyMustNewDecFromStr("240.50"),
+		PaymentAmount:   sdkmath.LegacyMustNewDecFromStr("240.50"),
 		TaxEntity:       "irs",
 		CurrencyCode:    "USD",
 		ProofCommitment: "commitment-0123456789abcdef0123456789abcdef",

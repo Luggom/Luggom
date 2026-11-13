@@ -36,7 +36,7 @@ func TestAttestationInterop_RustSignature(t *testing.T) {
 		ChainID:         "luggom-test",
 		ProofCommitment: "commit-abc",
 		PaymentID:       "pay-1",
-		PaymentAmount:        "240.500000000000000000",
+		PaymentAmount:   "240.500000000000000000",
 		TaxEntity:       "br:receita_federal",
 		CurrencyCode:    "BRL",
 		PaymentDate:     1_770_000_000,
@@ -74,7 +74,7 @@ func baseFields() AttestationFields {
 		ChainID:         "luggom-test",
 		ProofCommitment: "commit-abc",
 		PaymentID:       "pay-1",
-		PaymentAmount:        "240.50",
+		PaymentAmount:   "240.50",
 		TaxEntity:       "br:receita_federal",
 		CurrencyCode:    "BRL",
 		PaymentDate:     1_770_000_000,
@@ -115,13 +115,13 @@ func TestAttestationDigest_CoversAllFields(t *testing.T) {
 		"chain_id":         func(f *AttestationFields) { f.ChainID = "luggom-mainnet" },
 		"proof_commitment": func(f *AttestationFields) { f.ProofCommitment = "outro" },
 		"payment_id":       func(f *AttestationFields) { f.PaymentID = "outro" },
-		"payment_amount":        func(f *AttestationFields) { f.PaymentAmount = "999" },
+		"payment_amount":   func(f *AttestationFields) { f.PaymentAmount = "999" },
 		"tax_entity":       func(f *AttestationFields) { f.TaxEntity = "irs" },
 		"currency_code":    func(f *AttestationFields) { f.CurrencyCode = "USD" },
 		// estes dois eram os que faltavam antes do A1.4:
-		"payment_date":   func(f *AttestationFields) { f.PaymentDate = 1 },
+		"payment_date":    func(f *AttestationFields) { f.PaymentDate = 1 },
 		"tax_nature_hash": func(f *AttestationFields) { f.TaxNatureHash = "outro-hash" },
-		"payer_tax_id":   func(f *AttestationFields) { f.PayerTaxID = "12345678000199" },
+		"payer_tax_id":    func(f *AttestationFields) { f.PayerTaxID = "12345678000199" },
 	}
 	for name, mutate := range mutations {
 		t.Run(name, func(t *testing.T) {
