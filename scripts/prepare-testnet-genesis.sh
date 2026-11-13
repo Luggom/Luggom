@@ -14,7 +14,7 @@ ROOT="$PWD"
 BIN="$ROOT/build/luggomd"
 TESTNET_BIN="$ROOT/build/luggomd-testnet"
 HOME_DIR="${HOME_DIR:-/tmp/luggom-testnet-genesis}"
-CHAIN_ID="${CHAIN_ID:-luggom-test}"
+CHAIN_ID="${CHAIN_ID:-luggom-test01}"
 TOTAL_GENESIS_LUG="${TOTAL_GENESIS_LUG:-8200000000000000000000}" # 8.200 LUG
 BOND_LUG="${BOND_LUG:-200}"
 VAL_COUNT="${VAL_COUNT:-3}" # validadores adicionais; + fundador = 4 no total
