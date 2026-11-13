@@ -1,9 +1,8 @@
 # Spec do Adapter de Banco — Luggom
 
 > **ARTEFACTO DE PUBLICAÇÃO INTENCIONAL.** É o documento que um banco/portal lê
-> para se tornar **minerável**. Não está no git (`docs/` está no `.gitignore`) —
-> vive no **tarball**, como `api/` e `scripts/`. Publicar deliberadamente, como o
-> `TESTNET/`.
+> para se tornar **minerável**. Vive no repositório e no **tarball**, como `api/` e
+> `scripts/`. Publicar deliberadamente, como o `TESTNET/`.
 >
 > **Versão:** 2026-09-18 · **Estado:** derivado do que está **provado** (Viacredi/Ailos,
 > mineração real `code 0`) e das **duas lições que custaram sessões** na Caixa
@@ -15,7 +14,7 @@
 ## 0. O que é (e o que não é)
 
 O Luggom minera LUG pagando **imposto real**, provado por **TLSNotary**: o utilizador
-prova, sem terceiros e sem KYC, que uma transacção fiscal existe, e o protocolo
+prova, sem custódia e sem KYC, que uma transacção fiscal existe, e o protocolo
 extrai dela um conjunto fixo de *claims*.
 
 **O adapter é o contrato entre o banco/portal e o protocolo.** Não é um SDK, não é

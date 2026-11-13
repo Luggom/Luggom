@@ -1,14 +1,15 @@
 # Luggom
 
-**PT** — O Luggom é uma blockchain **Cosmos SDK** (`x/luggom`) onde se **minera LUG pagando imposto real**, provado por **TLSNotary** — sem KYC, sem terceiros.
+**PT** — O Luggom é uma blockchain **Cosmos SDK** (`x/luggom`) onde se **minera LUG pagando imposto real**, provado por **TLSNotary** — sem KYC, código aberto e permissionless.
 
-**EN** — Luggom is a **Cosmos SDK** blockchain (`x/luggom`) where you **mine LUG by paying real taxes**, proven by **TLSNotary** — no KYC, no third parties.
+**EN** — Luggom is a **Cosmos SDK** blockchain (`x/luggom`) where you **mine LUG by paying real taxes**, proven by **TLSNotary** — no KYC, open source and permissionless.
 
 ## Links · Ligações
 
-- Website / Site: [EN](site/index.html) · [PT](site/pt/index.html)
-- Whitepaper: [EN](site/whitepaper.html) · [PT](site/pt/whitepaper.html)
-- Developers: [EN](site/developers.html) · [PT](site/pt/developers.html) · [Endpoints](TESTNET/ENDPOINTS.en.md)
+- Website / Site: [EN](https://luggom.com/) · [PT](https://luggom.com/pt/)
+- Whitepaper: [EN](https://luggom.com/whitepaper.html) · [PT](https://luggom.com/pt/whitepaper.html)
+- Developers: [EN](https://luggom.com/developers.html) · [PT](https://luggom.com/pt/developers.html) · [Endpoints](TESTNET/ENDPOINTS.en.md)
+- Tokenomics: [`docs/TOKENOMICS.md`](docs/TOKENOMICS.md)
 - Testnet: [`TESTNET/README.md`](TESTNET/README.md) · [EN](TESTNET/README.en.md)
 - Roadmap / Roteiro: [`TESTNET/ROADMAP.md`](TESTNET/ROADMAP.md) · [EN](TESTNET/ROADMAP.en.md)
 - Add a bank / Adicionar um banco: [`TESTNET/DEVELOPER_GUIDE.md`](TESTNET/DEVELOPER_GUIDE.md) · [EN](TESTNET/DEVELOPER_GUIDE.en.md)
@@ -28,7 +29,7 @@
 - `apk_luggom/native/tlsn-mobile/` — the Rust signer/prover crate used by the desktop wallet / o crate Rust de assinatura usado pela carteira desktop.
 - `deps/cosmos-sdk/` — the vendored Cosmos SDK fork (export tally) / o fork do Cosmos SDK (export tally).
 - `stubs/` — local Go stubs needed by the proto tooling / stubs Go locais do tooling de proto.
-- `site/` — the public website (EN/PT) / o website público (EN/PT).
+- `docs/TOKENOMICS.md` — the canonical mining split, pool and validator rules / o split canónico, a pool e as regras de validadores.
 - `TESTNET/` — the public testnet package and endpoints (PT/EN) / o pacote público e endpoints da testnet (PT/EN).
 
 ## Build · Compilar
