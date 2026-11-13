@@ -39,6 +39,7 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 		&MsgBuyPreSale{},
 		&MsgDistributePreSaleProceeds{},
 		&MsgSpendFromReserve{},
+		&MsgBuyOtc{},
 	)
 	msgservice.RegisterMsgServiceDesc(registrar, &_Msg_serviceDesc)
 }

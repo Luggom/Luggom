@@ -48,6 +48,11 @@ func (k msgServer) UpdateUsdOracleBasket(ctx context.Context, msg *types.MsgUpda
 	return k.Keeper.UpdateUsdOracleBasket(ctx, msg)
 }
 
+// BuyOtc buys LUG from the OTC vault with the configured IBC BTC denom.
+func (k msgServer) BuyOtc(ctx context.Context, msg *types.MsgBuyOtc) (*types.MsgBuyOtcResponse, error) {
+	return k.Keeper.BuyOtc(ctx, msg)
+}
+
 // LockSavings implements the MsgLockSavings handler (Bolsão — §13.64/§13.65).
 func (k msgServer) LockSavings(ctx context.Context, msg *types.MsgLockSavings) (*types.MsgLockSavingsResponse, error) {
 	return k.Keeper.LockSavings(ctx, msg)

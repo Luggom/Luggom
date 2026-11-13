@@ -88,6 +88,12 @@ func ValidateOtcSale(assetDenom string, lugAmount sdkmath.Int) error {
 	if !IsOtcAllowedAsset(assetDenom) {
 		return ErrOtcAssetNotAllowed.Wrapf("%q (só BTC)", assetDenom)
 	}
+	return ValidateOtcLot(lugAmount)
+}
+
+// ValidateOtcLot valida só o lote mínimo de 100.000 LUG. O denom do BTC é
+// validado contra params.otc_btc_denom no keeper (o denom real é ibc/<HASH>).
+func ValidateOtcLot(lugAmount sdkmath.Int) error {
 	if lugAmount.IsNil() || !lugAmount.IsPositive() {
 		return ErrOtcLotBelowMinimum.Wrap("amount must be positive")
 	}

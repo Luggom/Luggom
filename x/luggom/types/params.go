@@ -25,6 +25,7 @@ func NewParams() Params {
 		GovernmentEntityBlacklist: DefaultGovernmentEntities(),
 		BankProviders:             DefaultBankProviders(),
 		PoolAssets:                DefaultPoolAssets(),
+		OtcBtcDenom:               "btc",
 		// Tally da governança (por decidir com a comunidade — §13.170 §4).
 		GovValidatorMinForWeightShift: 100,
 		GovLlcVoteWeightBps:           0,
@@ -112,6 +113,12 @@ func (p Params) Validate() error {
 			return fmt.Errorf("notary_payees[%d] is duplicated: %s", i, payee)
 		}
 		seenPayee[payee] = struct{}{}
+	}
+	if p.OtcBtcDenom == "" {
+		return errors.New("otc_btc_denom cannot be empty")
+	}
+	if err := sdk.ValidateDenom(p.OtcBtcDenom); err != nil {
+		return fmt.Errorf("otc_btc_denom is not a valid denom: %w", err)
 	}
 	if len(p.PoolAssets) == 0 {
 		return errors.New("pool_assets cannot be empty")

@@ -40,6 +40,8 @@
 - A compra on-chain (`MsgBuyOtc`) exige o preço **BTC/USD** do dia no oráculo
   (`btc_usd`); sem fixing, falha. O BTC do comprador passa para o cofre e o LUG do
   cofre para a carteira do comprador.
+- O denom IBC aceito é **`params.otc_btc_denom`** (default `btc`; na mainnet
+  `ibc/<HASH>`). O feeder do oráculo publica o `btc_usd` diário com `--btc-usd`.
 
 ## POOL
 

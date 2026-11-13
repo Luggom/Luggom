@@ -31,6 +31,7 @@ func (AppModule) GetTxCmd() *cobra.Command {
 	cmd.AddCommand(NewDistributePreSaleProceedsCliCmd())
 	cmd.AddCommand(NewSpendFromReserveCliCmd())
 	cmd.AddCommand(NewUpdateUsdOracleBasketCliCmd())
+	cmd.AddCommand(NewBuyOtcCliCmd())
 	return cmd
 }
 
@@ -129,7 +130,11 @@ const (
 	flagGbpUsd   = "gbp-usd"
 	flagBrlUsd   = "brl-usd"
 	flagCadUsd   = "cad-usd"
+	flagBtcUsd   = "btc-usd"
 	flagRateDate = "rate-date"
+	// OTC
+	flagLugAmount = "lug-amount"
+	flagBtcDenom  = "btc-denom"
 	// §14 — reservas (tesouraria e notariado)
 	flagReserve = "reserve"
 )
@@ -152,6 +157,7 @@ func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 			gbp, _ := cmd.Flags().GetString(flagGbpUsd)
 			brl, _ := cmd.Flags().GetString(flagBrlUsd)
 			cad, _ := cmd.Flags().GetString(flagCadUsd)
+			btc, _ := cmd.Flags().GetString(flagBtcUsd)
 			rateDate, _ := cmd.Flags().GetString(flagRateDate)
 
 			chfDec, err := sdkmath.LegacyNewDecFromStr(strings.TrimSpace(chf))
@@ -174,6 +180,10 @@ func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("cad-usd: %w", err)
 			}
+			btcDec, err := sdkmath.LegacyNewDecFromStr(strings.TrimSpace(btc))
+			if err != nil {
+				return fmt.Errorf("btc-usd: %w", err)
+			}
 
 			msg := &types.MsgUpdateUsdOracleBasket{
 				Signer:   clientCtx.GetFromAddress().String(),
@@ -182,6 +192,7 @@ func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 				GbpUsd:   gbpDec,
 				BrlUsd:   brlDec,
 				CadUsd:   cadDec,
+				BtcUsd:   btcDec,
 				RateDate: strings.TrimSpace(rateDate),
 			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -192,6 +203,7 @@ func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 	cmd.Flags().String(flagGbpUsd, "", "GBP/USD — USD por 1 GBP (ex.: 1.37)")
 	cmd.Flags().String(flagBrlUsd, "", "BRL/USD — BRL por 1 USD (ex.: 5.04)")
 	cmd.Flags().String(flagCadUsd, "", "CAD/USD — CAD por 1 USD (ex.: 1.40)")
+	cmd.Flags().String(flagBtcUsd, "0", "BTC/USD — USD por 1 BTC (usado na venda OTC)")
 	cmd.Flags().String(flagRateDate, "", "fixing date, YYYY-MM-DD (dia UTC da publicação)")
 	_ = cmd.MarkFlagRequired(flagChfUsd)
 	_ = cmd.MarkFlagRequired(flagEurUsd)
@@ -199,6 +211,39 @@ func NewUpdateUsdOracleBasketCliCmd() *cobra.Command {
 	_ = cmd.MarkFlagRequired(flagBrlUsd)
 	_ = cmd.MarkFlagRequired(flagCadUsd)
 	_ = cmd.MarkFlagRequired(flagRateDate)
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// NewBuyOtcCliCmd compra LUG do cofre OTC com o BTC IBC configurado.
+func NewBuyOtcCliCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "buy-otc",
+		Short: "Buy LUG from the OTC vault with the configured IBC BTC denom",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			lugStr, _ := cmd.Flags().GetString(flagLugAmount)
+			lug, ok := sdkmath.NewIntFromString(strings.TrimSpace(lugStr))
+			if !ok {
+				return fmt.Errorf("lug-amount: %q não é um inteiro (uluggom, 18 casas)", lugStr)
+			}
+			btcDenom, _ := cmd.Flags().GetString(flagBtcDenom)
+			msg := &types.MsgBuyOtc{
+				Buyer:     clientCtx.GetFromAddress().String(),
+				LugAmount: lug,
+				BtcDenom:  strings.TrimSpace(btcDenom),
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	cmd.Flags().String(flagLugAmount, "", "LUG amount in uluggom (integer, min 100000000000000000000000)")
+	cmd.Flags().String(flagBtcDenom, "", "IBC BTC denom (ex.: ibc/<HASH>)")
+	_ = cmd.MarkFlagRequired(flagLugAmount)
+	_ = cmd.MarkFlagRequired(flagBtcDenom)
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
