@@ -16,7 +16,8 @@
 
 - Linux 64-bit (Ubuntu 22.04/24.04), 2+ vCPU, 4 GB RAM, 50 GB SSD, static IP.
 - Port **26656/tcp** open (p2p). Do **not** expose RPC/LCD to the internet.
-- `luggomd` and `genesis.json` from the testnet release.
+- `luggomd` and the **final** `genesis.json` from the release (the draft is only
+  for gentx generation).
 
 ## 1. Install
 
@@ -109,7 +110,9 @@ luggomd tx staking create-validator \
 ```
 
 `200 LUG` is the **testnet standard** (the same bond as the 16 current validators). It
-stays bonded; it only leaves after **21 days** of unbonding.
+stays bonded; it only leaves after **21 days** of unbonding. The reset genesis's
+operator gentxs used a 0.10 commission; new validators may choose their own rate
+(the example uses 0.05).
 
 ## 8. Verify
 

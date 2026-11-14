@@ -16,7 +16,8 @@
 
 - Linux 64-bit (Ubuntu 22.04/24.04), 2+ vCPU, 4 GB RAM, 50 GB SSD, IP fixo.
 - Porta **26656/tcp** aberta (p2p). RPC/LCD **não** expostos à internet.
-- `luggomd` e `genesis.json` da release da testnet.
+- `luggomd` e o `genesis.json` **final** da release (o draft serve apenas para
+  gerar o gentx).
 
 ## 1. Instalar
 
@@ -110,7 +111,8 @@ luggomd tx staking create-validator \
 ```
 
 `200 LUG` é o **padrão da testnet** (o mesmo bond dos 16 validadores atuais). Fica em stake;
-só sai com unbonding de **21 dias**.
+só sai com unbonding de **21 dias**. Os gentxs dos operadores do reset usaram
+comissão 0.10; novos validadores podem escolher a sua (o exemplo usa 0.05).
 
 ## 8. Verificar
 

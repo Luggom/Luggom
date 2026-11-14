@@ -1,8 +1,11 @@
 # Security policy
 
+> **Testnet reset 2026-11-19:** the public testnet moves to `luggom-test01`.
+> See [TESTNET/RESET-2026-11-19.en.md](TESTNET/RESET-2026-11-19.en.md).
+
 ## Supported versions
 
-The project is in **public testnet** (`chain-id: luggom-test`). There is no mainnet and no funds at risk.
+The project is in **public testnet** (`chain-id: luggom-test` until 2026-11-19, then `luggom-test01`). There is no mainnet and no funds at risk.
 
 Security fixes are applied to the `main` branch of this repository.
 
