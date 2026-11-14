@@ -1,16 +1,16 @@
 # Gentx for `luggom-test01`
 
 This is the short checklist for the 12 external validators. The full reset guide
-is [RESET-2026-11-17.en.md](RESET-2026-11-17.en.md). Release:
-<https://github.com/Luggom/Luggom/releases/tag/testnet-2026-11-17>
+is [RESET-2026-11-19.en.md](RESET-2026-11-19.en.md). Release:
+<https://github.com/Luggom/Luggom/releases/tag/testnet-2026-11-19>
 
 ## 1. Verify the artifacts
 
 ```sh
 sha256sum luggomd genesis-draft.json
-# luggomd            1d1d4866e53c96690e842b8cf1d7440e0d46ee825f018c623c05281f34ed3e3e
+# luggomd            3daae139402537890967ec6c67a3b9ab43b8d0e1d2a3911feaf4fd5f41eda7b2
 # genesis-draft.json 4926bdacc60f48d3511f622b72ff25be976f3cb6cc75ebdc0fa325c4ad84ce86
-luggomd version --long --output json   # testnet-2026-11-17 / 7fa7dfc
+luggomd version --long --output json   # testnet-2026-11-19 / 7fa7dfc
 ```
 
 ## 2. Use the draft genesis
@@ -47,7 +47,7 @@ Compare the consensus pubkey with the `pubkey` field in
 ## 5. Send the file
 
 Send `~/.luggom/config/gentx/gentx-*.json` to the coordinator by
-**2026-11-16 02:00 UTC** (Telegram group or the address in the release).
+**2026-11-18 02:00 UTC** (Telegram group or the address in the release).
 
 Do **not** run `collect-gentxs`. Do **not** start the chain with the draft genesis.
 The final genesis (16 gentxs) is published after the deadline.
