@@ -18,7 +18,9 @@
 
 IP direto (fallback): `62.146.183.122` nas portas `26657` (RPC), `1317` (LCD), `8082` (API) e `7047` (notário).
 
-O p2p (`26656`) está **fechado** ao público nesta fase. Validadores externos entram por convite.
+O p2p (`26656`) está aberto no seed público para validadores:
+`1530baa7b3a07e0cab8dc81c9c08fccc51a47471@62.146.183.122:26656`. Não expor
+RPC/LCD/API ao público. Validadores entram por convite.
 
 ## Verificação rápida
 
@@ -30,9 +32,11 @@ curl https://api.luggom.com/api/v1/chain/info
 curl https://notary.luggom.com/health
 ```
 
-Respostas esperadas: `chain_id = luggom-test`, altura a subir, **4 validadores**, `ok` no notário.
+Respostas esperadas depois do reset: `chain_id = luggom-test01`, altura a subir, **16 validadores**, `ok` no notário.
 
-## Primeira mineração (on-chain)
+## Primeira mineração (on-chain) — histórica, `luggom-test`
+
+Esta transação é da chain antiga e não existe na `luggom-test01`.
 
 - tx: `75EEF27E00190D2117E2DBA4388B694C34962467F56F77A57CC4114A61E5141D`
 - altura: `1284`

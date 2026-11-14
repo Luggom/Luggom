@@ -2,6 +2,8 @@
 
 > **RESET 2026-11-17:** all 16 current validators move to `luggom-test01`. Do not
 > bond on `luggom-test`; see [RESET-2026-11-17.en.md](RESET-2026-11-17.en.md).
+> **The 16 current validators are already in the reset genesis.** The invitation
+> flow below is for new validators joining after the reset.
 
 > **Upgrades:** the chain is upgraded by a published **halt height**, not by an ad-hoc restart. Read `TESTNET/UPGRADES.en.md` before you bond — one missed height means downtime, and downtime means jail.
 
@@ -28,7 +30,7 @@ luggomd version
 ## 2. Initialise
 
 ```sh
-luggomd init "<moniker>" --chain-id luggom-test --home "$HOME/.luggom"
+luggomd init "<moniker>" --chain-id luggom-test01 --home "$HOME/.luggom"
 cp genesis.json "$HOME/.luggom/config/genesis.json"
 ```
 
@@ -96,7 +98,7 @@ luggomd tx staking create-validator \
   --amount 200000000000000000000uluggom \
   --pubkey "$PUBKEY" \
   --moniker "<moniker>" \
-  --chain-id luggom-test \
+  --chain-id luggom-test01 \
   --commission-rate 0.05 \
   --commission-max-rate 0.20 \
   --commission-max-change-rate 0.01 \
@@ -106,7 +108,7 @@ luggomd tx staking create-validator \
   --node tcp://127.0.0.1:26657 -y
 ```
 
-`200 LUG` is the **testnet standard** (the same bond as the four current validators). It
+`200 LUG` is the **testnet standard** (the same bond as the 16 current validators). It
 stays bonded; it only leaves after **21 days** of unbonding.
 
 ## 8. Verify
