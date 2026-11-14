@@ -1,5 +1,10 @@
 # Upgrades — altura de halt
 
+> **RESET 2026-11-17 — não é um upgrade.** A testnet é re-fundada em
+> `luggom-test01`; este procedimento de halt-height não se aplica. Ver
+> [RESET-2026-11-17.md](RESET-2026-11-17.md). Os `trust_height`/`trust_hash`
+> antigos de state-sync estão obsoletos.
+
 > **Porquê isto existe.** Enquanto o conjunto de validadores é uma máquina só, um
 > upgrade é "parar os quatro nós e trocar o binário". Quando entram validadores
 > externos, isso deixa de funcionar: cada nó tem de parar **na mesma altura** e

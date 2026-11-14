@@ -1,6 +1,10 @@
 # Public testnet endpoints — Luggom
 
-**chain-id:** `luggom-test`
+> **RESET 2026-11-17:** after the reset the chain-id is `luggom-test01` with 16
+> validators. See [RESET-2026-11-17.en.md](RESET-2026-11-17.en.md). Until then,
+> the live chain is `luggom-test`.
+
+**chain-id:** `luggom-test01` (from 2026-11-17; `luggom-test` before)
 **Status:** public testnet. It can be reset (balances and history may disappear). Nothing here has monetary value.
 
 ## Endpoints
@@ -26,7 +30,7 @@ curl https://api.luggom.com/api/v1/chain/info
 curl https://notary.luggom.com/health
 ```
 
-Expected: `chain_id = luggom-test`, height rising, **4 validators**, `ok` from the notary.
+Expected after the reset: `chain_id = luggom-test01`, height rising, **16 validators**, `ok` from the notary.
 
 ## First mining (on-chain)
 

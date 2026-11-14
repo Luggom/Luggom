@@ -1,6 +1,10 @@
 # Endpoints públicos da testnet — Luggom
 
-**chain-id:** `luggom-test`
+> **RESET 2026-11-17:** depois do reset a chain-id é `luggom-test01` com 16
+> validadores. Ver [RESET-2026-11-17.md](RESET-2026-11-17.md). Até lá, a chain
+> live é `luggom-test`.
+
+**chain-id:** `luggom-test01` (a partir de 2026-11-17; `luggom-test` antes)
 **Estado:** testnet pública. Pode ser resetada (saldos e histórico podem desaparecer). Nada aqui tem valor monetário.
 
 ## Endpoints
