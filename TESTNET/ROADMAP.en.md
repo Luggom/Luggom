@@ -25,7 +25,7 @@ unblocking self-service**.
 
 1. **Fix the notary key** (`LUGGOM_NOTARY_KEY_HEX`) — decide the real key.
 2. **Generate the genesis** with the notary address:
-   `./scripts/prepare-e2e-real.sh --chain-id luggom-test` (with the variable above).
+   `./scripts/prepare-e2e-real.sh --chain-id luggom-test01` (with the variable above).
 3. **Start the validators** in `external` mode (never `local`):
    `./scripts/bootstrap-validators.sh external validators.txt --gentx-dir ./gentxs`.
 4. **Start the notary** (`tlsn-verifier-server`, README §2).

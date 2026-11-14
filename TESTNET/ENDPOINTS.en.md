@@ -18,7 +18,9 @@
 
 Direct IP (fallback): `62.146.183.122` on ports `26657` (RPC), `1317` (LCD), `8082` (API) and `7047` (notary).
 
-p2p (`26656`) is **closed** to the public at this stage. External validators join by invitation.
+p2p (`26656`) is open on the public seed for validators:
+`1530baa7b3a07e0cab8dc81c9c08fccc51a47471@62.146.183.122:26656`. Do not expose
+RPC/LCD/API to the public. Validators join by invitation.
 
 ## Quick check
 
@@ -32,7 +34,9 @@ curl https://notary.luggom.com/health
 
 Expected after the reset: `chain_id = luggom-test01`, height rising, **16 validators**, `ok` from the notary.
 
-## First mining (on-chain)
+## First mining (on-chain) — historical, `luggom-test`
+
+This transaction belongs to the old chain and does not exist on `luggom-test01`.
 
 - tx: `75EEF27E00190D2117E2DBA4388B694C34962467F56F77A57CC4114A61E5141D`
 - height: `1284`

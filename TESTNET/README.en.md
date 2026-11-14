@@ -47,7 +47,7 @@ The coordinator generates the genesis and fixes the parameters (max_validators=1
 ```sh
 # The notary key must be set BEFORE genesis (it writes api_verifier_address).
 export LUGGOM_NOTARY_KEY_HEX="<notary-hex-key>"
-./scripts/prepare-e2e-real.sh --chain-id luggom-test
+./scripts/prepare-e2e-real.sh --chain-id luggom-test01
 ```
 
 Without `LUGGOM_NOTARY_KEY_HEX`, the chain has no verifier and **refuses mining**
@@ -67,7 +67,7 @@ The coordinator merges the addresses and collects the gentxs.
 Each validator, on their side, produces the gentx:
 
 ```sh
-luggomd genesis gentx <key> 200000000000000000000uluggom --chain-id luggom-test --home $HOME/.luggom
+luggomd genesis gentx <key> 200000000000000000000uluggom --chain-id luggom-test01 --home $HOME/.luggom
 ```
 
 > ⚠️ The `local N` mode is **disposable** (generates keys and prints mnemonics) —

@@ -25,7 +25,7 @@ self-service**.
 
 1. **Fixar a chave do notário** (`LUGGOM_NOTARY_KEY_HEX`) — decidir a chave real.
 2. **Gerar o genesis** com o endereço do notário:
-   `./scripts/prepare-e2e-real.sh --chain-id luggom-test` (com a variável acima).
+   `./scripts/prepare-e2e-real.sh --chain-id luggom-test01` (com a variável acima).
 3. **Subir os validadores** em modo `external` (nunca `local`):
    `./scripts/bootstrap-validators.sh external validators.txt --gentx-dir ./gentxs`.
 4. **Subir o notário** (`tlsn-verifier-server`, §2 do README).

@@ -47,7 +47,7 @@ O coordenador gera o genesis e fixa os parâmetros (max_validators=180, slashing
 ```sh
 # A chave do notário tem de estar definida ANTES do genesis (grava api_verifier_address).
 export LUGGOM_NOTARY_KEY_HEX="<chave-hex-do-notário>"
-./scripts/prepare-e2e-real.sh --chain-id luggom-test
+./scripts/prepare-e2e-real.sh --chain-id luggom-test01
 ```
 
 Sem `LUGGOM_NOTARY_KEY_HEX`, a chain fica sem verificador e **recusa mineração**
@@ -67,7 +67,7 @@ funde os endereços e recolhe os gentx.
 Cada validador, do lado dele, produz o gentx:
 
 ```sh
-luggomd genesis gentx <chave> 200000000000000000000uluggom --chain-id luggom-test --home $HOME/.luggom
+luggomd genesis gentx <chave> 200000000000000000000uluggom --chain-id luggom-test01 --home $HOME/.luggom
 ```
 
 > ⚠️ O modo `local N` é **descartável** (gera as chaves e imprime os mnemonics) —
