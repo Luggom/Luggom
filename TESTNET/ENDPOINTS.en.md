@@ -1,10 +1,10 @@
 # Public testnet endpoints — Luggom
 
-> **RESET 2026-11-17:** after the reset the chain-id is `luggom-test01` with 16
-> validators. See [RESET-2026-11-17.en.md](RESET-2026-11-17.en.md). Until then,
+> **RESET 2026-11-19:** after the reset the chain-id is `luggom-test01` with 16
+> validators. See [RESET-2026-11-19.en.md](RESET-2026-11-19.en.md). Until then,
 > the live chain is `luggom-test`.
 
-**chain-id:** `luggom-test01` (from 2026-11-17; `luggom-test` before)
+**chain-id:** `luggom-test01` (from 2026-11-19; `luggom-test` before)
 **Status:** public testnet. It can be reset (balances and history may disappear). Nothing here has monetary value.
 
 ## Endpoints

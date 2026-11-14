@@ -1,7 +1,7 @@
 # TESTNET/ — pacote público da testnet do Luggom
 
-> **RESET 2026-11-17:** a testnet passa para `luggom-test01`. Genesis draft,
-> binário e instruções: [RESET-2026-11-17.md](RESET-2026-11-17.md). A chain
+> **RESET 2026-11-19:** a testnet passa para `luggom-test01`. Genesis draft,
+> binário e instruções: [RESET-2026-11-19.md](RESET-2026-11-19.md). A chain
 > antiga `luggom-test` é abandonada.
 
 Tudo o que é **publicável** para rodar, validar e notariar a testnet. Esta pasta

@@ -1,7 +1,7 @@
 # Validadores — testnet Luggom (por convite)
 
-> **RESET 2026-11-17:** os 16 validadores atuais passam para `luggom-test01`. Não
-> faças bond na `luggom-test`; ver [RESET-2026-11-17.md](RESET-2026-11-17.md).
+> **RESET 2026-11-19:** os 16 validadores atuais passam para `luggom-test01`. Não
+> faças bond na `luggom-test`; ver [RESET-2026-11-19.md](RESET-2026-11-19.md).
 > **Os 16 validadores atuais já estão no genesis do reset.** O fluxo de convite
 > abaixo é para novos validadores depois do reset.
 

@@ -1,8 +1,8 @@
 # Upgrades — halt height
 
-> **RESET 2026-11-17 — not an upgrade.** The testnet is re-founded on
+> **RESET 2026-11-19 — not an upgrade.** The testnet is re-founded on
 > `luggom-test01`; this halt-height procedure does not apply. See
-> [RESET-2026-11-17.en.md](RESET-2026-11-17.en.md). The old state-sync
+> [RESET-2026-11-19.en.md](RESET-2026-11-19.en.md). The old state-sync
 > `trust_height`/`trust_hash` are obsolete.
 
 > **Why this exists.** While the validator set is one host, an upgrade is "stop the
