@@ -1,5 +1,8 @@
 # Validadores — testnet Luggom (por convite)
 
+> **RESET 2026-11-17:** os 16 validadores atuais passam para `luggom-test01`. Não
+> faças bond na `luggom-test`; ver [RESET-2026-11-17.md](RESET-2026-11-17.md).
+
 > **Upgrades:** a chain sobe por uma **altura de halt** publicada, não por um restart à vontade. Lê `TESTNET/UPGRADES.md` antes de bondares — perder uma altura é downtime, e downtime é jail.
 
 > **Testnet.** Sem valor monetário. A chain pode ser resetada.

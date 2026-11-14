@@ -1,5 +1,10 @@
 # Upgrades — halt height
 
+> **RESET 2026-11-17 — not an upgrade.** The testnet is re-founded on
+> `luggom-test01`; this halt-height procedure does not apply. See
+> [RESET-2026-11-17.en.md](RESET-2026-11-17.en.md). The old state-sync
+> `trust_height`/`trust_hash` are obsolete.
+
 > **Why this exists.** While the validator set is one host, an upgrade is "stop the
 > four nodes and swap the binary". Once external validators join, that stops
 > working: every node has to stop at **the same height** and come back with the

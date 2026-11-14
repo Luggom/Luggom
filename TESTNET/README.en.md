@@ -1,5 +1,9 @@
 # TESTNET/ — public Luggom testnet package
 
+> **RESET 2026-11-17:** the testnet moves to `luggom-test01`. Draft genesis,
+> binary and instructions: [RESET-2026-11-17.en.md](RESET-2026-11-17.en.md).
+> The old `luggom-test` chain is abandoned.
+
 Everything that is **publishable** for running, validating and notarizing the testnet.
 This folder is public (GitHub / webpage / validators' VPS): **never** put keys, seeds,
 keyrings, local paths or real names here.
