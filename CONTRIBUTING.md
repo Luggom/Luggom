@@ -1,8 +1,11 @@
 # Contributing to Luggom
 
+> **Testnet reset 2026-11-19:** the public testnet moves to `luggom-test01`.
+> See [TESTNET/RESET-2026-11-19.en.md](TESTNET/RESET-2026-11-19.en.md).
+
 Thanks for helping. Luggom is a Cosmos SDK chain where you mine LUG by paying real taxes, proven end to end with TLSNotary.
 
-The public testnet is live (`luggom-test`). Nothing on it has monetary value, and it can be reset at any time.
+The public testnet is live (`luggom-test` until 2026-11-19, then `luggom-test01`). Nothing on it has monetary value, and it can be reset at any time.
 
 ## Where to talk
 
