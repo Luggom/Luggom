@@ -49,7 +49,7 @@ self-service**.
 | **Minerar** | instalar o app desktop e provar pagamento | `README.md` §3 |
 | **Adicionar um banco** | entregar pacote de evidência (recibo sanitizado + campo canónico) | `DEVELOPER_GUIDE.md` |
 | **Testar Windows/macOS** | keychain + instaladores (só Linux validado) | — |
-| **Ensinar a minerar (GoldHunters)** | onboarding de pessoas/empresas | site/whitepaper |
+| **Ensinar a minerar (GoldHunters)** | onboarding de pessoas/empresas | [whitepaper](https://luggom.com/whitepaper.html) |
 
 **A contribuição de maior alavancagem agora:** os **pacotes de evidência** para
 **US/CA** (e bancos BR novos) — os rails US/CA estão desligados de propósito à
@@ -70,7 +70,7 @@ espera do **campo canónico por rail**, e isso é **dado real**, não código.
 
 - **Código:** FASE 8 essencialmente fechada (hard test local Blocos 1–4; A-8 e
   T-GOV-1 fechados). Reset da chain feito (2026-10-07).
-- **Minerável E2E:** Viacredi (`code 0`). Caixa: rail **FAIL** (anti-bot). BB:
-  pendente de sessão. US/CA: falta campo canónico.
+- **Minerável E2E:** Viacredi (`code 0`) e **Banco do Brasil** (`code 0`, tx `F2D532…`,
+  altura 144732). Caixa: rail **FAIL** (anti-bot). US/CA: falta campo canónico.
 - **Falta para abrir:** o checklist da §2.
 

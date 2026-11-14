@@ -5,11 +5,9 @@ import (
 	proto "github.com/cosmos/gogoproto/proto"
 )
 
-// OTC LOCKED vault state (§13.132). Ver a tabela das fases em
-// x/luggom/keeper/otc_vault.go.
-//
-// O cofre acumula o LUG da Fase 2 (40% de cada mineração, sem tecto) e vende-o
-// só por BTC, sempre ao preço da cesta, em lotes mínimos de 100.000 LUG.
+// OTC LOCKED vault state. Split ÚNICO: o cofre acumula 40% de cada mineração,
+// sem tecto, e vende o LUG só por BTC, sempre ao preço da cesta, em lotes
+// mínimos de 100.000 LUG.
 //
 // O BTC recebido é LASTRO PERMANENTE: nunca sai do cofre, nunca é queimado e
 // nunca é trocado por LUG. Só pode ser migrado para outra ponte/denom do MESMO
@@ -46,26 +44,6 @@ func init() {
 	proto.RegisterType((*OtcVault)(nil), "luggom.luggom.v1.OtcVault")
 	proto.RegisterType((*OtcRetainedAsset)(nil), "luggom.luggom.v1.OtcRetainedAsset")
 }
-
-// OtcPhase identifica o regime de split vigente (§13.132 + §13.159).
-//
-//	Fase 1 (pré-pool, pre-sale activa): supply total <10M LUG — minerador 30% +
-//	  pre-sale 35% + POOL 10% + staking 7,5% + ATOM 7,5% + fundador 5% +
-//	  validadores 3% + gov 2%.
-//	Transição (pré-pool, pre-sale encerrada): ≥10M e pool ainda fechada — a
-//	  pre-sale e a POOL encerram e o staking/ATOM sobem para 30% cada; ainda sem OTC.
-//	Fase 2 (definitiva): pool + IBC abertos — minerador 30% + OTC LOCKED 40%
-//	  contínuo + staking 10% + ATOM 10% + fundador 5% + validadores 3% +
-//	  gov 2% (0,5% notariado + 1,5% tesouraria). Permanente e imutável.
-type OtcPhase string
-
-const (
-	OtcPhase1          OtcPhase = "phase1"
-	OtcPhaseTransition OtcPhase = "transition"
-	OtcPhase2          OtcPhase = "phase2"
-)
-
-func (p OtcPhase) String() string { return string(p) }
 
 // otcAllowedAssets são os únicos ativos aceites na venda do cofre (§13.117):
 // o LUG do cofre troca só por BTC. O PAXG foi descartado — é um claim regulado
@@ -110,6 +88,12 @@ func ValidateOtcSale(assetDenom string, lugAmount sdkmath.Int) error {
 	if !IsOtcAllowedAsset(assetDenom) {
 		return ErrOtcAssetNotAllowed.Wrapf("%q (só BTC)", assetDenom)
 	}
+	return ValidateOtcLot(lugAmount)
+}
+
+// ValidateOtcLot valida só o lote mínimo de 100.000 LUG. O denom do BTC é
+// validado contra params.otc_btc_denom no keeper (o denom real é ibc/<HASH>).
+func ValidateOtcLot(lugAmount sdkmath.Int) error {
 	if lugAmount.IsNil() || !lugAmount.IsPositive() {
 		return ErrOtcLotBelowMinimum.Wrap("amount must be positive")
 	}

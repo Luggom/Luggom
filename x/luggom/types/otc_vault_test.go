@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestValidateOtcSale valida as regras da venda do cofre: lote mínimo de 10k LUG
+// TestValidateOtcSale valida as regras da venda do cofre: lote mínimo de 100k LUG
 // e apenas BTC (§13.117). O PAXG foi descartado (claim regulado com freeze).
 func TestValidateOtcSale(t *testing.T) {
 	minLot := MinOtcLotLug()

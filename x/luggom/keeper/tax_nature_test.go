@@ -5,6 +5,7 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"luggom/x/luggom/types"
@@ -24,7 +25,7 @@ func TestMineTaxPayment_TaxNatureHashRequired(t *testing.T) {
 
 	base := taxPaymentMsgForTest(t, f, minerStr, "tax-nature", 66)
 	base.PaymentAmount = sdkmath.LegacyMustNewDecFromStr("240.50")
-	base.PaymentDate = time.Now().Add(-24 * time.Hour).Unix()
+	base.PaymentDate = sdk.UnwrapSDKContext(f.ctx).BlockTime().Add(-24 * time.Hour).Unix()
 
 	t.Run("missing tax_nature_hash is rejected", func(t *testing.T) {
 		msg := *base

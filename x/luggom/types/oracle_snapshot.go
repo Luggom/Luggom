@@ -19,6 +19,8 @@ type UsdOracleSnapshot struct {
 	BrlUsd sdkmath.LegacyDec `protobuf:"bytes,6,opt,name=brl_usd,json=brlUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"brl_usd"`
 	// CadUsd is CAD per 1 USD.
 	CadUsd sdkmath.LegacyDec `protobuf:"bytes,7,opt,name=cad_usd,json=cadUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"cad_usd"`
+	// BtcUsd is USD per 1 BTC, used by the OTC vault sale.
+	BtcUsd sdkmath.LegacyDec `protobuf:"bytes,8,opt,name=btc_usd,json=btcUsd,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"btc_usd"`
 }
 
 func (m *UsdOracleSnapshot) Reset()         { *m = UsdOracleSnapshot{} }

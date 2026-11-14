@@ -35,13 +35,13 @@ GENTX_DIR=""
 
 LUG="000000000000000000"          # 10^18
 DENOM="uluggom"
-BOND_LUG="200"                    # 200 LUG por validador (desenho do bootstrap)
+BOND_LUG="${BOND_LUG:-200}"       # 200 LUG testnet / 1.000 mainnet (env)
 BOND_COIN="${BOND_LUG}${LUG}${DENOM}"   # a string COMPLETA da moeda (com denom)
 
 # Supply canónico do bootstrap — TEM de ser o mesmo de prepare-e2e-real.sh
 # (4.000 LUG dos validadores + 0,000204 da reserva de pó). O `add-genesis-account`
 # ACRESCENTA ao supply; no fim repomo-lo, senão cada validador "cunhava" LUG.
-TOTAL_GENESIS_LUG="4000000204000000000000"
+TOTAL_GENESIS_LUG="${TOTAL_GENESIS_LUG:-4000000204000000000000}"
 
 MODE="${1:-}"
 shift || true

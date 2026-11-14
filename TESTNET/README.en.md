@@ -171,7 +171,7 @@ A brand-new wallet does not exist on-chain and cannot pay a fee. The API sends a
 > address and finite (10 fees). The right policy — re-send after X failures or
 > leave it stuck — is an open decision.
 
-The wallet logo uses the same "L" as the site (see `../site/assets/img/mark*.png` and
+The wallet logo uses the same "L" as the site (see `https://luggom.com/assets/img/mark*.png` and
 `wordmark.svg`).
 
 ---

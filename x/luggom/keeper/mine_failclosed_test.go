@@ -11,9 +11,10 @@ import (
 
 // DV M1 (achado do parecer do DV Master, 2026-09-18): as fatias da mineração
 // são **FAIL-CLOSED**. Antes, um envio que falhasse — **Fundador, Staking
-// Reservoir, ATOM Reservoir ou POOL** — era **engolido** (`_ = err`) e a tx
+// Reservoir ou ATOM Reservoir** — era **engolido** (`_ = err`) e a tx
 // reportava **SUCESSO** com o LUG preso no módulo. A fatia do pre-sale tinha o
-// mesmo bug e foi corrigida no §13.136; estas quatro passaram a falhar alto.
+// mesmo bug e foi corrigida no §13.136; estas passaram a falhar alto. A POOL
+// não tem dotação no split único, por isso não entra neste teste.
 //
 // O teste força a falha de cada envio (no mock) e exige que a MINERAÇÃO FALHE.
 // §13.146 A: mina-se pelo caminho COM prova (MsgMineTaxPayment) — as msgs legadas
@@ -25,7 +26,6 @@ func TestMiningSplit_FailClosedQuandoUmEnvioFalha(t *testing.T) {
 	}{
 		{"staking reservoir", authtypes.NewModuleAddress(types.StakingReservoirModuleName).String()},
 		{"atom reservoir", authtypes.NewModuleAddress(types.AtomReservoirModuleName).String()},
-		{"pool treasury", authtypes.NewModuleAddress(types.PoolTreasuryModuleName).String()},
 	}
 
 	for _, tc := range casos {

@@ -135,7 +135,7 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 		return nil, types.ErrFuturePayment.Wrapf("payment date %s is after block time %s",
 			paymentTime.Format("2006-01-02"), blockTime.UTC().Format(time.RFC3339))
 	}
-	cutoff := blockTime.UTC().Truncate(24 * time.Hour).AddDate(0, 0, -int(maxAge))
+	cutoff := blockTime.UTC().Truncate(24*time.Hour).AddDate(0, 0, -int(maxAge))
 	if paymentTime.Before(cutoff) {
 		return nil, types.ErrStalePayment.Wrapf("payment date %s exceeds max age %d days",
 			paymentTime.Format("2006-01-02"), maxAge)
@@ -209,17 +209,13 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 		return nil, fmt.Errorf("calculated LUG amount is zero (payment_amount too small)")
 	}
 
-	// 10b. Annual mining cap (MVP 2.0 §13.49/§13.52): 365d sliding window, 15B −5% a.a.
+	// 10b. Annual mining cap (MVP 2.0 §13.49/§13.52): 365d sliding window, 7B −5% a.a.
 	if err := k.recordMinedAmount(ctx, amountLUGInt); err != nil {
 		return nil, err
 	}
 
-	// §13.117: fase vigente (Fase 1 / Transição / Fase 2) e split da mineração.
-	phase, err := k.miningPhase(ctx)
-	if err != nil {
-		return nil, err
-	}
-	split := computeMiningSplit(amountLUGInt, phase)
+	// Split único e permanente da mineração.
+	split := computeMiningSplit(amountLUGInt)
 
 	// 12. Resolve miner address
 	minerAddr, err := k.addressCodec.StringToBytes(msg.MinerAddress)
@@ -265,7 +261,7 @@ func (k Keeper) MineTaxPayment(ctx context.Context, msg *types.MsgMineTaxPayment
 	attrs = append(attrs, miningSplitAttributes(split)...)
 	attrs = append(attrs,
 		sdk.NewAttribute("pool_active", fmt.Sprintf("%t", k.PoolOpen(ctx))),
-		sdk.NewAttribute("presale_active", fmt.Sprintf("%t", phase == types.OtcPhase1)),
+		sdk.NewAttribute("dao_active", fmt.Sprintf("%t", k.DAOActive(ctx))),
 	)
 	sdkCtx.EventManager().EmitEvent(sdk.NewEvent(types.EventTypeMine, attrs...))
 

@@ -79,21 +79,22 @@ message MsgMineResponse {
     (gogoproto.nullable) = false
   ];
 
-  // tax_root is the amount sent to the founder (2.5% of total mint).
+  // tax_root is the amount sent to the founder (5% of total mint).
   string tax_root = 2 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
 
-  // tax_staking: share to x/distribution (2.5% of minted LUG when pool_active; 10.5% when pre-POOL merges 2.5%+8%).
+  // tax_staking: share to the Staking Reservoir (7.5% of each mint).
   string tax_staking = 3 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
 
-  // tax_validator: share to POOL treasury when pool_active (8% of minted LUG); zero when pre-POOL.
+  // tax_validator: legacy name — carries the POOL share (always 0 in the single split).
+  // The 3% paid to validators goes to x/distribution via the fee collector, not through this field.
   string tax_validator = 4 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
@@ -190,6 +191,12 @@ message MsgUpdateUsdOracleBasket {
     (gogoproto.nullable) = false
   ];
   string cad_usd = 7 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  // btc_usd: USD por 1 BTC, usado na venda OTC do cofre (lote ≥100k LUG).
+  string btc_usd = 8 [
     (cosmos_proto.scalar) = "cosmos.Dec",
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
@@ -339,6 +346,35 @@ message MsgSpendFromReserve {
 
 message MsgSpendFromReserveResponse {}
 
+// MsgBuyOtc compra LUG do cofre OTC com o BTC IBC configurado em
+// params.otc_btc_denom. O preço é a cesta do dia e a fixing BTC/USD do oráculo;
+// sem fixing, falha. O BTC fica no cofre como lastro permanente.
+message MsgBuyOtc {
+  option (amino.name) = "luggom/x/luggom/MsgBuyOtc";
+  option (cosmos.msg.v1.signer) = "buyer";
+
+  string buyer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string lug_amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string btc_denom = 3;
+}
+
+message MsgBuyOtcResponse {
+  string btc_amount = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string lug_amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
 // Service Msg — gRPC service for all mining/tax/oracle messages.
 service Msg {
   option (cosmos.msg.v1.service) = true;
@@ -368,6 +404,7 @@ service Msg {
   rpc BuyPreSale(MsgBuyPreSale) returns (MsgBuyPreSaleResponse);
   rpc DistributePreSaleProceeds(MsgDistributePreSaleProceeds) returns (MsgDistributePreSaleProceedsResponse);
   rpc SpendFromReserve(MsgSpendFromReserve) returns (MsgSpendFromReserveResponse);
+  rpc BuyOtc(MsgBuyOtc) returns (MsgBuyOtcResponse);
 }
 
 // MsgAddTaxEntity adds a tax entity slug to the whitelist (operational list).
@@ -490,7 +527,7 @@ message MsgUnlockSavingsResponse {
 // FASE 6A — Pool nativa (AMM, §13.76)
 
 // MsgAddLiquidity deposits LUG + a pool asset into a pair, minting LP shares.
-// Only available after the pool opens (100M LUG mined, §13.55/§13.76).
+// Only available after the pool opens (params.pool_active, §13.114).
 message MsgAddLiquidity {
   option (amino.name) = "luggom/x/luggom/MsgAddLiquidity";
   option (cosmos.msg.v1.signer) = "depositor";

@@ -19,7 +19,7 @@ func DefaultGlobalTaxEntities() []string {
 		// === EUA — federal + state ===
 		"irs",
 		"ca_ftb", "ny_dtf",
-	// === EUA — states (Departments of Revenue) — 50 estados completos (FASE 4-B) ===
+		// === EUA — states (Departments of Revenue) — 50 estados completos (FASE 4-B) ===
 		"us:al", "us:ak", "us:az", "us:ar", "us:ca", "us:co", "us:ct", "us:de",
 		"us:fl", "us:ga", "us:hi", "us:id", "us:il", "us:in", "us:ia", "us:ks",
 		"us:ky", "us:la", "us:me", "us:md", "us:ma", "us:mi", "us:mn", "us:ms",
@@ -28,7 +28,7 @@ func DefaultGlobalTaxEntities() []string {
 		"us:sd", "us:tn", "us:tx", "us:ut", "us:vt", "us:va", "us:wa", "us:wv",
 		"us:wi", "us:wy",
 
-	// === EUA — property tax counties ===
+		// === EUA — property tax counties ===
 		"us:county:los_angeles_ca",
 		"us:county:cook_il",
 		"us:county:harris_tx",
@@ -338,27 +338,27 @@ func DefaultGlobalTaxEntities() []string {
 		"us:county:richmond_ny",
 
 		// === EUA — state capital counties (FASE 4-B) ===
-		"us:county:montgomery_al",       // Montgomery (AL)
-		"us:county:juneau_ak",           // Juneau (AK)
-		"us:county:sangamon_il",         // Springfield (IL)
-		"us:county:suffolk_ma",          // Boston (MA)
-		"us:county:cole_mo",             // Jefferson City (MO)
-		"us:county:lewis_clark_mt",      // Helena (MT)
-		"us:county:lancaster_ne",        // Lincoln (NE)
-		"us:county:carson_city_nv",      // Carson City (NV)
-		"us:county:merrimack_nh",        // Concord (NH)
-		"us:county:santa_fe_nm",         // Santa Fe (NM)
-		"us:county:burleigh_nd",         // Bismarck (ND)
-		"us:county:dauphin_pa",          // Harrisburg (PA)
-		"us:county:hughes_sd",           // Pierre (SD)
-		"us:county:washington_vt",       // Montpelier (VT)
-		"us:county:richmond_city_va",    // Richmond (VA — independent city)
+		"us:county:montgomery_al",    // Montgomery (AL)
+		"us:county:juneau_ak",        // Juneau (AK)
+		"us:county:sangamon_il",      // Springfield (IL)
+		"us:county:suffolk_ma",       // Boston (MA)
+		"us:county:cole_mo",          // Jefferson City (MO)
+		"us:county:lewis_clark_mt",   // Helena (MT)
+		"us:county:lancaster_ne",     // Lincoln (NE)
+		"us:county:carson_city_nv",   // Carson City (NV)
+		"us:county:merrimack_nh",     // Concord (NH)
+		"us:county:santa_fe_nm",      // Santa Fe (NM)
+		"us:county:burleigh_nd",      // Bismarck (ND)
+		"us:county:dauphin_pa",       // Harrisburg (PA)
+		"us:county:hughes_sd",        // Pierre (SD)
+		"us:county:washington_vt",    // Montpelier (VT)
+		"us:county:richmond_city_va", // Richmond (VA — independent city)
 
 		// === Brasil — federal + state (SEFAZ) ===
 		"br:receita_federal",
 		"br:stn",
 		"br:inss", // INSS (GPS — previdência social; CNPJ 29.979.036/0001-40)
-	// === Brasil — SEFAZ ===
+		// === Brasil — SEFAZ ===
 		"br:sefaz_ac",
 		"br:sefaz_al",
 		"br:sefaz_ap",
@@ -386,7 +386,7 @@ func DefaultGlobalTaxEntities() []string {
 		"br:sefaz_se",
 		"br:sefaz_to",
 
-	// === Brasil — municipalities (IPTU) ===
+		// === Brasil — municipalities (IPTU) ===
 		"br:iptu_sao_paulo",
 		"br:iptu_rio_de_janeiro",
 		"br:iptu_belo_horizonte",
@@ -675,7 +675,7 @@ func DefaultGlobalTaxEntities() []string {
 		// === Canadá — federal ===
 		"ca:cra",
 		"ca:rc",
-	// === Canadá — provinces ===
+		// === Canadá — provinces ===
 		"ca:on",
 		// ca:qc REMOVIDO (FASE 4-B): Revenu Québec usa NEQ (formato não aceito pelo extractor CA).
 		// Quebequenses mineram via ca:cra (federal) e ca:city:* (municípios, que têm BN).
@@ -691,7 +691,7 @@ func DefaultGlobalTaxEntities() []string {
 		"ca:yt",
 		"ca:nu",
 
-	// === Canadá — municipalities ===
+		// === Canadá — municipalities ===
 		"ca:city:toronto",
 		"ca:city:montreal",
 		"ca:city:calgary",
@@ -792,7 +792,6 @@ func DefaultGlobalTaxEntities() []string {
 		"ca:city:whitehorse",
 		"ca:city:yellowknife",
 		"ca:city:iqaluit",
-
 	}
 }
 

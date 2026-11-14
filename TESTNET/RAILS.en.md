@@ -1,6 +1,6 @@
 # Add a bank / rail — testnet
 
-> Today only **Viacredi (Brazil)** is proven end to end.
+> Today **Viacredi** and **Banco do Brasil** are proven end to end.
 > **The US and Canada** are the next markets. A rail only lights up with **evidence**:
 > a **sanitised** real receipt + the payment's **canonical field**.
 

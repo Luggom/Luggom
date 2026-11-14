@@ -25,9 +25,12 @@ func NewParams() Params {
 		GovernmentEntityBlacklist: DefaultGovernmentEntities(),
 		BankProviders:             DefaultBankProviders(),
 		PoolAssets:                DefaultPoolAssets(),
+		OtcBtcDenom:               "btc",
 		// Tally da governança (por decidir com a comunidade — §13.170 §4).
 		GovValidatorMinForWeightShift: 100,
-		GovLlcVoteWeightBps:           0,
+		// Legado: a LBC não tem classe de voto desde 13/11/2026. Mantido para
+		// compatibilidade de proto/genesis; o tally ignora-o.
+		GovLlcVoteWeightBps: 0,
 		// Pré-pool o Fundador decide sozinho (decisão do Fundador, 2026-09-18).
 		GovFounderVoteWeightBps:    10_000,
 		GovValidatorsVoteWeightBps: 0,
@@ -113,8 +116,47 @@ func (p Params) Validate() error {
 		}
 		seenPayee[payee] = struct{}{}
 	}
+	if p.OtcBtcDenom == "" {
+		return errors.New("otc_btc_denom cannot be empty")
+	}
+	if err := sdk.ValidateDenom(p.OtcBtcDenom); err != nil {
+		return fmt.Errorf("otc_btc_denom is not a valid denom: %w", err)
+	}
 	if len(p.PoolAssets) == 0 {
 		return errors.New("pool_assets cannot be empty")
+	}
+	if len(p.PoolAssets) > 128 {
+		return fmt.Errorf("pool_assets cannot have more than 128 entries, got %d", len(p.PoolAssets))
+	}
+	seenAsset := make(map[string]struct{}, len(p.PoolAssets))
+	for i, denom := range p.PoolAssets {
+		if denom == "" {
+			return fmt.Errorf("pool_assets[%d] cannot be empty", i)
+		}
+		if strings.TrimSpace(denom) != denom {
+			return fmt.Errorf("pool_assets[%d] has leading or trailing whitespace: %q", i, denom)
+		}
+		if denom == "uluggom" {
+			return errors.New("pool_assets cannot include the base denom uluggom")
+		}
+		if err := sdk.ValidateDenom(denom); err != nil {
+			return fmt.Errorf("pool_assets[%d] is not a valid denom: %w", i, err)
+		}
+		if strings.HasPrefix(denom, "ibc/") {
+			hash := strings.TrimPrefix(denom, "ibc/")
+			if len(hash) != 64 {
+				return fmt.Errorf("pool_assets[%d] has a malformed IBC voucher (want ibc/<64 hex>): %s", i, denom)
+			}
+			for _, c := range hash {
+				if !((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
+					return fmt.Errorf("pool_assets[%d] has a malformed IBC voucher hash: %s", i, denom)
+				}
+			}
+		}
+		if _, dup := seenAsset[denom]; dup {
+			return fmt.Errorf("pool_assets[%d] is duplicated: %s", i, denom)
+		}
+		seenAsset[denom] = struct{}{}
 	}
 
 	return nil

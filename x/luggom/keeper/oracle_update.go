@@ -100,6 +100,7 @@ func (k Keeper) UpdateUsdOracleBasket(ctx context.Context, msg *types.MsgUpdateU
 	}
 
 	snap := types.UsdOracleSnapshot{
+		BtcUsd:      msg.BtcUsd,
 		ChfUsd:      msg.ChfUsd,
 		EurUsd:      msg.EurUsd,
 		GbpUsd:      msg.GbpUsd,

@@ -48,6 +48,11 @@ func (k msgServer) UpdateUsdOracleBasket(ctx context.Context, msg *types.MsgUpda
 	return k.Keeper.UpdateUsdOracleBasket(ctx, msg)
 }
 
+// BuyOtc buys LUG from the OTC vault with the configured IBC BTC denom.
+func (k msgServer) BuyOtc(ctx context.Context, msg *types.MsgBuyOtc) (*types.MsgBuyOtcResponse, error) {
+	return k.Keeper.BuyOtc(ctx, msg)
+}
+
 // LockSavings implements the MsgLockSavings handler (Bolsão — §13.64/§13.65).
 func (k msgServer) LockSavings(ctx context.Context, msg *types.MsgLockSavings) (*types.MsgLockSavingsResponse, error) {
 	return k.Keeper.LockSavings(ctx, msg)
@@ -85,6 +90,10 @@ func (k msgServer) CancelEscrow(ctx context.Context, msg *types.MsgCancelEscrow)
 }
 
 // BLOCO D — pre-sale on-chain (§13.132 §4).
+//
+// ⛔ DESACTIVADO (2026-11-09): a pré-venda pública foi substituída pela rodada
+// de equity. O split já não financia `luggom_presale`; aceitar compras aqui
+// venderia LUG sem lastro. O keeper antigo fica para histórico/testes.
 func (k msgServer) BuyPreSale(ctx context.Context, msg *types.MsgBuyPreSale) (*types.MsgBuyPreSaleResponse, error) {
-	return k.Keeper.BuyPreSale(ctx, msg)
+	return nil, types.ErrPreSaleClosed.Wrap("MsgBuyPreSale is disabled — the pre-sale was replaced by the equity round")
 }

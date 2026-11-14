@@ -56,7 +56,7 @@ type Keeper struct {
 	// FASE 6B — Escrow P2P on-chain (§13.76/§13.24)
 	EscrowTrades collections.Map[uint64, types.EscrowTrade]
 	EscrowSeq    collections.Sequence
-	// OTC LOCKED vault (§13.132) — acumula o LUG da Fase 2 (40% contínuo, sem tecto).
+	// OTC LOCKED vault (§13.132) — acumula 40% de cada mint (contínuo, sem tecto).
 	OtcVault collections.Item[types.OtcVault]
 	// BLOCO D — pre-sale on-chain (§13.132 §4): posições de vesting + contadores.
 	PreSalePositions    collections.Map[uint64, types.PreSalePosition]
@@ -172,9 +172,10 @@ func (k Keeper) GetTotalSupply(ctx context.Context, denom string) sdk.Coin {
 	return k.bankKeeper.GetSupply(ctx, denom)
 }
 
-// preSaleThreshold is the supply threshold that ENDS the pre-sale phase and
-// starts the transition: 10M LUG in uluggom base units (10_000_000 × 10^18),
-// §13.132. Deterministic, on-chain.
+// preSaleThreshold is the supply threshold that ends the founder-led
+// governance phase: 10M LUG in uluggom base units (10_000_000 × 10^18),
+// §13.132. O split não muda; só a governança passa para a DAO.
+// Deterministic, on-chain.
 //
 // NOTA: compara com o SUPPLY TOTAL (não só o minerado) — o genesis entra na conta.
 var preSaleThreshold = func() sdkmath.Int {
@@ -185,17 +186,23 @@ var preSaleThreshold = func() sdkmath.Int {
 	return v
 }()
 
-// preSaleActive reports whether the pre-sale phase is still running
-// (total supply < 10M LUG, §13.132). Enquanto for verdade corre a Fase 1:
-// minerador 30% + pre-sale 35% + POOL 10% + staking 7,5% + ATOM 7,5% + fundador
-// 5% + validadores 3% + gov 2%.
+// preSaleActive reports whether the pre-sale window is still open
+// (total supply < 10M LUG, §13.132). O nome e legado: a venda esta desligada.
 //
-// Depois dos 10M a pre-sale encerra (a fatia vai a 0), a POOL encerra, e o
-// staking/ATOM sobem para 30% cada até a pool/IBC abrir — é a **Transição**.
-// A Fase 2 definitiva (OTC 40%) só começa com a pool aberta (params.pool_active).
+// O split e unico e NAO muda com o supply. Aos 10M muda apenas a governanca:
+// founder-led (<10M) passa a DAO (1 LUG em staking = 1 voto). A pool e um
+// interruptor separado (params.pool_active) e tambem nao muda o split.
 func (k Keeper) preSaleActive(ctx context.Context) bool {
 	supply := k.GetTotalSupply(ctx, "uluggom")
 	return supply.Amount.LT(preSaleThreshold)
+}
+
+// DAOActive reports whether governance is open to the DAO (supply ≥ 10M).
+// Até lá a governança é founder-led; o split é único e não muda com o supply.
+// A pool é um interruptor separado (params.pool_active).
+func (k Keeper) DAOActive(ctx context.Context) bool {
+	supply := k.GetTotalSupply(ctx, "uluggom")
+	return !supply.Amount.LT(preSaleThreshold)
 }
 
 // PoolOpen reports whether the pool is open — now a GOVERNABLE flag (params.pool_active),

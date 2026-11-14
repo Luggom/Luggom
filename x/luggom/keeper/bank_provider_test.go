@@ -5,6 +5,7 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"luggom/x/luggom/types"
@@ -30,7 +31,7 @@ func TestMineTaxPayment_BankProviderNotWhitelisted(t *testing.T) {
 	// provider_id (que vai no digest), é preciso assinar de novo em cada um.
 	base := taxPaymentMsgForTest(t, f, minerStr, "a4", 66)
 	base.PaymentAmount = sdkmath.LegacyMustNewDecFromStr("240.50")
-	base.PaymentDate = time.Now().Add(-24 * time.Hour).Unix()
+	base.PaymentDate = sdk.UnwrapSDKContext(f.ctx).BlockTime().Add(-24 * time.Hour).Unix()
 	base.TaxNatureHash = taxNatureHashForTest()
 
 	t.Run("banco fora da whitelist é recusado", func(t *testing.T) {

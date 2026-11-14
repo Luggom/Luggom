@@ -17,8 +17,9 @@ import (
 // - Swap fee: 0.3% stays in the pair (grows LP value).
 // - Fixed 0.005 LUG fee per swap is charged by the ante-handler (ante_lug_move_fee.go).
 // - Yield by imbalance (§13.19): deposits of scarce assets earn more, excess assets earn less.
-// - Pool opens at 100M LUG mined (§13.55) — before that, AddLiquidity/Swap are rejected.
-// - Treasury (0.5% from genesis — §13.86) is the first LP.
+// - Pool opens when params.pool_active is set (§13.114) — before that, AddLiquidity/Swap are rejected.
+// - The protocol has no POOL allocation (split bpsPool = 0); the LLC may seed
+//   liquidity as a normal LP.
 
 const (
 	// poolSwapFeeBps is the 0.3% swap fee (30 bps).
@@ -29,20 +30,21 @@ const (
 	poolImbalanceYieldBps = int64(2_000)
 )
 
-// poolOpen returns true if the pool is open (mined LUG supply ≥ 50M, §13.81).
+// poolOpen returns true if the pool is open (params.pool_active, §13.114).
 // Shared with the tokenomics trigger via Keeper.PoolOpen (single source of truth — §13.84).
 func (k Keeper) poolOpen(ctx context.Context) bool {
 	return k.PoolOpen(ctx)
 }
 
-// poolAssetDenoms returns the on-chain pool asset denoms (fake on testnet).
-func poolAssetDenoms() []string {
-	return []string{"btc", "atom", "usdt", "usdc", "xmr"}
-}
-
-// isPoolAsset reports whether denom is a pool asset.
-func isPoolAsset(denom string) bool {
-	for _, a := range poolAssetDenoms() {
+// isPoolAsset reports whether denom is whitelisted in params.PoolAssets.
+// The whitelist is a governance parameter (67%); adding an asset there must be
+// enough for the pool to accept it — no binary upgrade.
+func (k Keeper) isPoolAsset(ctx context.Context, denom string) bool {
+	params, err := k.Params.Get(ctx)
+	if err != nil {
+		return false
+	}
+	for _, a := range params.PoolAssets {
 		if a == denom {
 			return true
 		}
@@ -53,9 +55,9 @@ func isPoolAsset(denom string) bool {
 // AddLiquidity deposits LUG + asset into a pair, minting LP shares.
 func (k Keeper) AddLiquidity(ctx context.Context, msg *types.MsgAddLiquidity) (*types.MsgAddLiquidityResponse, error) {
 	if !k.poolOpen(ctx) {
-		return nil, fmt.Errorf("pool is not open yet (opens at 100M LUG mined)")
+		return nil, fmt.Errorf("pool is not open yet (requires params.pool_active)")
 	}
-	if !isPoolAsset(msg.Asset) {
+	if !k.isPoolAsset(ctx, msg.Asset) {
 		return nil, fmt.Errorf("invalid pool asset %q", msg.Asset)
 	}
 	if msg.AmountLug.IsNil() || !msg.AmountLug.IsPositive() || msg.AmountAsset.IsNil() || !msg.AmountAsset.IsPositive() {
@@ -149,7 +151,7 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *types.MsgRemoveLiquidi
 	if !k.poolOpen(ctx) {
 		return nil, fmt.Errorf("pool is not open")
 	}
-	if !isPoolAsset(msg.Asset) {
+	if !k.isPoolAsset(ctx, msg.Asset) {
 		return nil, fmt.Errorf("invalid pool asset %q", msg.Asset)
 	}
 	if msg.LpShares.IsNil() || !msg.LpShares.IsPositive() {
@@ -231,9 +233,9 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *types.MsgRemoveLiquidi
 // Swap swaps LUG ↔ asset using the constant-product curve with a 0.3% fee.
 func (k Keeper) Swap(ctx context.Context, msg *types.MsgSwap) (*types.MsgSwapResponse, error) {
 	if !k.poolOpen(ctx) {
-		return nil, fmt.Errorf("pool is not open yet (opens at 100M LUG mined)")
+		return nil, fmt.Errorf("pool is not open yet (requires params.pool_active)")
 	}
-	if !isPoolAsset(msg.Asset) {
+	if !k.isPoolAsset(ctx, msg.Asset) {
 		return nil, fmt.Errorf("invalid pool asset %q", msg.Asset)
 	}
 	if msg.AmountIn.IsNil() || !msg.AmountIn.IsPositive() {

@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"cosmossdk.io/collections"
@@ -26,6 +25,10 @@ const (
 	miningCapDecay = "0.95"
 	// miningCapWindowDays is the sliding window (365 days).
 	miningCapWindowDays = 365
+	// Velocity caps: fraction of the current annual cap per day / 7-day window.
+	// Backstop against a compromised notary signing many receipts in one window.
+	miningCapDailyBps  = int64(100) // 1% of the annual cap per day
+	miningCapWeeklyBps = int64(500) // 5% of the annual cap per 7-day window
 )
 
 // MiningCapDailyBuckets tracks uluggom mined per UTC day (key: YYYYMMDD).
@@ -48,17 +51,23 @@ func (k Keeper) recordMinedAmount(ctx context.Context, amount sdkmath.Int) error
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	dayKey := sdkCtx.BlockTime().UTC().Format("20060102")
 
-	// Sum the sliding window (last 365 days, including today).
+	// Sum the 365-day window, the last 7 days and today's bucket in one walk.
 	windowStart := sdkCtx.BlockTime().UTC().AddDate(0, 0, -(miningCapWindowDays - 1))
 	startKey := windowStart.Format("20060102")
+	weekStart := sdkCtx.BlockTime().UTC().AddDate(0, 0, -6).Format("20060102")
 
 	var windowTotal sdkmath.Int = sdkmath.ZeroInt()
-	// Bound the iteration to at most 365 buckets.
-	// Walking the whole map would be expensive; we iterate with a lexicographic prefix
-	// [startKey, ...] and filter keys >= startKey.
+	var weekTotal sdkmath.Int = sdkmath.ZeroInt()
+	var dayTotal sdkmath.Int = sdkmath.ZeroInt()
 	err := k.MiningCapDailyBuckets.Walk(sdkCtx, nil, func(key string, val sdkmath.Int) (bool, error) {
 		if key >= startKey {
 			windowTotal = windowTotal.Add(val)
+		}
+		if key >= weekStart {
+			weekTotal = weekTotal.Add(val)
+		}
+		if key == dayKey {
+			dayTotal = val
 		}
 		return false, nil
 	})
@@ -71,7 +80,7 @@ func (k Keeper) recordMinedAmount(ctx context.Context, amount sdkmath.Int) error
 		return err
 	}
 
-	// Gate: mined_365d + amount <= current_cap; otherwise REJECT (decision §13.41 item 7).
+	// Annual cap: mined_365d + amount <= current_cap.
 	novoTotal := windowTotal.Add(amount)
 	if novoTotal.GT(capVigente) {
 		return fmt.Errorf(
@@ -80,22 +89,31 @@ func (k Keeper) recordMinedAmount(ctx context.Context, amount sdkmath.Int) error
 		)
 	}
 
-	// Update today's bucket.
-	cur, err := k.MiningCapDailyBuckets.Get(sdkCtx, dayKey)
-	if err != nil {
-		if !errors.Is(err, collections.ErrNotFound) {
-			return fmt.Errorf("failed to read daily bucket: %w", err)
-		}
-		cur = sdkmath.ZeroInt()
+	// Velocity caps: 1% of the annual cap per day, 5% per 7-day window.
+	dailyCap := capVigente.MulRaw(miningCapDailyBps).QuoRaw(10_000)
+	if dayTotal.Add(amount).GT(dailyCap) {
+		return fmt.Errorf(
+			"mining velocity cap exceeded: day=%s + new=%s > cap=%s (1%% of the annual cap per day)",
+			dayTotal.String(), amount.String(), dailyCap.String(),
+		)
 	}
-	if err := k.MiningCapDailyBuckets.Set(sdkCtx, dayKey, cur.Add(amount)); err != nil {
+	weeklyCap := capVigente.MulRaw(miningCapWeeklyBps).QuoRaw(10_000)
+	if weekTotal.Add(amount).GT(weeklyCap) {
+		return fmt.Errorf(
+			"mining velocity cap exceeded: week=%s + new=%s > cap=%s (5%% of the annual cap per 7 days)",
+			weekTotal.String(), amount.String(), weeklyCap.String(),
+		)
+	}
+
+	// Update today's bucket.
+	if err := k.MiningCapDailyBuckets.Set(sdkCtx, dayKey, dayTotal.Add(amount)); err != nil {
 		return fmt.Errorf("failed to set daily bucket: %w", err)
 	}
 
 	return nil
 }
 
-// miningCapVigente returns the current annual cap: 15B × 0.95^years_since_genesis (uluggom).
+// miningCapVigente returns the current annual cap: 7B × 0.95^years_since_genesis (uluggom).
 // O epoch usa a MESMA âncora do multiplicador da cesta: o bloco 0 (§13.170
 // Grupo D — derivada, não um param).
 func (k Keeper) miningCapVigente(sdkCtx sdk.Context) (sdkmath.Int, error) {
