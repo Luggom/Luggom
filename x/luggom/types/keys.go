@@ -10,44 +10,41 @@ const (
 	// no longer receives mint. Pre-upgrade balance should be migrated by an upgrade handler.
 	LLCTreasuryModuleName = "luggom_llc_treasury"
 
-	// PoolTreasuryModuleName receives the POOL share — a one-time 10% liquidity
-	// carve-out that runs ONLY in Fase 1 and ends at the Transition (§13.132 §1).
+	// PoolTreasuryModuleName is retained for compatibility. The protocol has no
+	// POOL allocation (split bpsPool = 0); the LLC may seed liquidity as a
+	// normal LP.
 	PoolTreasuryModuleName = "luggom_pool_treasury"
 
-	// PreSaleModuleName holds the pre-sale LUG during Fase 1 (§13.132 §4): it
-	// receives the 35% share of each mint (<10M mined) and pays out the LUG sold
-	// in the $350k raise (3,5M LUG × $0,10) as the 3-month linear vesting
-	// releases. It also holds the USDT proceeds (moved out by the authority-gated
-	// MsgDistributePreSaleProceeds).
+	// PreSaleModuleName is legacy: the pre-sale is disabled and receives no slice
+	// of the split. It still holds any vesting positions from a pre-upgrade state.
 	PreSaleModuleName = "luggom_presale"
 
-	// AtomReservoirModuleName (Atom Reservoir — §13.64) ALWAYS receives the ATOM share
-	// (7,5% na Fase 1, 30% na Transição, 10% na Fase 2). It accumulates and pays the
-	// flat caps to qualified holders (Phase 2); the excess stays as a cushion for
-	// low-mining months. It is LUG's savings account.
+	// AtomReservoirModuleName (Atom Reservoir — §13.64) ALWAYS receives the ATOM
+	// share (7,5% of each mint). It accumulates and pays the flat caps to
+	// qualified holders; the excess stays as a cushion for low-mining months.
+	// It is LUG's savings account.
 	AtomReservoirModuleName = "luggom_atom_reservoir"
 
 	// StakingReservoirModuleName (Staking Reservoir — §13.56/§13.64) receives the
-	// staking share (7,5% na Fase 1, 30% na Transição, 10% na Fase 2). It feeds the
-	// monthly drip paid to LUG locks (savings account). Separate from native PoS
-	// (0.005 LUG/tx + 3% validators in x/distribution).
+	// staking share (7,5% of each mint). It feeds the monthly drip paid to LUG
+	// locks (savings account). Separate from native PoS (0.005 LUG/tx + 3%
+	// validators in x/distribution).
 	StakingReservoirModuleName = "luggom_staking_reservoir"
 
-	// GovReserveModuleName is the protocol Treasury. §13.132 reactivated it at 2%
-	// (Fase 1 and Transição) after it had been dropped in §13.64. From §13.153/
-	// §13.154 it also stays at 2% in Fase 2 — but split, see below.
+	// GovReserveModuleName is the protocol Treasury. It receives 1,5% of each
+	// mint; the notary reserve (0,5%) is a separate account.
 	//
 	// It is DISCRETIONARY money: it only leaves by governance vote (security,
 	// marketing, implementation, Open Finance). It is the opposite of the OTC
 	// vault, which is never spent.
 	GovReserveModuleName = "luggom_gov_reserve"
 
-	// NotaryReserveModuleName holds the notary share (0,5% of each mint in Fase 2,
-	// §13.154). It is a SEPARATE account from the Treasury on purpose: the money
-	// that pays the notaries must not be reachable by the same vote that spends
-	// marketing. The notaries are drawn by lot from a pool of volunteer validators
-	// (§13.152), and paying them has to be automatic — a failed vote cannot be
-	// allowed to stop mining.
+	// NotaryReserveModuleName holds the notary share (0,5% of each mint, from the
+	// first mint). It is a SEPARATE account from the Treasury on purpose: the
+	// money that pays the notaries must not be reachable by the same vote that
+	// spends marketing. The notaries are drawn by lot from a pool of volunteer
+	// validators (§13.152), and paying them has to be automatic — a failed vote
+	// cannot be allowed to stop mining.
 	NotaryReserveModuleName = "luggom_notary_reserve"
 
 	// Nomes aceites em MsgSpendFromReserve. "gov" é a tesouraria (discricionária,
@@ -56,8 +53,8 @@ const (
 	ReserveGov    = "gov"
 	ReserveNotary = "notary"
 
-	// OtcVaultModuleName is the OTC LOCKED vault (§13.132). It receives the Phase 2
-	// share (40% of each mint, no cap) while mining exists. The LUG is sold for BTC
+	// OtcVaultModuleName is the OTC LOCKED vault (§13.132). It receives 40% of
+	// each mint (no cap) while mining exists. The LUG is sold for BTC
 	// at the basket price (min lot 100k LUG); BTC only enters via IBC, so settlement
 	// is deferred. The BTC received is PERMANENT collateral — it never leaves the
 	// vault. It is NOT a spendable treasury.

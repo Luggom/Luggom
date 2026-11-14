@@ -38,8 +38,8 @@ message Params {
   // --- C: endereços ---
 
   // founder_address é o multisig 2-de-3 do Fundador (root wallet). Recebe a
-  // fatia de 5% de cada mineração (retida até ao cliff de 24 m, §13.171) e tem
-  // poder de veto na governança. TRANCADO no genesis: nunca muda (Grupo C).
+  // fatia de 5% de cada mineração (retida até ao cliff de 24 m, §13.171).
+  // TRANCADO no genesis: nunca muda (Grupo C).
   string founder_address = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
   // api_verifier_address: conta cuja pubkey verifica as assinaturas de atestação
@@ -53,7 +53,8 @@ message Params {
 
   // --- E: a "decoração" (governável a 67%) ---
 
-  // pool_active: quando true, a fatia da POOL vai para o cofre da pool.
+  // pool_active: quando true, a pool (AMM) abre para AddLiquidity/Swap.
+  // O protocolo não tem dotação de POOL.
   bool pool_active = 6;
 
   // tax_entity_whitelist: whitelist global unificada (slugs EUA + entes "br:")
@@ -74,7 +75,7 @@ message Params {
   repeated string pool_assets = 33;
 
   // notary_payees: destinos PERMITIDOS para a reserva do notariado (0,5% de
-  // cada cunhagem na Fase 2). A governança muda QUEM recebe; não pode mandar o
+  // cada cunhagem). A governança muda QUEM recebe; não pode mandar o
   // orçamento para um endereço arbitrário. Lista vazia ⇒ a reserva não se gasta
   // (fail-closed). A tesouraria (1,5%) não usa esta lista: é discricionária.
   repeated string notary_payees = 34;
@@ -84,8 +85,8 @@ message Params {
   string otc_btc_denom = 35;
 
   // --- Pesos do tally da governança (GOVERNANCE_MVP15) — usados pelo x/gov ---
-  // gov_validator_min_for_weight_shift: validadores bonded abaixo disto forçam
-  // peso 100% LLC no tally.
+  // gov_validator_min_for_weight_shift: legado; o tally atual não dilui pesos
+  // por classe.
   uint32 gov_validator_min_for_weight_shift = 15;
   uint32 gov_llc_vote_weight_bps = 16;
   uint32 gov_founder_vote_weight_bps = 17;

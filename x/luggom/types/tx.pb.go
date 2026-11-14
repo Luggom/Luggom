@@ -279,9 +279,9 @@ type MsgMineResponse struct {
 	AmountMined cosmossdk_io_math.Int `protobuf:"bytes,1,opt,name=amount_mined,json=amountMined,proto3,customtype=cosmossdk.io/math.Int" json:"amount_mined"`
 	// tax_root is the amount sent to the founder (5% of total mint).
 	TaxRoot cosmossdk_io_math.Int `protobuf:"bytes,2,opt,name=tax_root,json=taxRoot,proto3,customtype=cosmossdk.io/math.Int" json:"tax_root"`
-	// tax_staking: share to the Staking Reservoir (7.5% in Phase 1, 30% in the Transition, 10% in Phase 2).
+	// tax_staking: share to the Staking Reservoir (7.5% of each mint).
 	TaxStaking cosmossdk_io_math.Int `protobuf:"bytes,3,opt,name=tax_staking,json=taxStaking,proto3,customtype=cosmossdk.io/math.Int" json:"tax_staking"`
-	// tax_validator: legacy name — carries the POOL treasury share (10% in Phase 1, zero afterwards).
+	// tax_validator: legacy name — carries the POOL share (always 0 in the single split).
 	// The 3% paid to validators goes to x/distribution via the fee collector, not through this field.
 	TaxValidator cosmossdk_io_math.Int `protobuf:"bytes,4,opt,name=tax_validator,json=taxValidator,proto3,customtype=cosmossdk.io/math.Int" json:"tax_validator"`
 }

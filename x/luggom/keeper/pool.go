@@ -18,7 +18,8 @@ import (
 // - Fixed 0.005 LUG fee per swap is charged by the ante-handler (ante_lug_move_fee.go).
 // - Yield by imbalance (§13.19): deposits of scarce assets earn more, excess assets earn less.
 // - Pool opens when params.pool_active is set (§13.114) — before that, AddLiquidity/Swap are rejected.
-// - The Pool Treasury (10% of each mint in Fase 1, §13.132) seeds the first liquidity.
+// - The protocol has no POOL allocation (split bpsPool = 0); the LLC may seed
+//   liquidity as a normal LP.
 
 const (
 	// poolSwapFeeBps is the 0.3% swap fee (30 bps).

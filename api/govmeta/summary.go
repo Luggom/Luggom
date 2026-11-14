@@ -3,15 +3,17 @@ package govmeta
 
 import "encoding/json"
 
-// PolicyMVP15 reflecte a governança MVP 2.0 (§13.57/§13.84): fundador autônomo
-// até 50M LUG (IBC), depois validadores em igualdade. LLC EXTINTA (2026-06-25).
-const PolicyMVP15 = "docs/GOVERNANCE_MVP15.md"
+// PolicyMVP15 aponta para a política canónica vigente: founder-led até 10M
+// LUG, DAO a partir daí (1 LUG em staking = 1 voto). A LBC não tem classe nem
+// tecto de voto.
+const PolicyMVP15 = "docs/TOKENOMICS.md"
 
-// ValidatorMinForDilutionGate validadores mínimos antes de aplicar peso <100% LLC.
+// ValidatorMinForDilutionGate é legado: o tally atual não dilui pesos por
+// classe. Mantido no JSON por compatibilidade da API.
 const ValidatorMinForDilutionGate = 100
 
-// VoteWeightsTier0to10M percentuais inteiros (soma 100) para [0, 10M).
-// LLC extinta: fundador 100% até 50M (autonomia), validadores 0%.
+// VoteWeightsTier0to10M percentuais inteiros (soma 100) para [0, 10M):
+// fundador 100%, validadores 0%. Aos 10M abre a DAO (1 LUG = 1 voto).
 var VoteWeightsTier0to10M = struct {
 	LLC, Founder, Validators int
 }{0, 100, 0}
@@ -32,7 +34,7 @@ type Summary struct {
 	Policy                 struct {
 		ValidatorMinForDilution int `json:"validator_min_for_dilution"`
 		VoteWeights0to10M       struct {
-			LlcPercent        int `json:"llc_percent"` // deprecated: LLC extinta — sempre 0
+			LlcPercent        int `json:"llc_percent"` // deprecated: a LBC não tem classe de voto — sempre 0
 			FounderPercent    int `json:"founder_percent"`
 			ValidatorsPercent int `json:"validators_percent"`
 		} `json:"vote_weights_0_to_10m_lug_mined"`
@@ -49,9 +51,9 @@ func BuildSummary(luggomParams map[string]interface{}, cosmosGov map[string]inte
 	s.Policy.VoteWeights0to10M.FounderPercent = VoteWeightsTier0to10M.Founder
 	s.Policy.VoteWeights0to10M.ValidatorsPercent = VoteWeightsTier0to10M.Validators
 	s.Notes = []string{
-		"LLC DAO extinta (2026-06-25): sem peso LLC.",
-		"Fundador autônomo até 50M LUG (IBC abre); depois governança igual entre validadores (§13.57/§13.84).",
-		"Governança on-chain 67% decide listas operacionais (entidades fiscais, bancos, ativos da pool); tokenomics imutável.",
+		"LBC sem classe nem tecto de voto: na DAO, 1 LUG em staking = 1 voto.",
+		"Founder-led até 10M LUG; a partir daí a DAO decide.",
+		"A governança decide listas operacionais (entidades fiscais, bancos, pool_assets); o split e as constantes compiladas não mudam por voto.",
 	}
 	if p, ok := luggomParams["params"].(map[string]interface{}); ok {
 		// §13.170 Grupo B: governance_quorum/veto_threshold deixaram de ser params
@@ -67,6 +69,7 @@ func BuildSummary(luggomParams map[string]interface{}, cosmosGov map[string]inte
 		if g, ok := uintFromJSON(p["gov_validator_min_for_weight_shift"]); ok && g > 0 {
 			s.Policy.ValidatorMinForDilution = int(g)
 		}
+		// Legado: o param existe mas o tally atual ignora-o.
 		if llc, ok := uintFromJSON(p["gov_llc_vote_weight_bps"]); ok {
 			s.Policy.VoteWeights0to10M.LlcPercent = bpsToPercent(int(llc))
 		}

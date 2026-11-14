@@ -41,8 +41,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // Os números apagados ficam RESERVADOS — não se reutilizam.
 type Params struct {
 	// founder_address é o multisig 2-de-3 do Fundador (root wallet). Recebe a
-	// fatia de 5% de cada mineração (retida até ao cliff de 24 m, §13.171) e tem
-	// poder de veto na governança. TRANCADO no genesis: nunca muda (Grupo C).
+	// fatia de 5% de cada mineração (retida até ao cliff de 24 m, §13.171).
+	// TRANCADO no genesis: nunca muda (Grupo C).
 	FounderAddress string `protobuf:"bytes,3,opt,name=founder_address,json=founderAddress,proto3" json:"founder_address,omitempty"`
 	// api_verifier_address: conta cuja pubkey verifica as assinaturas de atestação
 	// (fase 2). ROTÁVEL de propósito — a chave do notário tem de poder rodar
@@ -51,7 +51,8 @@ type Params struct {
 	// usd_oracle_updater_address: conta autorizada a submeter o snapshot do oráculo
 	// (chave quente). ROTÁVEL — o impacto é limitado pela mediana + fail-closed.
 	UsdOracleUpdaterAddress string `protobuf:"bytes,13,opt,name=usd_oracle_updater_address,json=usdOracleUpdaterAddress,proto3" json:"usd_oracle_updater_address,omitempty"`
-	// pool_active: quando true, a fatia da POOL vai para o cofre da pool.
+	// pool_active: quando true, a pool (AMM) abre para AddLiquidity/Swap.
+	// O protocolo não tem dotação de POOL.
 	PoolActive bool `protobuf:"varint,6,opt,name=pool_active,json=poolActive,proto3" json:"pool_active,omitempty"`
 	// tax_entity_whitelist: whitelist global unificada (slugs EUA + entes "br:")
 	// para a mineração. Operacional — 67% de governança.
@@ -67,7 +68,7 @@ type Params struct {
 	// Operacional — 67% de governança.
 	PoolAssets []string `protobuf:"bytes,33,rep,name=pool_assets,json=poolAssets,proto3" json:"pool_assets,omitempty"`
 	// notary_payees: destinos PERMITIDOS para a reserva do notariado (0,5% de
-	// cada cunhagem na Fase 2). A governança muda QUEM recebe; não pode mandar o
+	// cada cunhagem). A governança muda QUEM recebe; não pode mandar o
 	// orçamento para um endereço arbitrário. Lista vazia ⇒ a reserva não se gasta
 	// (fail-closed). A tesouraria (1,5%) não usa esta lista: é discricionária.
 	NotaryPayees []string `protobuf:"bytes,34,rep,name=notary_payees,json=notaryPayees,proto3" json:"notary_payees,omitempty"`
@@ -75,8 +76,8 @@ type Params struct {
 	// Operacional — 67% de governança.
 	OtcBtcDenom string `protobuf:"bytes,35,opt,name=otc_btc_denom,json=otcBtcDenom,proto3" json:"otc_btc_denom,omitempty"`
 	// --- Pesos do tally da governança (GOVERNANCE_MVP15) — usados pelo x/gov ---
-	// gov_validator_min_for_weight_shift: validadores bonded abaixo disto forçam
-	// peso 100% LLC no tally.
+	// gov_validator_min_for_weight_shift: legado; o tally atual não dilui pesos
+	// por classe.
 	GovValidatorMinForWeightShift uint32 `protobuf:"varint,15,opt,name=gov_validator_min_for_weight_shift,json=govValidatorMinForWeightShift,proto3" json:"gov_validator_min_for_weight_shift,omitempty"`
 	GovLlcVoteWeightBps           uint32 `protobuf:"varint,16,opt,name=gov_llc_vote_weight_bps,json=govLlcVoteWeightBps,proto3" json:"gov_llc_vote_weight_bps,omitempty"`
 	GovFounderVoteWeightBps       uint32 `protobuf:"varint,17,opt,name=gov_founder_vote_weight_bps,json=govFounderVoteWeightBps,proto3" json:"gov_founder_vote_weight_bps,omitempty"`

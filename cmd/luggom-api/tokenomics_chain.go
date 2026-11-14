@@ -7,19 +7,8 @@ import (
 	"os/exec"
 	"strings"
 
-	sdkmath "cosmossdk.io/math"
-
 	"luggom/api/uspipeline"
 )
-
-// preSaleThresholdUluggom é o fim da Fase 1: 10M LUG em uluggom (§13.117).
-var preSaleThresholdUluggom = func() sdkmath.Int {
-	v, ok := sdkmath.NewIntFromString("10000000000000000000000000")
-	if !ok {
-		panic("bad preSaleThresholdUluggom")
-	}
-	return v
-}()
 
 // parsePoolActiveFromQueryParamsJSON extrai pool_active e atom_bonus_active da saída JSON.
 func parsePoolActiveFromQueryParamsJSON(raw []byte) (poolActive bool, atomBonusActive bool, err error) {
@@ -85,15 +74,11 @@ func (s *Server) queryTokenomicsFromNode() (uspipeline.TokenomicsSnapshot, error
 		// Fallback: params flag (kept for genesis compat) if the node query fails.
 		poolActive, _, _ = parsePoolActiveFromQueryParamsJSON(out)
 	}
-	// §13.132: a Fase 1 termina quando o supply total atinge 10M. A partir daí,
-	// enquanto a pool estiver fechada, vigora a transição — minerador 30% +
-	// staking 30% + ATOM 30% + fundador 5% + validadores 3% + gov 2% (sem
-	// pre-sale e sem POOL).
-	preSaleActive := false
-	if supply, err := s.queryLugSupplyFromNode(); err == nil {
-		preSaleActive = supply.LT(preSaleThresholdUluggom)
-	}
-	return uspipeline.BuildTokenomicsSnapshot(poolActive, preSaleActive, atomBonusActive), nil
+	// O split é único e NÃO muda com o supply, a pool ou a pré-venda.
+	// A pré-venda está desligada (MsgBuyPreSale devolve erro), pelo que o flag
+	// `pre_sale_active` é sempre false; a governança é que passa de founder-led
+	// a DAO aos 10M.
+	return uspipeline.BuildTokenomicsSnapshot(poolActive, false, atomBonusActive), nil
 }
 
 // queryParamsFromNode runs `luggomd query luggom params -o json` and returns the raw
