@@ -1,8 +1,8 @@
 # Validators — Luggom testnet (by invitation)
 
-> **RESET 2026-11-19:** 15 of the 16 current validators move to `luggom-test01`.
+> **RESET 2026-11-19:** 13 of the 16 current validators move to `luggom-test01`.
 > Do not bond on `luggom-test`; see [RESET-2026-11-19.en.md](RESET-2026-11-19.en.md).
-> **15 are already in the reset genesis; BonyNode is funded but not bonded and can
+> **13 are already in the reset genesis; NODESYNC, Sr20de and BonyNode are funded but not bonded and can
 > join later.** The invitation flow below is for new validators after the reset.
 
 > **Upgrades:** the chain is upgraded by a published **halt height**, not by an ad-hoc restart. Read `TESTNET/UPGRADES.en.md` before you bond — one missed height means downtime, and downtime means jail.

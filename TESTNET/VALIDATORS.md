@@ -1,8 +1,8 @@
 # Validadores — testnet Luggom (por convite)
 
-> **RESET 2026-11-19:** 15 dos 16 validadores atuais passam para `luggom-test01`.
+> **RESET 2026-11-19:** 13 dos 16 validadores atuais passam para `luggom-test01`.
 > Não faças bond na `luggom-test`; ver [RESET-2026-11-19.md](RESET-2026-11-19.md).
-> **15 já estão no genesis do reset; o BonyNode fica fundado mas sem bond e pode
+> **13 já estão no genesis do reset; NODESYNC, Sr20de e BonyNode ficam fundados mas sem bond e podem
 > entrar depois.** O fluxo de convite abaixo é para novos validadores depois do reset.
 
 > **Upgrades:** a chain sobe por uma **altura de halt** publicada, não por um restart à vontade. Lê `TESTNET/UPGRADES.md` antes de bondares — perder uma altura é downtime, e downtime é jail.
