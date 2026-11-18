@@ -1,9 +1,9 @@
 # Validadores — testnet Luggom (por convite)
 
-> **RESET 2026-11-19:** os 16 validadores atuais passam para `luggom-test01`. Não
-> faças bond na `luggom-test`; ver [RESET-2026-11-19.md](RESET-2026-11-19.md).
-> **Os 16 validadores atuais já estão no genesis do reset.** O fluxo de convite
-> abaixo é para novos validadores depois do reset.
+> **RESET 2026-11-19:** 15 dos 16 validadores atuais passam para `luggom-test01`.
+> Não faças bond na `luggom-test`; ver [RESET-2026-11-19.md](RESET-2026-11-19.md).
+> **15 já estão no genesis do reset; o BonyNode fica fundado mas sem bond e pode
+> entrar depois.** O fluxo de convite abaixo é para novos validadores depois do reset.
 
 > **Upgrades:** a chain sobe por uma **altura de halt** publicada, não por um restart à vontade. Lê `TESTNET/UPGRADES.md` antes de bondares — perder uma altura é downtime, e downtime é jail.
 
@@ -110,7 +110,7 @@ luggomd tx staking create-validator \
   --node tcp://127.0.0.1:26657 -y
 ```
 
-`200 LUG` é o **padrão da testnet** (o mesmo bond dos 16 validadores atuais). Fica em stake;
+`200 LUG` é o **padrão da testnet** (o mesmo bond dos validadores atuais). Fica em stake;
 só sai com unbonding de **21 dias**. Os gentxs dos operadores do reset usaram
 comissão 0.10; novos validadores podem escolher a sua (o exemplo usa 0.05).
 

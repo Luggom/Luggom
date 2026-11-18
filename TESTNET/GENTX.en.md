@@ -1,6 +1,7 @@
 # Gentx for `luggom-test01`
 
-This is the short checklist for the 12 external validators. The full reset guide
+This is the short checklist for the external validators (11 are in the final
+genesis; BonyNode joins later). The full reset guide
 is [RESET-2026-11-19.en.md](RESET-2026-11-19.en.md). Release:
 <https://github.com/Luggom/Luggom/releases/tag/testnet-2026-11-19>
 
@@ -50,4 +51,6 @@ Send `~/.luggom/config/gentx/gentx-*.json` to the coordinator by
 **2026-11-18 02:00 UTC** (Telegram group or the address in the release).
 
 Do **not** run `collect-gentxs`. Do **not** start the chain with the draft genesis.
-The final genesis (16 gentxs) is published after the deadline.
+The final genesis (15 gentxs) is published in the release. BonyNode is funded but
+not in the genesis; after launch, sync and run `MsgCreateValidator` with 200 LUG +
+gas.
