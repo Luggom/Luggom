@@ -32,7 +32,7 @@ curl https://api.luggom.com/api/v1/chain/info
 curl https://notary.luggom.com/health
 ```
 
-Respostas esperadas depois do reset: `chain_id = luggom-test01`, altura a subir, **15 validadores** (o BonyNode pode entrar depois), `ok` no notário.
+Respostas esperadas depois do reset: `chain_id = luggom-test01`, altura a subir, **13 validadores** (NODESYNC, Sr20de e BonyNode podem entrar depois), `ok` no notário.
 
 ## Primeira mineração (on-chain) — histórica, `luggom-test`
 

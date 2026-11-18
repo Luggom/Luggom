@@ -32,7 +32,7 @@ curl https://api.luggom.com/api/v1/chain/info
 curl https://notary.luggom.com/health
 ```
 
-Expected after the reset: `chain_id = luggom-test01`, height rising, **15 validators** (BonyNode can join later), `ok` from the notary.
+Expected after the reset: `chain_id = luggom-test01`, height rising, **13 validators** (NODESYNC, Sr20de and BonyNode can join later), `ok` from the notary.
 
 ## First mining (on-chain) — historical, `luggom-test`
 
